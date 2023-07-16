@@ -25,7 +25,7 @@ function App() {
         <Devnet />
       </div>
       <p className="read-the-docs">
-        <a href="https://docs.zama.ai/fhevm">See the documentation for more informations</a>
+        <a href="https://docs.zama.ai/fhevm">See the documentation for more information</a>
       </p>
     </>
   );
