@@ -1,5 +1,5 @@
 import { BrowserProvider } from 'ethers';
-import { initFhevm, createInstance, FhevmInstance } from 'fhevmjs/web';
+import { initFhevm, createInstance, FhevmInstance } from 'fhevmjs';
 
 export const init = async () => {
   await initFhevm();
@@ -8,11 +8,13 @@ export const init = async () => {
 let instance: FhevmInstance;
 
 export const createFhevmInstance = async () => {
-  const chainIdHex = await window.ethereum.request<string>({ method: 'eth_chainId' });
   const provider = new BrowserProvider(window.ethereum);
-  const publicKey = await provider.call({ from: null, to: '0x0000000000000000000000000000000000000044' });
-  const chainId = parseInt(chainIdHex, 16);
-  if (chainId !== 9000) throw new Error('Invalid port');
+  const network = await provider.getNetwork();
+  const chainId = +network.chainId.toString();
+  const publicKey = await provider.call({
+    from: null,
+    to: '0x0000000000000000000000000000000000000044',
+  });
   instance = await createInstance({ chainId, publicKey });
 };
 

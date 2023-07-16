@@ -3,8 +3,7 @@ import { getInstance } from '../../fhevmjs';
 
 import './Devnet.css';
 
-export const toHexString = (bytes: Uint8Array) =>
-  bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
+const toHexString = (bytes: Uint8Array) => bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
 
 export const Devnet = () => {
   const [encryption, setEncryption] = useState<Uint8Array>();
@@ -13,8 +12,12 @@ export const Devnet = () => {
 
   useEffect(() => {
     setEncryption(instance.encrypt32(1337));
-    setToken(instance.generateToken({ verifyingContract: '0x309cf2aae85ad8a1db70ca88cfd4225bf17a7482' }));
-  }, []);
+    setToken(
+      instance.generateToken({
+        verifyingContract: '0x309cf2aae85ad8a1db70ca88cfd4225bf17a7482',
+      })
+    );
+  }, [instance]);
 
   return (
     <div>
