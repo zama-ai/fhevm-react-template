@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "ethers": "^6.6.4",
-    "fhevmjs": "^0.1.1",
+    "fhevmjs": "^0.2.0",
     "prettier": "^3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
