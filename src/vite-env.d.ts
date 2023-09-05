@@ -1,7 +1,5 @@
 /// <reference types="vite/client" />
 
 interface Window {
-  ethereum: {
-    request<T = any>(request: { method: string; params?: Array<any> | Record<string, any> }): Promise<T>;
-  };
+  ethereum: import('ethers').Eip1193Provider & { on: (event: string, cb: (param: any) => any) => void };
 }

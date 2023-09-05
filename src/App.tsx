@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
-import './App.css';
 import { Devnet } from './components/Devnet';
 import { init, createFhevmInstance } from './fhevmjs';
+import { BrowserProvider } from 'ethers';
+import './App.css';
+import { Connect } from './components/Connect';
 
 function App() {
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const startup = async () => {
-    await init();
-    await createFhevmInstance();
-    setIsInitialized(true);
-  };
-
   useEffect(() => {
-    startup().catch((e) => console.log('init failed', e));
+    init()
+      .then(() => {
+        setIsInitialized(true);
+      })
+      .catch(() => setIsInitialized(false));
   }, []);
 
   if (!isInitialized) return null;
@@ -21,9 +21,13 @@ function App() {
   return (
     <>
       <h1>fhevmjs</h1>
-      <div className="card">
-        <Devnet />
-      </div>
+      <Connect>
+        {(account, provider) => (
+          <div className="card">
+            <Devnet />
+          </div>
+        )}
+      </Connect>
       <p className="read-the-docs">
         <a href="https://docs.zama.ai/fhevm">See the documentation for more information</a>
       </p>
