@@ -21,13 +21,7 @@ function App() {
   return (
     <>
       <h1>fhevmjs</h1>
-      <Connect>
-        {(account, provider) => (
-          <div className="card">
-            <Devnet />
-          </div>
-        )}
-      </Connect>
+      <Connect>{(account, provider) => <Devnet />}</Connect>
       <p className="read-the-docs">
         <a href="https://docs.zama.ai/fhevm">See the documentation for more information</a>
       </p>

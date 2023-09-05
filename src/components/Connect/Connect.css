@@ -9,3 +9,12 @@
 .Connect__wrongNetwork {
   color: #ff0000;
 }
+
+.Connect__button {
+  border: 1px solid #999;
+  background: #eee;
+}
+
+.Connect__button:hover {
+  border: 1px solid #000;
+}
