@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Devnet } from './components/Devnet';
-import { init, createFhevmInstance } from './fhevmjs';
-import { BrowserProvider } from 'ethers';
+import { init } from './fhevmjs';
 import './App.css';
 import { Connect } from './components/Connect';
 
