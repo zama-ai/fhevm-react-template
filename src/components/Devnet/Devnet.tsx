@@ -23,11 +23,11 @@ export const Devnet = () => {
     <div>
       <dl>
         <dt className="Devnet__title">This is an encryption of 1337:</dt>
-        <dd>
+        <dd className="Devnet__dd">
           <pre className="Devnet__pre">{encryption && toHexString(encryption)}</pre>
         </dd>
         <dt className="Devnet__title">And this is a EIP-712 token</dt>
-        <dd>
+        <dd className="Devnet__dd">
           <pre className="Devnet__pre">{token && JSON.stringify(token.token)}</pre>
         </dd>
       </dl>
