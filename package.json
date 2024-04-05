@@ -24,7 +24,7 @@
     "eslint": "^8.44.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.1",
-    "fhevmjs": "^0.3.1",
+    "fhevmjs": "^0.4.0",
     "typescript": "^5.0.2",
     "vite": "^5.0.4"
   }

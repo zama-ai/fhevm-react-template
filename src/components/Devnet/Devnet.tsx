@@ -7,13 +7,13 @@ const toHexString = (bytes: Uint8Array) => bytes.reduce((str, byte) => str + byt
 
 export const Devnet = () => {
   const [encryption, setEncryption] = useState<Uint8Array>();
-  const [token, setToken] = useState<ReturnType<typeof instance.generateToken>>();
+  const [token, setToken] = useState<ReturnType<typeof instance.generatePublicKey>>();
   const instance = getInstance();
 
   useEffect(() => {
     setEncryption(instance.encrypt32(1337));
     setToken(
-      instance.generateToken({
+      instance.generatePublicKey({
         verifyingContract: '0x309cf2aae85ad8a1db70ca88cfd4225bf17a7482',
       })
     );
@@ -28,7 +28,7 @@ export const Devnet = () => {
         </dd>
         <dt className="Devnet__title">And this is a EIP-712 token</dt>
         <dd className="Devnet__dd">
-          <pre className="Devnet__pre">{token && JSON.stringify(token.token)}</pre>
+          <pre className="Devnet__pre">{token && JSON.stringify(token.eip712)}</pre>
         </dd>
       </dl>
     </div>
