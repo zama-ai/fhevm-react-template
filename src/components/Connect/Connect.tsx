@@ -5,7 +5,7 @@ import './Connect.css';
 import { Eip1193Provider } from 'ethers';
 import { createFhevmInstance } from '../../fhevmjs';
 
-const AUTHORIZED_CHAIN_ID = ['0x1f49', '0x1f4a', '0x1f4b', '0x2328'];
+const AUTHORIZED_CHAIN_ID = ['0x2328', '0x1f49', '0x1f4a', '0x1f4b'];
 
 export const Connect: React.FC<{
   children: (account: string, provider: any) => React.ReactNode;

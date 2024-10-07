@@ -24,7 +24,12 @@ const keypairs: Keypairs = {};
 
 export const createFhevmInstance = async () => {
   if (instancePromise) return instancePromise;
-  instancePromise = createInstance({ network: window.ethereum });
+  instancePromise = createInstance({
+    network: window.ethereum,
+    aclContractAddress: '0x7DC28FBFbF129d4E27f214bE9900efE806Def6d2',
+    kmsContractAddress: '0x973AfA7Aa85a1B3cB273226Dd4Acb29c546BDD7a',
+    gatewayUrl: 'https://gateway.devnet.zama.ai/',
+  });
   instance = await instancePromise;
 };
 
