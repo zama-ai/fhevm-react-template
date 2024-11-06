@@ -18,11 +18,15 @@ export default defineConfig({
         name: 'Disable nested workers',
         enforce: 'pre',
         transform(code: string, id: string) {
-          if (code.includes('new Worker') && code.includes('new URL') && code.includes('import.meta.url')) {
-            return code.replace(workerImportMetaUrlRE, `((() => { throw new Error('Nested workers are disabled') })()`);
-          }
+          const toFind = "new URL('./workerHelpers.worker.js', import.meta.url)";
+          return code.replace(toFind, `new URL('./workerHelpers.worker.js')`);
         },
       },
     ],
+    rollupOptions: {
+      output: {
+        entryFileNames: '[name].js',
+      },
+    },
   },
 });
