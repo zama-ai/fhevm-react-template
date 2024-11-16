@@ -114,7 +114,7 @@ export const Connect: React.FC<{
         <div>
           <p>You're not on the correct network</p>
           <p>
-            <button className="Connect__button" onClick={switchNetwork}>
+            <button onClick={switchNetwork}>
               Switch to Zama Devnet
             </button>
           </p>
@@ -132,7 +132,7 @@ export const Connect: React.FC<{
   const connectInfos = (
     <div className="Connect__info">
       {!connected && (
-        <button className="Connect__button" onClick={connect}>
+        <button onClick={connect}>
           Connect your wallet
         </button>
       )}
