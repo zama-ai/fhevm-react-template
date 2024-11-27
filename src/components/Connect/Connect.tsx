@@ -1,40 +1,45 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BrowserProvider } from 'ethers';
 
 import './Connect.css';
 import { Eip1193Provider } from 'ethers';
 import { createFhevmInstance } from '../../fhevmjs';
 
-// const AUTHORIZED_CHAIN_ID = ['0x2328', '0x1f49', '0x1f4a', '0x1f4b'];
+const AUTHORIZED_CHAIN_ID = ['0xaa36a7', '0x2328'];
 
 export const Connect: React.FC<{
   children: (account: string, provider: any) => React.ReactNode;
 }> = ({ children }) => {
   const [connected, setConnected] = useState(false);
-  // const [validNetwork, setValidNetwork] = useState(false);
+  const [validNetwork, setValidNetwork] = useState(false);
   const [account, setAccount] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [provider, setProvider] = useState<BrowserProvider | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const refreshAccounts = async (accounts: string[]) => {
+  const refreshAccounts = (accounts: string[]) => {
     setAccount(accounts[0] || '');
     setConnected(accounts.length > 0);
-    await createFhevmInstance();
   };
 
-  // const hasValidNetwork = async (): Promise<boolean> => {
-  //   const currentChainId: string = await window.ethereum.request({ method: 'eth_chainId' });
-  //   return AUTHORIZED_CHAIN_ID.includes(currentChainId.toLowerCase());
-  // };
+  const hasValidNetwork = async (): Promise<boolean> => {
+    const currentChainId: string = await window.ethereum.request({ method: 'eth_chainId' });
+    return AUTHORIZED_CHAIN_ID.includes(currentChainId.toLowerCase());
+  };
 
-  // const refreshNetwork = useCallback(async () => {
-  //   if (await hasValidNetwork()) {
-  //     await createFhevmInstance();
-  //     setValidNetwork(true);
-  //   } else {
-  //     setValidNetwork(false);
-  //   }
-  // }, []);
+  const refreshNetwork = useCallback(async () => {
+    if (await hasValidNetwork()) {
+      setValidNetwork(true);
+      setLoading(true);
+      const load = async () => {
+        await createFhevmInstance();
+        setLoading(false);
+      };
+      window.requestAnimationFrame(load);
+    } else {
+      setValidNetwork(false);
+    }
+  }, []);
 
   const refreshProvider = (eth: Eip1193Provider) => {
     const p = new BrowserProvider(eth);
@@ -53,13 +58,14 @@ export const Connect: React.FC<{
 
     p.send('eth_accounts', [])
       .then(async (accounts: string[]) => {
-        await refreshAccounts(accounts);
+        refreshAccounts(accounts);
+        await refreshNetwork();
       })
       .catch(() => {
         // Do nothing
       });
     eth.on('accountsChanged', refreshAccounts);
-    // eth.on('chainChanged', refreshNetwork);
+    eth.on('chainChanged', refreshNetwork);
   }, []);
 
   const connect = async () => {
@@ -71,59 +77,45 @@ export const Connect: React.FC<{
     if (accounts.length > 0) {
       setAccount(accounts[0]);
       setConnected(true);
-      // if (!(await hasValidNetwork())) {
-      //   await switchNetwork();
-      // }
+      if (!(await hasValidNetwork())) {
+        await switchNetwork();
+      }
     }
   };
 
-  // const switchNetwork = useCallback(async () => {
-  //   try {
-  //     await window.ethereum.request({
-  //       method: 'wallet_switchEthereumChain',
-  //       params: [{ chainId: AUTHORIZED_CHAIN_ID[0] }],
-  //     });
-  //   } catch (e) {
-  //     await window.ethereum.request({
-  //       method: 'wallet_addEthereumChain',
-  //       params: [
-  //         {
-  //           chainId: AUTHORIZED_CHAIN_ID[0],
-  //           rpcUrls: ['https://devnet.zama.ai/'],
-  //           chainName: 'Zama Devnet',
-  //           nativeCurrency: {
-  //             name: 'ZAMA',
-  //             symbol: 'ZAMA',
-  //             decimals: 18,
-  //           },
-  //           blockExplorerUrls: ['https://main.explorer.zama.ai'],
-  //         },
-  //       ],
-  //     });
-  //   }
-  //   await refreshNetwork();
-  // }, []);
+  const switchNetwork = useCallback(async () => {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: AUTHORIZED_CHAIN_ID[0] }],
+      });
+    } catch (e) {
+      console.error('No Sepolia chain configured');
+    }
+  }, []);
 
   const child = useMemo<React.ReactNode>(() => {
     if (!account || !provider) {
       return null;
     }
 
-    // if (!validNetwork) {
-    //   return (
-    //     <div>
-    //       <p>You're not on the correct network</p>
-    //       <p>
-    //         <button onClick={switchNetwork}>
-    //           Switch to Zama Devnet
-    //         </button>
-    //       </p>
-    //     </div>
-    //   );
-    // }
+    if (!validNetwork) {
+      return (
+        <div>
+          <p>You're not on the correct network</p>
+          <p>
+            <button onClick={switchNetwork}>Switch to Sepolia</button>
+          </p>
+        </div>
+      );
+    }
+
+    if (loading) {
+      return <p>Loading...</p>;
+    }
 
     return children(account, provider);
-  }, [account, provider, children]);
+  }, [account, provider, children, validNetwork, loading]);
 
   if (error) {
     return <p>No wallet has been found.</p>;

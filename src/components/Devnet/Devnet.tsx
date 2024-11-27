@@ -2,40 +2,50 @@ import { useEffect, useState } from 'react';
 import { getInstance } from '../../fhevmjs';
 
 import './Devnet.css';
-import { Eip1193Provider } from 'ethers';
+import { Eip1193Provider, getAddress } from 'ethers';
 
 const toHexString = (bytes: Uint8Array) => bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
 
 export type DevnetProps = { account: string; provider: Eip1193Provider };
 
 export const Devnet = ({ account, provider }: DevnetProps) => {
+  console.log(account, provider);
   const [handles, setHandles] = useState<Uint8Array[]>([]);
   const [encryption, setEncryption] = useState<Uint8Array>();
   const [eip712, setEip712] = useState<ReturnType<typeof instance.createEIP712>>();
   const instance = getInstance();
 
-  console.log(instance);
-
-  console.log(provider, account);
-
   useEffect(() => {
-    instance
-      .createEncryptedInput('0x309cf2aae85ad8a1db70ca88cfd4225bf17a7456', '0x309cf2aae85ad8a1db70ca88cfd4225bf17a7482')
-      .add64(32)
-      .encrypt()
-      .then(({ handles, inputProof }) => {
-        setHandles(handles);
-        setEncryption(inputProof);
-      })
-      .catch(() => {});
     const { publicKey } = instance.generateKeypair();
     const eip = instance.createEIP712(publicKey, '0x309cf2aae85ad8a1db70ca88cfd4225bf17a7482');
     setEip712(eip);
   }, [instance]);
 
+  const encrypt = (val: number) => {
+    const now = Date.now();
+    instance
+      .createEncryptedInput(
+        getAddress('0x309cf2aae85ad8a1db70ca88cfd4225bf17a7456'),
+        getAddress('0x309cf2aae85ad8a1db70ca88cfd4225bf17a7482')
+      )
+      .add64(val)
+      .encrypt()
+      .then(({ handles, inputProof }) => {
+        console.log(`Took ${(Date.now() - now) / 1000}`);
+        console.log(handles, inputProof);
+        setHandles(handles);
+        setEncryption(inputProof);
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log(Date.now() - now);
+      });
+  };
+
   return (
     <div>
       <dl>
+        <button onClick={() => encrypt(1337)}>Encrypt 1337</button>
         <dt className="Devnet__title">This is an encryption of 1337:</dt>
         <dd className="Devnet__dd">
           <pre className="Devnet__pre">Handle: {handles.length && toHexString(handles[0])}</pre>

@@ -14,7 +14,8 @@ type Keypairs = {
 };
 
 export const init = async () => {
-  await initFhevm();
+  await initFhevm({ thread: navigator.hardwareConcurrency });
+  console.log('wtf');
 };
 
 let instancePromise: Promise<FhevmInstance>;
@@ -26,9 +27,9 @@ export const createFhevmInstance = async () => {
   if (instancePromise) return instancePromise;
   instancePromise = createInstance({
     network: window.ethereum,
-    aclContractAddress: '0x7DC28FBFbF129d4E27f214bE9900efE806Def6d2',
-    kmsContractAddress: '0x973AfA7Aa85a1B3cB273226Dd4Acb29c546BDD7a',
-    gatewayUrl: 'https://gateway.devnet.zama.ai/',
+    aclContractAddress: '0x9479B455904dCccCf8Bc4f7dF8e9A1105cBa2A8e',
+    kmsContractAddress: '0x904Af2B61068f686838bD6257E385C2cE7a09195',
+    gatewayUrl: 'https://gateway-sepolia.kms-dev-v1.bc.zama.team/',
   });
   instance = await instancePromise;
 };
