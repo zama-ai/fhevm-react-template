@@ -9,7 +9,6 @@ const toHexString = (bytes: Uint8Array) => bytes.reduce((str, byte) => str + byt
 export type DevnetProps = { account: string; provider: Eip1193Provider };
 
 export const Devnet = ({ account, provider }: DevnetProps) => {
-  console.log(account, provider);
   const [handles, setHandles] = useState<Uint8Array[]>([]);
   const [encryption, setEncryption] = useState<Uint8Array>();
   const [eip712, setEip712] = useState<ReturnType<typeof instance.createEIP712>>();
@@ -31,8 +30,7 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
       .add64(val)
       .encrypt()
       .then(({ handles, inputProof }) => {
-        console.log(`Took ${(Date.now() - now) / 1000}`);
-        console.log(handles, inputProof);
+        console.log(`Took ${(Date.now() - now) / 1000}s`);
         setHandles(handles);
         setEncryption(inputProof);
       })

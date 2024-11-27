@@ -8,7 +8,6 @@ function App() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    console.log(init);
     init()
       .then(() => {
         setIsInitialized(true);
