@@ -14,6 +14,8 @@ npm install
 npm run dev
 ```
 
+The server listens on [http://localhost:4173/](http://localhost:4173/)
+
 ## Build
 
 ```bash
