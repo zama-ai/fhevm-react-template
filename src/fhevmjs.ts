@@ -2,7 +2,7 @@ import { isAddress } from 'ethers';
 import { initFhevm, createInstance, FhevmInstance } from 'fhevmjs';
 import { getPublicKey, getPublicParams, storePublicKey, storePublicParams } from './fhevmStorage';
 
-const ACL_ADDRESS = '0x9479B455904dCccCf8Bc4f7dF8e9A1105cBa2A8e';
+const ACL_ADDRESS: string = import.meta.env.VITE_ACL_ADDRESS;
 
 export type Keypair = {
   publicKey: string;
@@ -26,6 +26,7 @@ let instance: FhevmInstance;
 const keypairs: Keypairs = {};
 
 export const createFhevmInstance = async () => {
+  console.log(import.meta.env);
   if (instancePromise) return instancePromise;
   const storedPublicKey = await getPublicKey(ACL_ADDRESS);
   const publicKey = storedPublicKey?.publicKey;
@@ -39,8 +40,8 @@ export const createFhevmInstance = async () => {
   instancePromise = createInstance({
     network: window.ethereum,
     aclContractAddress: ACL_ADDRESS,
-    kmsContractAddress: '0x904Af2B61068f686838bD6257E385C2cE7a09195',
-    gatewayUrl: 'https://gateway-sepolia.kms-dev-v1.bc.zama.team/',
+    kmsContractAddress: import.meta.env.VITE_KMS_ADDRESS,
+    gatewayUrl: import.meta.env.VITE_GATEWAY_URL,
     publicKey,
     publicKeyId,
     publicParams,
