@@ -2,7 +2,12 @@ import { build, createServer, preview } from 'vite';
 
 (async () => {
   try {
-    await preview({ BASE_URL: '/', MODE: 'production', DEV: false, PROD: true });
+    await preview({
+      BASE_URL: '/',
+      MODE: 'production',
+      DEV: false,
+      PROD: true,
+    });
     console.log('Preview server is running...');
     console.log('Listening on http://localhost:4173\n');
 

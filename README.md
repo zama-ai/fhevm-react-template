@@ -10,7 +10,7 @@ npm install
 
 ## Configuration
 
-Edit your `.env` to set Gateway URL, ACL Address and KMS Address.
+Copy `.env.example` to `.env` and update the gateway URL, ACL address, and KMS address to match the fhEVM you're using.
 
 ## Development
 

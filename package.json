@@ -7,12 +7,13 @@
     "dev": "node scripts/dev.js",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prettier": "prettier --write \"**/*.{js,json,md,sol,ts,yml}\"",
+    "prettier:check": "prettier --check \"**/*.{js,json,md,sol,ts,yml}\""
   },
   "dependencies": {
     "ethers": "^6.6.4",
     "idb": "^8.0.0",
-    "prettier": "^3.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -26,6 +27,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
     "fhevmjs": "^0.6.0-12",
+    "prettier": "^3.4.1",
     "typescript": "^5.4.5",
     "vite": "^5.4.11",
     "vite-plugin-node-polyfills": "^0.22.0"

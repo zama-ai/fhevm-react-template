@@ -1,6 +1,11 @@
 import { isAddress } from 'ethers';
 import { initFhevm, createInstance, FhevmInstance } from 'fhevmjs';
-import { getPublicKey, getPublicParams, storePublicKey, storePublicParams } from './fhevmStorage';
+import {
+  getPublicKey,
+  getPublicParams,
+  storePublicKey,
+  storePublicParams,
+} from './fhevmStorage';
 
 const ACL_ADDRESS: string = import.meta.env.VITE_ACL_ADDRESS;
 
@@ -57,14 +62,23 @@ export const createFhevmInstance = async () => {
   }
 };
 
-export const setKeypair = (contractAddress: string, userAddress: string, keypair: Keypair) => {
+export const setKeypair = (
+  contractAddress: string,
+  userAddress: string,
+  keypair: Keypair,
+) => {
   if (!isAddress(contractAddress) || !isAddress(userAddress)) return;
   keypairs[userAddress][contractAddress] = keypair;
 };
 
-export const getKeypair = (contractAddress: string, userAddress: string): Keypair | null => {
+export const getKeypair = (
+  contractAddress: string,
+  userAddress: string,
+): Keypair | null => {
   if (!isAddress(contractAddress) || !isAddress(userAddress)) return null;
-  return keypairs[userAddress] ? keypairs[userAddress][contractAddress] || null : null;
+  return keypairs[userAddress]
+    ? keypairs[userAddress][contractAddress] || null
+    : null;
 };
 
 export const getInstance = (): FhevmInstance => {
