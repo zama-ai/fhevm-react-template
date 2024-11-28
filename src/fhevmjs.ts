@@ -31,7 +31,6 @@ let instance: FhevmInstance;
 const keypairs: Keypairs = {};
 
 export const createFhevmInstance = async () => {
-  console.log(import.meta.env);
   if (instancePromise) return instancePromise;
   const storedPublicKey = await getPublicKey(ACL_ADDRESS);
   const publicKey = storedPublicKey?.publicKey;
