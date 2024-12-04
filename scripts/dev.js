@@ -1,4 +1,4 @@
-import { build, createServer, preview } from 'vite';
+import { build, preview } from 'vite';
 
 (async () => {
   try {
