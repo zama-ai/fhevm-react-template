@@ -5,7 +5,7 @@ import './Connect.css';
 import { Eip1193Provider } from 'ethers';
 import { createFhevmInstance } from '../../fhevmjs';
 
-const AUTHORIZED_CHAIN_ID = ['0x1f49', '0x1f4a', '0x1f4b', '0x2328'];
+const AUTHORIZED_CHAIN_ID = ['0xaa36a7', '0x2328'];
 
 export const Connect: React.FC<{
   children: (account: string, provider: any) => React.ReactNode;
@@ -15,6 +15,7 @@ export const Connect: React.FC<{
   const [account, setAccount] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [provider, setProvider] = useState<BrowserProvider | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const refreshAccounts = (accounts: string[]) => {
     setAccount(accounts[0] || '');
@@ -28,8 +29,13 @@ export const Connect: React.FC<{
 
   const refreshNetwork = useCallback(async () => {
     if (await hasValidNetwork()) {
-      await createFhevmInstance();
       setValidNetwork(true);
+      setLoading(true);
+      const load = async () => {
+        await createFhevmInstance();
+        setLoading(false);
+      };
+      window.requestAnimationFrame(load);
     } else {
       setValidNetwork(false);
     }
@@ -60,7 +66,7 @@ export const Connect: React.FC<{
       });
     eth.on('accountsChanged', refreshAccounts);
     eth.on('chainChanged', refreshNetwork);
-  }, [refreshNetwork]);
+  }, []);
 
   const connect = async () => {
     if (!provider) {
@@ -84,25 +90,9 @@ export const Connect: React.FC<{
         params: [{ chainId: AUTHORIZED_CHAIN_ID[0] }],
       });
     } catch (e) {
-      await window.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: AUTHORIZED_CHAIN_ID[0],
-            rpcUrls: ['https://devnet.zama.ai/'],
-            chainName: 'Zama Devnet',
-            nativeCurrency: {
-              name: 'ZAMA',
-              symbol: 'ZAMA',
-              decimals: 18,
-            },
-            blockExplorerUrls: ['https://main.explorer.zama.ai'],
-          },
-        ],
-      });
+      console.error('No Sepolia chain configured');
     }
-    await refreshNetwork();
-  }, [refreshNetwork]);
+  }, []);
 
   const child = useMemo<React.ReactNode>(() => {
     if (!account || !provider) {
@@ -114,16 +104,18 @@ export const Connect: React.FC<{
         <div>
           <p>You're not on the correct network</p>
           <p>
-            <button onClick={switchNetwork}>
-              Switch to Zama Devnet
-            </button>
+            <button onClick={switchNetwork}>Switch to Sepolia</button>
           </p>
         </div>
       );
     }
 
+    if (loading) {
+      return <p>Loading...</p>;
+    }
+
     return children(account, provider);
-  }, [account, provider, validNetwork, children, switchNetwork]);
+  }, [account, provider, children, validNetwork, loading]);
 
   if (error) {
     return <p>No wallet has been found.</p>;
@@ -131,11 +123,7 @@ export const Connect: React.FC<{
 
   const connectInfos = (
     <div className="Connect__info">
-      {!connected && (
-        <button onClick={connect}>
-          Connect your wallet
-        </button>
-      )}
+      {!connected && <button onClick={connect}>Connect your wallet</button>}
       {connected && <div className="Connect__account">Connected with {account}</div>}
     </div>
   );
