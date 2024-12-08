@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getInstance } from '../../fhevmjs';
 import './Devnet.css';
-import { Eip1193Provider, getAddress } from 'ethers';
+import { Eip1193Provider } from 'ethers';
 
 const toHexString = (bytes: Uint8Array) =>
   bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
@@ -11,35 +11,14 @@ export type DevnetProps = {
   provider: Eip1193Provider;
 };
 
-const CONTRACT_ADDRESS = getAddress(
-  '0x309cf2aae85ad8a1db70ca88cfd4225bf17a7482',
-);
+const CONTRACT_ADDRESS = '0x309cf2aae85ad8a1db70ca88cfd4225bf17a7482';
 
 export const Devnet = ({ account, provider }: DevnetProps) => {
   const [handles, setHandles] = useState<Uint8Array[]>([]);
   const [encryption, setEncryption] = useState<Uint8Array>();
   const [eip712, setEip712] =
     useState<ReturnType<typeof instance.createEIP712>>();
-  const [walletAddress, setWalletAddress] = useState<string>('');
   const instance = getInstance();
-
-  // Handle wallet connection
-  useEffect(() => {
-    const connectWallet = async () => {
-      if (typeof window.ethereum !== 'undefined') {
-        try {
-          const accounts = await window.ethereum.request({
-            method: 'eth_requestAccounts',
-          });
-          setWalletAddress(accounts[0]);
-        } catch (error) {
-          console.error('Error connecting to wallet:', error);
-        }
-      }
-    };
-
-    connectWallet();
-  }, []); // Empty dependency array means this runs once on mount
 
   // Handle EIP712 setup
   useEffect(() => {
@@ -49,7 +28,7 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
   }, [instance]);
 
   const encrypt = async (val: number) => {
-    if (!walletAddress) {
+    if (!account) {
       console.error('Wallet not connected');
       return;
     }
@@ -57,7 +36,7 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
     const now = Date.now();
     try {
       const result = await instance
-        .createEncryptedInput(CONTRACT_ADDRESS, walletAddress)
+        .createEncryptedInput(CONTRACT_ADDRESS, account)
         .add64(val)
         .encrypt();
 
