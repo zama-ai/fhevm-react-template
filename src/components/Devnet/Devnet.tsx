@@ -28,11 +28,6 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
   }, [instance]);
 
   const encrypt = async (val: number) => {
-    if (!account) {
-      console.error('Wallet not connected');
-      return;
-    }
-
     const now = Date.now();
     try {
       const result = await instance
