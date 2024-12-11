@@ -1,0 +1,102 @@
+import { useEffect, useState } from 'react';
+import { getInstance } from '../../fhevmjs';
+import './Devnet.css';
+import { Eip1193Provider } from 'ethers';
+import { ethers } from 'ethers';
+
+import MyConfidentialERC20 from '../../../../deployments/sepolia/MyConfidentialERC20.json';
+import { reencryptEuint64 } from '../../../../test/reencrypt.ts';
+
+const toHexString = (bytes: Uint8Array) =>
+  bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
+
+export type DevnetProps = {
+  account: string;
+  provider: Eip1193Provider;
+};
+
+const CONTRACT_ADDRESS = MyConfidentialERC20.address;
+
+export const Devnet = ({ account, provider }: DevnetProps) => {
+  const [handleBalance, setHandleBalance] = useState('0');
+  const [decryptedBalance, setDecryptedBalance] = useState('???');
+
+  const [handles, setHandles] = useState<Uint8Array[]>([]);
+  const [encryption, setEncryption] = useState<Uint8Array>();
+  const instance = getInstance();
+
+  useEffect(() => {
+    const getHandleBalance = async () => {
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        // Minimal ABI for balanceOf
+        ['function balanceOf(address) view returns (uint256)'],
+        provider,
+      );
+      const handleBalance = await contract.balanceOf(account);
+      setHandleBalance(handleBalance);
+    };
+    getHandleBalance();
+  }, [account, provider]);
+
+  const encrypt = async (val: number) => {
+    const now = Date.now();
+    try {
+      const result = await instance
+        .createEncryptedInput(CONTRACT_ADDRESS, account)
+        .add64(val)
+        .encrypt();
+
+      console.log(`Took ${(Date.now() - now) / 1000}s`);
+      setHandles(result.handles);
+      setEncryption(result.inputProof);
+    } catch (e) {
+      console.error('Encryption error:', e);
+      console.log(Date.now() - now);
+    }
+  };
+
+  const decrypt = async () => {
+    const signer = await provider.getSigner();
+    try {
+      const clearBalance = await reencryptEuint64(
+        signer,
+        instance,
+        BigInt(handleBalance),
+        CONTRACT_ADDRESS,
+      );
+      setDecryptedBalance(clearBalance.toString());
+    } catch (error) {
+      if (error === 'Handle is not initialized') {
+        // if handle is uninitialized - i.e equal to 0 - we know for sure that the balance is null
+        setDecryptedBalance('0');
+      } else {
+        throw error;
+      }
+    }
+  };
+
+  return (
+    <div>
+      <dl>
+        <dt className="Devnet__title">My encrypted balance is:</dt>
+        <dd className="Devnet__dd">{handleBalance.toString()}</dd>
+
+        <button onClick={() => decrypt()}>
+          Reencrypt and decrypt my balance
+        </button>
+
+        <button onClick={() => encrypt(1337)}>Encrypt 1337</button>
+        <dt className="Devnet__title">This is an encryption of 1337:</dt>
+        <dd className="Devnet__dd">
+          <pre className="Devnet__pre">
+            Handle: {handles.length ? toHexString(handles[0]) : ''}
+          </pre>
+          <pre className="Devnet__pre">
+            Input Proof: {encryption ? toHexString(encryption) : ''}
+          </pre>
+        </dd>
+      </dl>
+    </div>
+  );
+};
