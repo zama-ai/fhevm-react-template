@@ -9,23 +9,14 @@ coverage
 dist
 node_modules
 types
-deployments
-kms-fhe-keys/
-network-fhe-keys/
-fhevmTemp/
-abi/
 
 # files
 *.env
 *.log
-.env.docker
 .DS_Store
 .pnp.*
 coverage.json
 package-lock.json
+pnpm-lock.yaml
 yarn.lock
-
-res/
-running_node/
-
-docker-compose/docker-compose-full.yml
+README.md

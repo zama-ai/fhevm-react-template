@@ -1,38 +1,98 @@
 {
-  "name": "fhevmjs-react-template",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "node scripts/dev.js",
-    "build": "tsc && vite build",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "prettier": "prettier --write \"**/*.{js,json,md,sol,ts,yml}\"",
-    "prettier:check": "prettier --check \"**/*.{js,json,md,sol,ts,yml}\""
+  "name": "@zama-ai/fhevm-hardhat-template",
+  "description": "fhEVM hardhat template",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=20.0.0"
   },
-  "dependencies": {
-    "ethers": "^6.6.4",
-    "idb": "^8.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+  "author": {
+    "name": "zama-ai",
+    "url": "https://github.com/zama-ai"
   },
   "devDependencies": {
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.0",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
-    "@vitejs/plugin-react": "^4.3.4",
-    "eslint": "^8.57.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.7",
+    "@eslint/js": "^9.9.0",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.12",
+    "@openzeppelin/contracts": "^5.1.0",
+    "@openzeppelin/hardhat-upgrades": "^3.6.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.0.0",
+    "@typechain/ethers-v6": "^0.5.1",
+    "@typechain/hardhat": "^9.1.0",
+    "@types/chai": "^4.3.4",
+    "@types/eslint__js": "^8.42.3",
+    "@types/fs-extra": "^9.0.13",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.19.59",
+    "@typescript-eslint/eslint-plugin": "^8.0.1",
+    "@typescript-eslint/parser": "^8.0.1",
+    "chai": "^4.3.7",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
+    "eslint": "^9.9.0",
+    "eslint-config-prettier": "^8.5.0",
+    "ethers": "^6.8.0",
+    "extra-bigint": "^1.1.18",
+    "fhevm": "^0.6.1-0",
+    "fhevm-contracts": "^0.2.0",
+    "fhevm-core-contracts": "^0.6.1-0",
     "fhevmjs": "^0.6.1",
-    "prettier": "^3.4.1",
-    "typescript": "^5.4.5",
-    "vite": "^5.4.11",
-    "vite-plugin-node-polyfills": "^0.22.0"
+    "fs-extra": "^10.1.0",
+    "globals": "^15.9.0",
+    "hardhat": "^2.22.8",
+    "hardhat-deploy": "^0.12.4",
+    "hardhat-gas-reporter": "^1.0.9",
+    "hardhat-ignore-warnings": "^0.2.11",
+    "hardhat-preprocessor": "^0.1.5",
+    "lodash": "^4.17.21",
+    "mocha": "^10.1.0",
+    "prettier": "^2.8.4",
+    "prettier-plugin-solidity": "^1.1.2",
+    "rimraf": "^4.1.2",
+    "sha3": "^2.1.4",
+    "solhint": "^3.4.0",
+    "solhint-plugin-prettier": "^0.0.5",
+    "solidity-coverage": "0.8.12",
+    "sqlite3": "^5.1.7",
+    "ts-generator": "^0.1.1",
+    "ts-node": "^10.9.1",
+    "typechain": "^8.2.0",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.0.1",
+    "web3-validator": "^2.0.6"
   },
-  "engines": {
-    "node": "^20.9.0"
+  "files": [
+    "contracts"
+  ],
+  "keywords": [
+    "blockchain",
+    "ethers",
+    "ethereum",
+    "hardhat",
+    "smart-contracts",
+    "solidity",
+    "template",
+    "typescript",
+    "typechain"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json && pnpm typechain",
+    "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
+    "lint": "pnpm lint:sol && pnpm lint:ts && pnpm prettier:check",
+    "lint:sol": "solhint --max-warnings 25 \"contracts/**/*.sol\"",
+    "lint:ts": "eslint .",
+    "postinstall": "DOTENV_CONFIG_PATH=./.env.example pnpm typechain",
+    "prettier:check": "prettier --check \"**/*.{js,json,md,sol,ts,yml}\"",
+    "prettier:write": "prettier --write \"**/*.{js,json,md,sol,ts,yml}\"",
+    "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
+    "test": "hardhat test --network hardhat",
+    "coverage": "hardhat coverage",
+    "deploy-sepolia": "hardhat deploy --network sepolia",
+    "mint-sepolia": "hardhat mint --amount 42 --network sepolia"
   }
 }
