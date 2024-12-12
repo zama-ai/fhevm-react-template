@@ -5,7 +5,7 @@ import './Connect.css';
 import { Eip1193Provider } from 'ethers';
 import { createFhevmInstance } from '../../fhevmjs';
 
-const AUTHORIZED_CHAIN_ID = ['0xaa36a7', '0x2328'];
+const AUTHORIZED_CHAIN_ID = ['0xaa36a7', '0x2328', '0x7a69'];
 
 export const Connect: React.FC<{
   children: (account: string, provider: any) => React.ReactNode;
@@ -23,8 +23,15 @@ export const Connect: React.FC<{
   };
 
   const hasValidNetwork = async (): Promise<boolean> => {
-    const currentChainId: string = await window.ethereum.request({ method: 'eth_chainId' });
-    return AUTHORIZED_CHAIN_ID.includes(currentChainId.toLowerCase());
+    const currentChainId: string = (
+      await window.ethereum.request({
+        method: 'eth_chainId',
+      })
+    ).toLowerCase();
+
+    return import.meta.env.MOCKED
+      ? currentChainId === AUTHORIZED_CHAIN_ID[2]
+      : currentChainId === AUTHORIZED_CHAIN_ID[0];
   };
 
   const refreshNetwork = useCallback(async () => {
@@ -87,10 +94,14 @@ export const Connect: React.FC<{
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: AUTHORIZED_CHAIN_ID[0] }],
+        params: [
+          { chainId: AUTHORIZED_CHAIN_ID[import.meta.env.MOCKED ? 2 : 0] },
+        ],
       });
     } catch (e) {
-      console.error('No Sepolia chain configured');
+      console.error(
+        `No ${import.meta.env.MOCKED ? 'Hardhat' : 'Sepolia'} chain configured`,
+      );
     }
   }, []);
 
@@ -104,7 +115,9 @@ export const Connect: React.FC<{
         <div>
           <p>You're not on the correct network</p>
           <p>
-            <button onClick={switchNetwork}>Switch to Sepolia</button>
+            <button onClick={switchNetwork}>
+              Switch to {import.meta.env.MOCKED ? 'Hardhat' : 'Sepolia'}
+            </button>
           </p>
         </div>
       );
@@ -124,7 +137,9 @@ export const Connect: React.FC<{
   const connectInfos = (
     <div className="Connect__info">
       {!connected && <button onClick={connect}>Connect your wallet</button>}
-      {connected && <div className="Connect__account">Connected with {account}</div>}
+      {connected && (
+        <div className="Connect__account">Connected with {account}</div>
+      )}
     </div>
   );
 

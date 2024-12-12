@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import path from 'path';
 
 const workerImportMetaUrlRE =
   /\bnew\s+(?:Worker|SharedWorker)\s*\(\s*(new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*\))/g;
@@ -9,6 +10,14 @@ const workerImportMetaUrlRE =
 export default defineConfig({
   assetsInclude: ['**/*.bin'],
   plugins: [react(), nodePolyfills()],
+  define: {
+    'import.meta.env.MOCKED': process.env.MOCKED === 'true',
+  },
+  resolve: {
+    alias: {
+      '@deployments': path.resolve(__dirname, '../deployments'),
+    },
+  },
   server: {
     port: 9000,
     headers: {

@@ -1,5 +1,11 @@
 import { isAddress } from 'ethers';
-import { initFhevm, createInstance, FhevmInstance } from 'fhevmjs';
+import {
+  initFhevm,
+  createInstance,
+  FhevmInstance,
+  createEIP712,
+  generateKeypair,
+} from 'fhevmjs';
 import {
   getPublicKey,
   getPublicParams,
@@ -7,7 +13,13 @@ import {
   storePublicParams,
 } from './fhevmStorage';
 
+import {
+  reencryptRequestMocked,
+  createEncryptedInputMocked,
+} from './fhevmjsMocked';
+
 const ACL_ADDRESS: string = import.meta.env.VITE_ACL_ADDRESS;
+const MOCKED: string = import.meta.env.MOCKED;
 
 export type Keypair = {
   publicKey: string;
@@ -80,6 +92,17 @@ export const getKeypair = (
     : null;
 };
 
-export const getInstance = (): FhevmInstance => {
-  return instance;
+export const getInstance = () => {
+  if (MOCKED) {
+    const instanceMocked = {
+      reencrypt: reencryptRequestMocked,
+      createEncryptedInput: createEncryptedInputMocked,
+      getPublicKey: () => '0xFFAA44433',
+      generateKeypair: generateKeypair,
+      createEIP712: createEIP712(31337),
+    };
+    return instanceMocked;
+  } else {
+    return instance;
+  }
 };

@@ -1,5 +1,6 @@
 import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
+import { spawn } from "child_process";
 import dotenv from "dotenv";
 import "hardhat-deploy";
 import "hardhat-ignore-warnings";
@@ -73,10 +74,15 @@ task("test", async (_taskArgs, hre, runSuper) => {
 });
 
 task("node", async (_taskArgs, hre, runSuper) => {
-  // Run modified test task
-  if (hre.network.name === "hardhat") {
-    await setCodeMocked(hre);
-  }
+  await setCodeMocked(hre);
+  const server = spawn("ts-node", ["--transpile-only", "mockedServices/server.ts"], {
+    stdio: "inherit",
+  });
+
+  process.on("SIGINT", () => {
+    server.kill();
+    process.exit(0);
+  });
   await runSuper();
 });
 

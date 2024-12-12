@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { network } from "hardhat";
 
+import { awaitAllDecryptionResults, initGateway } from "../asyncDecrypt";
 import { createInstance } from "../instance";
 import { reencryptEuint64 } from "../reencrypt";
 import { getSigners, initSigners } from "../signers";
@@ -11,6 +12,7 @@ describe("ConfidentialERC20", function () {
   before(async function () {
     await initSigners();
     this.signers = await getSigners();
+    await initGateway();
   });
 
   beforeEach(async function () {
@@ -176,6 +178,14 @@ describe("ConfidentialERC20", function () {
     const balanceHandleBob2 = await this.erc20.balanceOf(this.signers.bob);
     const balanceBob2 = await reencryptEuint64(this.signers.bob, this.fhevm, balanceHandleBob2, this.contractAddress);
     expect(balanceBob2).to.equal(1337); // check that transfer did happen this time
+  });
+
+  it("should decrypt the SECRET value", async function () {
+    const tx2 = await this.erc20.requestSecret();
+    await tx2.wait();
+    await awaitAllDecryptionResults();
+    const y = await this.erc20.revealedSecret();
+    expect(y).to.equal(42n);
   });
 
   it("DEBUG - using debug.decrypt64 for debugging transfer", async function () {

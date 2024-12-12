@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { getInstance } from '../../fhevmjs';
 import './Devnet.css';
-import { Eip1193Provider } from 'ethers';
+import { Eip1193Provider, ZeroAddress } from 'ethers';
 import { ethers } from 'ethers';
 
-import MyConfidentialERC20 from '../../../../deployments/sepolia/MyConfidentialERC20.json';
 import { reencryptEuint64 } from '../../../../test/reencrypt.ts';
 
 const toHexString = (bytes: Uint8Array) =>
@@ -16,9 +15,9 @@ export type DevnetProps = {
   provider: Eip1193Provider;
 };
 
-const CONTRACT_ADDRESS = MyConfidentialERC20.address;
-
 export const Devnet = ({ account, provider }: DevnetProps) => {
+  const [contractAddress, setContractAddress] = useState(ZeroAddress);
+
   const [handleBalance, setHandleBalance] = useState('0');
   const [decryptedBalance, setDecryptedBalance] = useState('???');
 
@@ -28,13 +27,48 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
   const [inputValue, setInputValue] = useState(''); // Track the input
   const [chosenValue, setChosenValue] = useState('0'); // Track the confirmed value
 
-  const handleConfirmAmount = () => {
-    setChosenValue(inputValue);
-  };
-
   const [inputValueAddress, setInputValueAddress] = useState('');
   const [chosenAddress, setChosenAddress] = useState('0x');
   const [errorMessage, setErrorMessage] = useState('');
+
+  const [decryptedSecret, setDecryptedResult] = useState('???');
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Conditional import based on MOCKED environment variable
+        let MyConfidentialERC20;
+        if (!import.meta.env.MOCKED) {
+          MyConfidentialERC20 = await import(
+            '@deployments/sepolia/MyConfidentialERC20.json'
+          );
+          console.log(
+            `Using ${MyConfidentialERC20.address} for the token address on Sepolia`,
+          );
+        } else {
+          MyConfidentialERC20 = await import(
+            '@deployments/localhost/MyConfidentialERC20.json'
+          );
+          console.log(
+            `Using ${MyConfidentialERC20.address} for the token address on Hardhat Local Node`,
+          );
+        }
+
+        setContractAddress(MyConfidentialERC20.address);
+      } catch (error) {
+        console.error(
+          'Error loading data - you probably forgot to deploy the token contract before running the front-end server:',
+          error,
+        );
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const handleConfirmAmount = () => {
+    setChosenValue(inputValue);
+  };
 
   const handleConfirmAddress = () => {
     const trimmedValue = inputValueAddress.trim().toLowerCase();
@@ -52,29 +86,29 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
   const instance = getInstance();
 
   const getHandleBalance = async () => {
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      // Minimal ABI for balanceOf
-      ['function balanceOf(address) view returns (uint256)'],
-      provider,
-    );
-    const handleBalance = await contract.balanceOf(account);
-    setHandleBalance(handleBalance);
-    setDecryptedBalance('???');
+    if (contractAddress != ZeroAddress) {
+      const contract = new ethers.Contract(
+        contractAddress,
+        ['function balanceOf(address) view returns (uint256)'],
+        provider,
+      );
+      const handleBalance = await contract.balanceOf(account);
+      setHandleBalance(handleBalance.toString());
+      setDecryptedBalance('???');
+    }
   };
 
   useEffect(() => {
     getHandleBalance();
-  }, [account, provider]);
+  }, [account, provider, contractAddress]);
 
   const encrypt = async (val: bigint) => {
     const now = Date.now();
     try {
       const result = await instance
-        .createEncryptedInput(CONTRACT_ADDRESS, account)
+        .createEncryptedInput(contractAddress, account)
         .add64(val)
         .encrypt();
-
       console.log(`Took ${(Date.now() - now) / 1000}s`);
       setHandles(result.handles);
       setEncryption(result.inputProof);
@@ -91,7 +125,7 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
         signer,
         instance,
         BigInt(handleBalance),
-        CONTRACT_ADDRESS,
+        contractAddress,
       );
       setDecryptedBalance(clearBalance.toString());
     } catch (error) {
@@ -106,8 +140,7 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
 
   const transferToken = async () => {
     const contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      // Minimal ABI for balanceOf
+      contractAddress,
       ['function transfer(address,bytes32,bytes) external returns (bool)'],
       provider,
     );
@@ -121,6 +154,29 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
       );
     await tx.wait();
     await getHandleBalance();
+  };
+
+  const decryptSecret = async () => {
+    const contract = new ethers.Contract(
+      contractAddress,
+      ['function requestSecret() external'],
+      provider,
+    );
+    const signer = await provider.getSigner();
+    const tx = await contract.connect(signer).requestSecret();
+    await tx.wait();
+  };
+
+  const refreshSecret = async () => {
+    const contract = new ethers.Contract(
+      contractAddress,
+      ['function revealedSecret() external view returns(uint64)'],
+      provider,
+    );
+    const revealedSecret = await contract.revealedSecret();
+    const revealedSecretString =
+      revealedSecret === 0n ? '???' : revealedSecret.toString();
+    setDecryptedResult(revealedSecretString);
   };
 
   return (
@@ -144,7 +200,7 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Enter a number"
-          />
+          />{' '}
           <button onClick={handleConfirmAmount}>OK</button>
           {chosenValue !== null && (
             <div>
@@ -175,7 +231,7 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
             onChange={(e) => setInputValueAddress(e.target.value)}
             placeholder="Receiver address"
           />
-          <button onClick={handleConfirmAddress}>OK</button>
+          <button onClick={handleConfirmAddress}>OK</button>{' '}
           {chosenAddress && (
             <div>
               <p>Chosen Address For Receiver: {chosenAddress}</p>
@@ -188,11 +244,30 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
           )}
         </div>
 
-        {chosenAddress !== '0x' && encryption && encryption.length > 0 && (
-          <button onClick={transferToken}>
-            Transfer Encrypted Amount To Receiver
+        <div>
+          {chosenAddress !== '0x' && encryption && encryption.length > 0 && (
+            <button onClick={transferToken}>
+              Transfer Encrypted Amount To Receiver
+            </button>
+          )}
+        </div>
+
+        <div>
+          <button onClick={decryptSecret} disabled={decryptedSecret !== '???'}>
+            Request Secret Decryption
           </button>
-        )}
+        </div>
+        <div>
+          <dd className="Devnet__dd">
+            The decrypted secret value is: {decryptedSecret}{' '}
+            <button
+              onClick={refreshSecret}
+              disabled={decryptedSecret !== '???'}
+            >
+              Refresh Decrypted Secret
+            </button>
+          </dd>
+        </div>
       </dl>
     </div>
   );

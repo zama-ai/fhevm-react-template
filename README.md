@@ -66,8 +66,6 @@ You can edit the CI script in [.github/workflows/ci.yml](./.github/workflows/ci.
 
 ### Pre Requisites
 
-Install [pnpm](https://pnpm.io/installation)
-
 Before being able to run any command, you need to create a `.env` file and set a BIP-39 compatible mnemonic as the `MNEMONIC`
 environment variable. You can follow the example in `.env.example` or start with the following command:
 
@@ -80,7 +78,7 @@ If you don't already have a mnemonic, you can use this [website](https://iancole
 Then, install all needed dependencies - please **_make sure to use Node v20_** or more recent:
 
 ```sh
-pnpm install
+npm install
 ```
 
 ### Compile
@@ -88,7 +86,7 @@ pnpm install
 Compile the smart contracts with Hardhat:
 
 ```sh
-pnpm compile
+npm run compile
 ```
 
 ### TypeChain
@@ -96,7 +94,7 @@ pnpm compile
 Compile the smart contracts and generate TypeChain bindings:
 
 ```sh
-pnpm typechain
+npm run typechain
 ```
 
 ### Test
@@ -104,7 +102,7 @@ pnpm typechain
 Run the tests with Hardhat - this will run the tests on a local hardhat node in mocked mode (i.e the FHE operations and decryptions will be simulated by default):
 
 ```sh
-pnpm test
+npm run test
 ```
 
 ### Lint Solidity
@@ -112,7 +110,7 @@ pnpm test
 Lint the Solidity code:
 
 ```sh
-pnpm lint:sol
+npm run lint:sol
 ```
 
 ### Lint TypeScript
@@ -120,7 +118,7 @@ pnpm lint:sol
 Lint the TypeScript code:
 
 ```sh
-pnpm lint:ts
+npm run lint:ts
 ```
 
 
@@ -129,7 +127,7 @@ pnpm lint:ts
 Delete the smart contract artifacts, the coverage reports and the Hardhat cache:
 
 ```sh
-pnpm clean
+npm run clean
 ```
 
 ### Mocked mode
@@ -139,7 +137,7 @@ encrypted types are not really encrypted, and the tests are run on the original 
 network instance. To run the tests in mocked mode, you can use directly the following command:
 
 ```bash
-pnpm test
+npm run test
 ```
 
 You can still use all the usual specific [hardhat network methods](https://hardhat.org/hardhat-network/docs/reference#hardhat-network-methods), such as `evm_snapshot`, `evm_mine`, `evm_increaseTime`, etc, which are very helpful in a testing context. Another useful hardhat feature, is the [console.log](https://hardhat.org/hardhat-network/docs/reference#console.log) function which can be used in fhevm smart contracts in mocked mode as well.
@@ -148,7 +146,7 @@ To analyze the coverage of the tests (in mocked mode necessarily, as this cannot
 can use this command :
 
 ```bash
-pnpm coverage
+npm run coverage
 ```
 
 Then open the file `coverage/index.html`. You can see there which line or branch for each contract which has been
@@ -181,12 +179,10 @@ If you don't own already Sepolia test tokens, you can for example use a free fau
 
 Another faster way to test the coprocessor on Sepolia is to simply run the following command:
 ```
-pnpm deploy-sepolia
+npm run deploy-sepolia
 ```
-This would automatically deploy an instance of the `MyConfidentialERC20` example contract on Sepolia. You could then use this other command to mint some amount of confidential tokens: 
-```
-pnpm mint-sepolia
-```
+This would automatically make Alice's account deploy an instance of the `MyConfidentialERC20` example contract on Sepolia, and then make Alice mint to herself `10000` tokens.
+
 
 ### Etherscan verification
 
@@ -202,7 +198,7 @@ As a concrete example, to verify the deployed `MyConfidentialERC20` from previou
 npx hardhat verify-deployed --address [CONFIDENTIAL_ERC20_ADDRESS] --contract contracts/MyConfidentialERC20.sol:MyConfidentialERC20 --args "Naraggara,NARA" --network sepolia
 ```
 
-Note that you should replace the address placeholder `[CONFIDENTIAL_ERC20_ADDRESS]` by the concrete address that is logged when you run the `pnpm deploy-sepolia` deployment script.
+Note that you should replace the address placeholder `[CONFIDENTIAL_ERC20_ADDRESS]` by the concrete address that is logged when you run the `npm run deploy-sepolia` deployment script.
 
 ### Syntax Highlighting
 
