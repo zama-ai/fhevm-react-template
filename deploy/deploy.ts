@@ -17,10 +17,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   console.log(`MyConfidentialERC20 contract: `, deployed.address);
   if (isNewDeployment) {
+    const signers = await hre.ethers.getSigners();
+    const alice = signers[0];
     const mintAmount = 10_000n;
     const tokenFactory = await hre.ethers.getContractFactory("MyConfidentialERC20");
     const token = tokenFactory.attach(deployed.address);
-    const mintTx = await token.mint(mintAmount);
+    const mintTx = await token.mint(alice, mintAmount);
     await mintTx.wait();
     console.log(`Alice minted ${mintAmount} tokens to herself`);
   }

@@ -38,7 +38,7 @@
     "express": "^4.21.2",
     "extra-bigint": "^1.1.18",
     "fhevm": "^0.6.1",
-    "fhevm-contracts": "^0.2.0",
+    "fhevm-contracts": "^0.2.1",
     "fhevm-core-contracts": "^0.6.1",
     "fhevmjs": "^0.6.1",
     "fs-extra": "^10.1.0",

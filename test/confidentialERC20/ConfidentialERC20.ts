@@ -23,7 +23,7 @@ describe("ConfidentialERC20", function () {
   });
 
   it("should mint the contract", async function () {
-    const transaction = await this.erc20.mint(1000);
+    const transaction = await this.erc20.mint(this.signers.alice, 1000);
     await transaction.wait();
 
     // Reencrypt Alice's balance
@@ -42,7 +42,7 @@ describe("ConfidentialERC20", function () {
   });
 
   it("should transfer tokens between two users", async function () {
-    const transaction = await this.erc20.mint(10000);
+    const transaction = await this.erc20.mint(this.signers.alice, 10000);
     const t1 = await transaction.wait();
     expect(t1?.status).to.eq(1);
 
@@ -50,7 +50,7 @@ describe("ConfidentialERC20", function () {
     input.add64(1337);
     const encryptedTransferAmount = await input.encrypt();
     const tx = await this.erc20["transfer(address,bytes32,bytes)"](
-      this.signers.bob.address,
+      this.signers.bob,
       encryptedTransferAmount.handles[0],
       encryptedTransferAmount.inputProof,
     );
@@ -84,14 +84,14 @@ describe("ConfidentialERC20", function () {
   });
 
   it("should not transfer tokens between two users", async function () {
-    const transaction = await this.erc20.mint(1000);
+    const transaction = await this.erc20.mint(this.signers.alice, 1000);
     await transaction.wait();
 
     const input = this.fhevm.createEncryptedInput(this.contractAddress, this.signers.alice.address);
     input.add64(1337);
     const encryptedTransferAmount = await input.encrypt();
     const tx = await this.erc20["transfer(address,bytes32,bytes)"](
-      this.signers.bob.address,
+      this.signers.bob,
       encryptedTransferAmount.handles[0],
       encryptedTransferAmount.inputProof,
     );
@@ -113,14 +113,14 @@ describe("ConfidentialERC20", function () {
   });
 
   it("should be able to transferFrom only if allowance is sufficient", async function () {
-    const transaction = await this.erc20.mint(10000);
+    const transaction = await this.erc20.mint(this.signers.alice, 10000);
     await transaction.wait();
 
     const inputAlice = this.fhevm.createEncryptedInput(this.contractAddress, this.signers.alice.address);
     inputAlice.add64(1337);
     const encryptedAllowanceAmount = await inputAlice.encrypt();
     const tx = await this.erc20["approve(address,bytes32,bytes)"](
-      this.signers.bob.address,
+      this.signers.bob,
       encryptedAllowanceAmount.handles[0],
       encryptedAllowanceAmount.inputProof,
     );
@@ -131,8 +131,8 @@ describe("ConfidentialERC20", function () {
     inputBob1.add64(1338); // above allowance so next tx should actually not send any token
     const encryptedTransferAmount = await inputBob1.encrypt();
     const tx2 = await bobErc20["transferFrom(address,address,bytes32,bytes)"](
-      this.signers.alice.address,
-      this.signers.bob.address,
+      this.signers.alice,
+      this.signers.bob,
       encryptedTransferAmount.handles[0],
       encryptedTransferAmount.inputProof,
     );
@@ -157,8 +157,8 @@ describe("ConfidentialERC20", function () {
     inputBob2.add64(1337); // below allowance so next tx should send token
     const encryptedTransferAmount2 = await inputBob2.encrypt();
     const tx3 = await bobErc20["transferFrom(address,address,bytes32,bytes)"](
-      this.signers.alice.address,
-      this.signers.bob.address,
+      this.signers.alice,
+      this.signers.bob,
       encryptedTransferAmount2.handles[0],
       encryptedTransferAmount2.inputProof,
     );
@@ -192,13 +192,13 @@ describe("ConfidentialERC20", function () {
     if (network.name === "hardhat") {
       // using the debug.decryptXX functions is possible only in mocked mode
 
-      const transaction = await this.erc20.mint(1000);
+      const transaction = await this.erc20.mint(this.signers.alice, 1000);
       await transaction.wait();
       const input = this.fhevm.createEncryptedInput(this.contractAddress, this.signers.alice.address);
       input.add64(1337);
       const encryptedTransferAmount = await input.encrypt();
       const tx = await this.erc20["transfer(address,bytes32,bytes)"](
-        this.signers.bob.address,
+        this.signers.bob,
         encryptedTransferAmount.handles[0],
         encryptedTransferAmount.inputProof,
       );
