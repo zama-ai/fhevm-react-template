@@ -12,6 +12,7 @@ import {
   PRIVATE_KEY_COPROCESSOR_ACCOUNT,
   PRIVATE_KEY_KMS_SIGNER,
 } from "../test/constants";
+import { initGateway } from "./asyncDecrypt";
 import { awaitCoprocessor, getClearText, insertSQL } from "./coprocessorUtils";
 
 const provider = new JsonRpcProvider("http://127.0.0.1:8545");
@@ -411,6 +412,7 @@ async function kmsSign(
   return result;
 }
 
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`Server running at http://localhost:${port}`);
+  await initGateway();
 });

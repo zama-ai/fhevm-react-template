@@ -4,7 +4,7 @@ import './Devnet.css';
 import { Eip1193Provider, ZeroAddress } from 'ethers';
 import { ethers } from 'ethers';
 
-import { reencryptEuint64 } from '../../../../test/reencrypt.ts';
+import { reencryptEuint64 } from '../../../../hardhat/test/reencrypt.ts';
 
 const toHexString = (bytes: Uint8Array) =>
   '0x' +
@@ -32,6 +32,7 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const [decryptedSecret, setDecryptedResult] = useState('???');
+  const [counter, setCounter] = useState(0); // useful trick to make the refresh of decryption state work, otherwise contract call will not work correctly (because provider's state won't be updated without a React re-rendering)
 
   useEffect(() => {
     const loadData = async () => {
@@ -168,9 +169,10 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
   };
 
   const refreshSecret = async () => {
+    setCounter(counter + 1);
     const contract = new ethers.Contract(
       contractAddress,
-      ['function revealedSecret() external view returns(uint64)'],
+      ['function revealedSecret() view returns(uint64)'],
       provider,
     );
     const revealedSecret = await contract.revealedSecret();
@@ -262,7 +264,7 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
             The decrypted secret value is: {decryptedSecret}{' '}
             <button
               onClick={refreshSecret}
-              disabled={decryptedSecret !== '???'}
+              //disabled={decryptedSecret !== '???'}
             >
               Refresh Decrypted Secret
             </button>
