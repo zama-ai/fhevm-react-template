@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node scripts/dev.js",
     "dev-mocked": "MOCKED=true node scripts/dev.js",
+    "dev-mocked-vite": "cross-env MOCKED=true vite",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
@@ -26,6 +27,7 @@
     "@typescript-eslint/parser": "^7.13.1",
     "@vitejs/plugin-react": "^4.3.4",
     "bigint-buffer": "^1.1.5",
+    "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
