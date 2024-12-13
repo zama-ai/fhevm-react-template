@@ -25,17 +25,26 @@ contract Ballot is
     uint256 public startTime;
     uint256 public duration;
     uint256 public proposalCount;
-
+    bool public ballotFinished;
 
     constructor(uint256 duration) {
-        startTime = block.timestamp;
+        startTime = 0;
         duration = duration;
         proposalCount = 0;
+        ballotFinished = false;
     }
 
     function createProposal(string memory proposalName) public {
         proposals[proposalCount] = Proposal({name: proposalName, index: proposalCount, voteCount: 0});
         proposalCount++;
+    }
+
+    function getProposal(uint256 index) public view returns (Proposal memory) {
+        return proposals[index];
+    }
+
+    function startBallot() public { 
+        startTime = block.timestamp;
     }
 
     function vote(uint256 proposal, bool voter) public {
@@ -45,5 +54,23 @@ contract Ballot is
             }
         }
         //proposals[proposal].voteCount += voter ? 1 : -1;
+    }
+
+    function finishBallot() public {
+        require(block.timestamp >= startTime + duration, "Ballot is still ongoing");
+        ballotFinished = true;
+    }
+
+    function get_result() public view returns (Proposal memory) {
+        require(ballotFinished, "Ballot is not finished");
+        uint256 maxVotes = 0;
+        uint256 maxIndex = 0;
+        for (uint256 i = 0; i < proposalCount; i++) {
+            if (proposals[i].voteCount > maxVotes) {
+                maxVotes = proposals[i].voteCount;
+                maxIndex = i;
+            }
+        }
+        return proposals[maxIndex];
     }
 }   
