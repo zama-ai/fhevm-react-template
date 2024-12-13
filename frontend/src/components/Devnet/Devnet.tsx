@@ -32,7 +32,6 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const [decryptedSecret, setDecryptedResult] = useState('???');
-  const [counter, setCounter] = useState(0); // useful trick to make the refresh of decryption state work, otherwise contract call will not work correctly (because provider's state won't be updated without a React re-rendering)
 
   useEffect(() => {
     const loadData = async () => {
@@ -169,7 +168,6 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
   };
 
   const refreshSecret = async () => {
-    setCounter(counter + 1);
     const contract = new ethers.Contract(
       contractAddress,
       ['function revealedSecret() view returns(uint64)'],
