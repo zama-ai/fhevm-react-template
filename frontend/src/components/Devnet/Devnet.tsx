@@ -264,7 +264,7 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
             The decrypted secret value is: {decryptedSecret}{' '}
             <button
               onClick={refreshSecret}
-              //disabled={decryptedSecret !== '???'}
+              disabled={decryptedSecret !== '???'}
             >
               Refresh Decrypted Secret
             </button>
