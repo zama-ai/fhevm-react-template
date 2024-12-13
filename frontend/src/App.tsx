@@ -19,7 +19,7 @@ function App() {
 
   return (
     <>
-      <h1>Confidential ERC20 dApp</h1>
+      <h1>Confidential ERC20 dAppa asda puito</h1>
       <Connect>
         {(account, provider) => (
           <Devnet account={account} provider={provider} />
