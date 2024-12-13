@@ -35,16 +35,29 @@ export const Connect: React.FC<{
   };
 
   const refreshNetwork = useCallback(async () => {
-    if (await hasValidNetwork()) {
-      setValidNetwork(true);
-      setLoading(true);
-      const load = async () => {
-        await createFhevmInstance();
-        setLoading(false);
-      };
-      window.requestAnimationFrame(load);
-    } else {
+    try {
+      const isValid = await hasValidNetwork();
+      if (isValid) {
+        setValidNetwork(true);
+        setLoading(true);
+        const load = async () => {
+          try {
+            await createFhevmInstance();
+            setLoading(false);
+          } catch (loadError) {
+            console.error('Error creating FHEVM instance:', loadError);
+            setLoading(false);
+            setError('Failed to initialize FHEVM instance');
+          }
+        };
+        window.requestAnimationFrame(load);
+      } else {
+        setValidNetwork(false);
+      }
+    } catch (networkError) {
+      console.error('Error checking network validity:', networkError);
       setValidNetwork(false);
+      setError('Failed to verify network');
     }
   }, []);
 
