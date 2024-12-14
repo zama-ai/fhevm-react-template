@@ -7,15 +7,23 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // Check if contract was previously deployed
   const existingDeployment = await getOrNull("MyConfidentialERC20");
-  const isNewDeployment = !existingDeployment;
+  const existingBallotDeploy = await getOrNull("Ballot");
+  const isNewDeployment = !existingDeployment || !existingBallotDeploy;
 
   const deployed = await deploy("MyConfidentialERC20", {
     from: deployer,
     args: ["Naraggara", "NARA"],
     log: true,
   });
-
   console.log(`MyConfidentialERC20 contract: `, deployed.address);
+
+  const deployedBallot = await deploy("Ballot", {
+    from: deployer,
+    args: ["10000"],
+    log: true,
+  });
+  console.log(`Ballot contract: `, deployedBallot.address);
+
   if (isNewDeployment) {
     const signers = await hre.ethers.getSigners();
     const alice = signers[0];
