@@ -1,10 +1,131 @@
-#root {
-  box-sizing: border-box;
-  max-width: 90vw;
-  margin: 0 auto;
-  text-align: center;
+:root {
+  --primary-color: #1d1d1d; /* Negro carbón */
+  --secondary-color: var(--color-warm-orange); /* Naranja cálido */
+  --tertiary-color: var(--color-golden-brown); /* Marrón dorado */
+  --accent-color: var(--color-bright-yellow); /* Amarillo brillante */
+  --text-color: #ffffff; /* Texto claro */
+  --highlight-color: var(--color-bright-yellow); /* Amarillo brillante */
+  --font-family: 'Outfit', sans-serif; /* Tipografía principal */
 }
 
-.read-the-docs {
-  color: #888;
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  background-color: var(--primary-color); /* Fondo negro carbón */
+  color: var(--text-color);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  justify-content: space-between;
+  background-color: var(--primary-color); /* Fondo negro carbón */
+}
+
+.app-header {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: var(--primary-color);
+  border-bottom: 2px solid var(--secondary-color); /* Línea naranja cálido */
+}
+
+.app-header h1 {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: var(--accent-color); /* Título en amarillo brillante */
+  margin-bottom: 20px;
+  text-shadow: 2px 2px var(--tertiary-color); /* Sutil sombra marrón dorado */
+}
+
+.app-header .subtitle {
+  font-size: 1.5rem;
+  color: var(--text-color); /* Texto claro */
+  margin-bottom: 30px;
+}
+
+.button-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.cta-button {
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: 3px solid var(--secondary-color); /* Borde naranja cálido */
+  border-radius: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s ease-in-out;
+}
+
+.cta-button.primary {
+  background-color: var(--secondary-color); /* Fondo naranja cálido */
+  color: var(--text-color); /* Texto claro */
+  box-shadow: 4px 4px 0 var(--tertiary-color); /* Sombra marrón dorado */
+}
+
+.cta-button.primary:hover {
+  background-color: var(--tertiary-color); /* Fondo marrón dorado */
+  box-shadow: 6px 6px 0 var(--secondary-color); /* Sombra naranja cálido */
+}
+
+.cta-button.secondary {
+  background-color: var(--tertiary-color); /* Fondo marrón dorado */
+  color: var(--text-color); /* Texto claro */
+  box-shadow: 4px 4px 0 var(--accent-color); /* Sombra amarillo brillante */
+}
+
+.cta-button.secondary:hover {
+  background-color: var(--accent-color); /* Fondo amarillo brillante */
+  box-shadow: 6px 6px 0 var(--tertiary-color); /* Sombra marrón dorado */
+}
+
+.main-content {
+  padding: 50px 20px;
+  text-align: center;
+  background-color: var(--primary-color); /* Fondo negro carbón */
+  color: var(--text-color); /* Texto claro */
+}
+
+.main-content h2 {
+  font-size: 2rem;
+  color: var(--accent-color); /* Amarillo brillante */
+  margin-bottom: 20px;
+}
+
+.main-content p {
+  font-size: 1.25rem;
+  color: var(--tertiary-color); /* Texto marrón dorado */
+  margin-bottom: 30px;
+}
+
+.app-footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.875rem;
+  background-color: var(--primary-color); /* Fondo negro carbón */
+  color: var(--accent-color); /* Texto amarillo brillante */
+  border-top: 2px solid var(--secondary-color); /* Línea naranja cálido */
+}
+
+.app-footer p {
+  margin: 0;
+  color: var(--accent-color); /* Texto amarillo brillante */
+}
+
+.app-footer a {
+  color: var(--secondary-color); /* Enlaces naranja cálido */
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s ease-in-out;
+}
+
+.app-footer a:hover {
+  color: var(--tertiary-color); /* Marrón dorado */
 }

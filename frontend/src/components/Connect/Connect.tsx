@@ -4,12 +4,14 @@ import { BrowserProvider } from 'ethers';
 import './Connect.css';
 import { Eip1193Provider } from 'ethers';
 import { createFhevmInstance } from '../../fhevmjs';
+import { ErrorComponent } from '../Error/Error';
 
 const AUTHORIZED_CHAIN_ID = ['0xaa36a7', '0x2328', '0x7a69'];
 
 export const Connect: React.FC<{
   children: (account: string, provider: any) => React.ReactNode;
-}> = ({ children }) => {
+  onConnectionSuccess: () => void;
+}> = ({ children, onConnectionSuccess }) => {
   const [connected, setConnected] = useState(false);
   const [validNetwork, setValidNetwork] = useState(false);
   const [account, setAccount] = useState<string>('');
@@ -20,6 +22,9 @@ export const Connect: React.FC<{
   const refreshAccounts = (accounts: string[]) => {
     setAccount(accounts[0] || '');
     setConnected(accounts.length > 0);
+    if (accounts.length > 0 && validNetwork) {
+      onConnectionSuccess();
+    }
   };
 
   const hasValidNetwork = async (): Promise<boolean> => {
@@ -144,7 +149,14 @@ export const Connect: React.FC<{
   }, [account, provider, children, validNetwork, loading]);
 
   if (error) {
-    return <p>No wallet has been found.</p>;
+    return (
+      <ErrorComponent
+        errorMessage={error}
+        onInstallMetamask={() =>
+          window.open('https://metamask.io/download/', '_blank')
+        }
+      />
+    );
   }
 
   const connectInfos = (

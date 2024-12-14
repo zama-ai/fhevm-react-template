@@ -1,11 +1,44 @@
-.Connect__account {
-  width: 100%;
-  max-width: 300px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  margin: 0 auto;
+.Connect__metamask-button {
+  position: relative;
+  display: inline-block;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--color-bright-yellow); /* Texto en amarillo brillante */
+  background-color: var(--color-dark-brown); /* Fondo marrón oscuro */
+  border: 2px solid var(--color-bright-yellow); /* Borde amarillo brillante */
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  box-shadow: 4px 4px 0 var(--color-golden-brown); /* Sombra marrón dorado */
+  transition: all 0.3s ease-in-out;
+  outline: none;
 }
 
-.Connect__wrongNetwork {
-  color: #ff0000;
+.Connect__metamask-button:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 6px 6px 0 var(--color-warm-orange); /* Hover con sombra naranja cálido */
+  background-color: var(--color-golden-brown); /* Fondo cambia a marrón dorado */
+  color: var(--color-dark-brown); /* Texto cambia a marrón oscuro */
+}
+
+.Connect__metamask-button:active {
+  transform: translate(2px, 2px);
+  background-color: var(--color-bright-yellow); /* Fondo amarillo brillante */
+  color: var(--color-deep-brown); /* Texto marrón profundo */
+  box-shadow: 2px 2px 0 var(--color-dark-brown); /* Sombra marrón oscuro */
+}
+
+.Connect__metamask-button:focus {
+  outline: none;
+  border-color: var(--color-warm-orange); /* Borde naranja cálido */
+  box-shadow: 0 0 10px var(--color-warm-orange); /* Resplandor de enfoque */
+}
+
+.Connect__metamask-button:disabled {
+  background-color: var(--color-deep-brown); /* Fondo marrón profundo */
+  color: var(--color-golden-brown); /* Texto marrón dorado */
+  border-color: var(--color-golden-brown); /* Borde marrón dorado */
+  cursor: not-allowed;
+  opacity: 0.7;
 }

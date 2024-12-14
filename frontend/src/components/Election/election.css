@@ -1,0 +1,184 @@
+.election-container {
+  font-family: var(--font-family);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: 100vw;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.election-header {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.election-title {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  color: var(--accent-color);
+}
+
+.countdown {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.vote-section {
+  width: 100%;
+  padding: 0 20px;
+  flex-grow: 1;
+}
+
+.candidate {
+  padding: 15px;
+  border: 2px solid var(--secondary-color);
+  border-radius: 12px;
+  background: linear-gradient(
+    145deg,
+    var(--primary-color),
+    rgba(0, 0, 0, 0.5)
+  ); /* Fondo con degradado */
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  width: 28%;
+  height: 15em;
+  text-align: center;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.2),
+    0 1px 3px rgba(255, 255, 255, 0.1); /* Sombra más pronunciada */
+}
+
+.candidate:hover {
+  transform: translateY(-5px); /* Eleva ligeramente al hacer hover */
+  box-shadow:
+    0 6px 10px rgba(0, 0, 0, 0.3),
+    0 3px 5px rgba(255, 255, 255, 0.2); /* Sombra más intensa */
+  background: linear-gradient(
+    145deg,
+    var(--secondary-color),
+    var(--primary-color)
+  ); /* Cambia a un degradado con color secundario */
+}
+
+.candidate.voted {
+  background: linear-gradient(
+    145deg,
+    var(--accent-color),
+    var(--tertiary-color)
+  );
+  border-color: var(--accent-color);
+  color: var(--primary-color);
+}
+
+.candidate-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.candidate-icon {
+  font-size: 2.5rem;
+}
+
+.candidate-info {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.candidate-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.candidate-party {
+  font-size: 1rem;
+
+  color: var(--accent-color);
+}
+
+.candidate-proposals {
+  margin-top: 10px;
+  list-style: none;
+  padding: 0;
+  font-size: 0.9rem;
+  text-align: left;
+  color: var(--text-color);
+}
+
+.candidate-proposals li {
+  margin-bottom: 5px;
+  padding-left: 15px;
+  position: relative;
+}
+
+.candidate-proposals li::before {
+  position: absolute;
+  left: 0;
+  color: var(--secondary-color);
+  font-weight: bold;
+}
+
+.candidate-list {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 0;
+  list-style: none;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.proposals-section {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--tertiary-color);
+  border-radius: 10px;
+  color: var(--primary-color);
+}
+
+.proposals-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.finalize-section {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.finalize-button {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--secondary-color); /* Naranja cálido */
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.finalize-button:hover {
+  background-color: var(--accent-color); /* Amarillo brillante */
+}
+
+.finalize-button:disabled {
+  background-color: rgba(255, 255, 255, 0.2); /* Botón deshabilitado */
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+}
