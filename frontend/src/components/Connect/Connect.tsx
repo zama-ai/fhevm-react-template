@@ -1,20 +1,28 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { BrowserProvider } from 'ethers';
+import { BrowserProvider, Provider } from 'ethers';
 
 import './Connect.css';
 import { Eip1193Provider } from 'ethers';
 import { createFhevmInstance } from '../../fhevmjs';
+import { JsonRpcProvider } from 'ethers';
 
 const AUTHORIZED_CHAIN_ID = ['0xaa36a7', '0x2328', '0x7a69'];
 
 export const Connect: React.FC<{
-  children: (account: string, provider: any) => React.ReactNode;
+  children: (
+    account: string,
+    provider: any,
+    readOnlyProvider: any,
+  ) => React.ReactNode;
 }> = ({ children }) => {
   const [connected, setConnected] = useState(false);
   const [validNetwork, setValidNetwork] = useState(false);
   const [account, setAccount] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [provider, setProvider] = useState<BrowserProvider | null>(null);
+  const [readOnlyProvider, setReadOnlyProvider] = useState<Provider | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
 
   const refreshAccounts = (accounts: string[]) => {
@@ -51,6 +59,13 @@ export const Connect: React.FC<{
   const refreshProvider = (eth: Eip1193Provider) => {
     const p = new BrowserProvider(eth);
     setProvider(p);
+    if (!import.meta.env.MOCKED) {
+      setReadOnlyProvider(p);
+    } else {
+      const pRO = new JsonRpcProvider('http://127.0.0.1:8545');
+      setReadOnlyProvider(pRO); // on Hardhat Node, for reading view functions, the JsonRpcProvider is more reliable than the BrowserProvider
+    }
+
     return p;
   };
 
@@ -127,7 +142,7 @@ export const Connect: React.FC<{
       return <p>Loading...</p>;
     }
 
-    return children(account, provider);
+    return children(account, provider, readOnlyProvider);
   }, [account, provider, children, validNetwork, loading]);
 
   if (error) {

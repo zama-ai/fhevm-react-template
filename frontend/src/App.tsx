@@ -21,8 +21,12 @@ function App() {
     <>
       <h1>Confidential ERC20 dApp</h1>
       <Connect>
-        {(account, provider) => (
-          <Devnet account={account} provider={provider} />
+        {(account, provider, readOnlyProvider) => (
+          <Devnet
+            account={account}
+            provider={provider}
+            readOnlyProvider={readOnlyProvider}
+          />
         )}
       </Connect>
       <p className="read-the-docs">

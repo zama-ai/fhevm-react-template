@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getInstance } from '../../fhevmjs';
 import './Devnet.css';
-import { Eip1193Provider, ZeroAddress } from 'ethers';
+import { Eip1193Provider, Provider, ZeroAddress } from 'ethers';
 import { ethers } from 'ethers';
 
 import { reencryptEuint64 } from '../../../../hardhat/test/reencrypt.ts';
@@ -13,9 +13,14 @@ const toHexString = (bytes: Uint8Array) =>
 export type DevnetProps = {
   account: string;
   provider: Eip1193Provider;
+  readOnlyProvider: Provider;
 };
 
-export const Devnet = ({ account, provider }: DevnetProps) => {
+export const Devnet = ({
+  account,
+  provider,
+  readOnlyProvider,
+}: DevnetProps) => {
   const [contractAddress, setContractAddress] = useState(ZeroAddress);
 
   const [handleBalance, setHandleBalance] = useState('0');
@@ -90,7 +95,7 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
       const contract = new ethers.Contract(
         contractAddress,
         ['function balanceOf(address) view returns (uint256)'],
-        provider,
+        readOnlyProvider,
       );
       const handleBalance = await contract.balanceOf(account);
       setHandleBalance(handleBalance.toString());
@@ -171,7 +176,7 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
     const contract = new ethers.Contract(
       contractAddress,
       ['function revealedSecret() view returns(uint64)'],
-      provider,
+      readOnlyProvider,
     );
     const revealedSecret = await contract.revealedSecret();
     const revealedSecretString =
