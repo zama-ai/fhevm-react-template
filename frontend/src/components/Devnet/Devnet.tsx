@@ -274,3 +274,4 @@ export const Devnet = ({ account, provider }: DevnetProps) => {
     </div>
   );
 };
+

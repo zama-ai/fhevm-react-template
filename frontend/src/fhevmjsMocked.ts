@@ -1,4 +1,5 @@
-import { ethers, BrowserProvider } from 'ethers';
+
+import { ethers, JsonRpcProvider } from 'ethers';
 import { isAddress } from 'web3-validator';
 import { toBigIntBE } from 'bigint-buffer';
 
@@ -36,7 +37,7 @@ export const reencryptRequestMocked = async (
   }
 
   // ACL checking
-  const provider = new BrowserProvider(window.ethereum);
+  const provider = new JsonRpcProvider('http://127.0.0.1:8545');
   const acl = new ethers.Contract(
     import.meta.env.VITE_ACL_ADDRESS,
     ['function persistAllowed(uint256,address) external view returns (bool)'],
@@ -46,9 +47,13 @@ export const reencryptRequestMocked = async (
   const userAllowed = await acl.persistAllowed(handle, userAddress);
 
   const contractAllowed = await acl.persistAllowed(handle, contractAddress);
-  const isAllowed = userAllowed && contractAllowed;
-  if (!isAllowed) {
+  if (!userAllowed) {
     throw new Error('User is not authorized to reencrypt this handle!');
+  }
+  if (!contractAllowed) {
+    throw new Error(
+      'dApp contract is not authorized to reencrypt this handle!',
+    );
   }
   if (userAddress === contractAddress) {
     throw new Error(

@@ -37,7 +37,7 @@ npx hardhat node
 
 This will also launch a mocked instance of the coprocessor.
 
-You can then go to the `frontend/` directory, and just run those two commands:
+Then, open a new tab in your terminal and go to the `frontend/` directory, and just run those two commands:
 
 ```
 npm install
@@ -49,3 +49,5 @@ The dApp will be available again at: [`http://localhost:4173/`](http://localhost
 #### Troubleshooting
 
 **_Invalid nonce errors:_** This is a common issue everytime you restart your local Hardhat node and you want to reuse the same accounts in Metamask. You should remember to reset the nonce of the accounts you used the last time with Hardhat. To reset the account's transaction history and the nonce, open Metamask and select the Hardhat network, click on your account followed by `Settings -> Advanced -> Clear activity tab data`.
+
+Another common issue, also due to Metamask not getting synced properly with Hardhat node sometimes if you restart your local node, is that you could get the frontend stuck at the loading page state. A simple fix for this issue is to simply close and restart your browser.
