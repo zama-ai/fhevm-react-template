@@ -54,7 +54,7 @@ contract Ballot is
     }
 
     function vote(uint256 _proposal) public {
-        require(!ballotFinished, "Ballot is finished");
+        require(isActive(), "Ballot is finished");
         require(!hasVoted[msg.sender], "Already voted");
         
         for (uint256 i = 0; i < proposalCount; i++) {
@@ -65,9 +65,11 @@ contract Ballot is
             }
         }
     }
-
+    function isActive() public view returns (bool) {
+        return block.timestamp < startTime + duration;
+    }
     function finishBallot() public {
-        require(block.timestamp >= startTime + duration, "Ballot is still ongoing");
+        require(!isActive(), "Ballot is still ongoing");
         ballotFinished = true;
     }
 
