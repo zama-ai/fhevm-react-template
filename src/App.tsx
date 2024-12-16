@@ -8,11 +8,17 @@ function App() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
+    // Trick to avoid double init with HMR
+    if (window.fhevmjsInitialized) return;
+    window.fhevmjsInitialized = true;
     init()
       .then(() => {
         setIsInitialized(true);
       })
-      .catch(() => setIsInitialized(false));
+      .catch((e) => {
+        console.log(e);
+        setIsInitialized(false);
+      });
   }, []);
 
   if (!isInitialized) return null;
@@ -20,9 +26,15 @@ function App() {
   return (
     <>
       <h1>fhevmjs</h1>
-      <Connect>{(account, provider) => <Devnet account={account} provider={provider} />}</Connect>
+      <Connect>
+        {(account, provider) => (
+          <Devnet account={account} provider={provider} />
+        )}
+      </Connect>
       <p className="read-the-docs">
-        <a href="https://docs.zama.ai/fhevm">See the documentation for more information</a>
+        <a href="https://docs.zama.ai/fhevm">
+          See the documentation for more information
+        </a>
       </p>
     </>
   );

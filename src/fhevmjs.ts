@@ -1,5 +1,5 @@
 import { isAddress } from 'ethers';
-import { initFhevm, createInstance, FhevmInstance } from 'fhevmjs';
+import { initFhevm, createInstance, FhevmInstance } from 'fhevmjs/bundle';
 import {
   getPublicKey,
   getPublicParams,
@@ -21,9 +21,7 @@ type Keypairs = {
   };
 };
 
-export const init = async () => {
-  await initFhevm({ thread: navigator.hardwareConcurrency });
-};
+export const init = initFhevm;
 
 let instancePromise: Promise<FhevmInstance>;
 let instance: FhevmInstance;
