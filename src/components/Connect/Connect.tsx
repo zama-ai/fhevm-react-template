@@ -23,7 +23,9 @@ export const Connect: React.FC<{
   };
 
   const hasValidNetwork = async (): Promise<boolean> => {
-    const currentChainId: string = await window.ethereum.request({ method: 'eth_chainId' });
+    const currentChainId: string = await window.ethereum.request({
+      method: 'eth_chainId',
+    });
     return AUTHORIZED_CHAIN_ID.includes(currentChainId.toLowerCase());
   };
 
@@ -124,7 +126,9 @@ export const Connect: React.FC<{
   const connectInfos = (
     <div className="Connect__info">
       {!connected && <button onClick={connect}>Connect your wallet</button>}
-      {connected && <div className="Connect__account">Connected with {account}</div>}
+      {connected && (
+        <div className="Connect__account">Connected with {account}</div>
+      )}
     </div>
   );
 

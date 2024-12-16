@@ -13,7 +13,7 @@ export type DevnetProps = {
 
 const CONTRACT_ADDRESS = '0x309cf2aae85ad8a1db70ca88cfd4225bf17a7482';
 
-export const Devnet = ({ account, provider }: DevnetProps) => {
+export const Devnet = ({ account }: DevnetProps) => {
   const [handles, setHandles] = useState<Uint8Array[]>([]);
   const [encryption, setEncryption] = useState<Uint8Array>();
   const [eip712, setEip712] =
