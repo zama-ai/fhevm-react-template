@@ -37,9 +37,10 @@ npx hardhat node
 
 This will also launch a mocked instance of the coprocessor.
 
-Then, open a new tab in your terminal and go to the `frontend/` directory, and just run those two commands:
+Then, open a new tab in your terminal and go to the `frontend/` directory, and just run those three commands:
 
 ```
+cp .env.example .env
 npm install
 npm run dev-mocked
 ```
