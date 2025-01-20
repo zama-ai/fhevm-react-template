@@ -43,11 +43,16 @@ export const Connect: React.FC<{
     }
   }, []);
 
-  const refreshProvider = (eth: Eip1193Provider) => {
-    const p = new BrowserProvider(eth);
-    setProvider(p);
-    return p;
-  };
+  const initializeProvider = useCallback(() => {
+    const eth = window.ethereum;
+    if (eth) {
+      const p = new BrowserProvider(eth);
+      setProvider(p);
+      return p;
+    }
+    setError('No wallet has been found');
+    return null;
+  }, []);
 
   useEffect(() => {
     const eth = window.ethereum;
@@ -56,9 +61,10 @@ export const Connect: React.FC<{
       return;
     }
 
-    const p = refreshProvider(eth);
+    const p = initializeProvider();
 
-    p.send('eth_accounts', [])
+    p
+      ?.send('eth_accounts', [])
       .then(async (accounts: string[]) => {
         refreshAccounts(accounts);
         await refreshNetwork();
@@ -66,15 +72,22 @@ export const Connect: React.FC<{
       .catch(() => {
         // Do nothing
       });
+
     eth.on('accountsChanged', refreshAccounts);
     eth.on('chainChanged', refreshNetwork);
-  }, []);
+
+    return () => {
+      eth.removeListener('accountsChanged', refreshAccounts);
+      eth.removeListener('chainChanged', refreshNetwork);
+    };
+  }, [initializeProvider, refreshNetwork]);
 
   const connect = async () => {
-    if (!provider) {
+    const p = provider || initializeProvider(); // Reinitialize provider if null
+    if (!p) {
       return;
     }
-    const accounts: string[] = await provider.send('eth_requestAccounts', []);
+    const accounts: string[] = await p.send('eth_requestAccounts', []);
 
     if (accounts.length > 0) {
       setAccount(accounts[0]);
@@ -83,6 +96,13 @@ export const Connect: React.FC<{
         await switchNetwork();
       }
     }
+  };
+
+  const disconnect = () => {
+    setAccount('');
+    setConnected(false);
+    setValidNetwork(false);
+    setProvider(null); // Reset provider
   };
 
   const switchNetwork = useCallback(async () => {
@@ -125,9 +145,13 @@ export const Connect: React.FC<{
 
   const connectInfos = (
     <div className="Connect__info">
-      {!connected && <button onClick={connect}>Connect your wallet</button>}
-      {connected && (
-        <div className="Connect__account">Connected with {account}</div>
+      {!connected ? (
+        <button onClick={connect}>Connect your wallet</button>
+      ) : (
+        <div className="Connect__account">
+          <span>Connected with {account}</span>
+          <button onClick={disconnect}>Disconnect</button>
+        </div>
       )}
     </div>
   );
