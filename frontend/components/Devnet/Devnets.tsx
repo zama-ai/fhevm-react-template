@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { getInstance } from '../../fhevmjs';
-import './Devnet.css';
+import { getInstance } from '../../src/fhevmjs.ts';
 import { Eip1193Provider, Provider, ZeroAddress } from 'ethers';
 import { ethers } from 'ethers';
+import { Button } from "@/components/ui/Button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+//import { useContract, useBalances, useEncryption } from '@/hooks/useContract';
 
-import { reencryptEuint64 } from '../../../../hardhat/test/reencrypt.ts';
+import { reencryptEuint64 } from '../../../hardhat/test/reencrypt.ts';
 
 const toHexString = (bytes: Uint8Array) =>
   '0x' +
@@ -36,7 +38,7 @@ export const Devnet = ({
   const [chosenAddress, setChosenAddress] = useState('0x');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const [decryptedSecret, setDecryptedResult] = useState('???');
+  const [balance, setBalance] = useState('0');
 
   useEffect(() => {
     const loadData = async () => {
@@ -90,8 +92,9 @@ export const Devnet = ({
 
   const instance = getInstance();
 
-  const getHandleBalance = async () => {
+  const getBalances = async () => {
     if (contractAddress != ZeroAddress) {
+      // Get encrypted token balance
       const contract = new ethers.Contract(
         contractAddress,
         ['function balanceOf(address) view returns (uint256)'],
@@ -100,11 +103,15 @@ export const Devnet = ({
       const handleBalance = await contract.balanceOf(account);
       setHandleBalance(handleBalance.toString());
       setDecryptedBalance('???');
+
+      // Get native ETH balance
+      const ethBalance = await readOnlyProvider.getBalance(account);
+      setBalance(ethers.formatEther(ethBalance)); // Convert from wei to ETH
     }
   };
 
   useEffect(() => {
-    getHandleBalance();
+    getBalances();
   }, [account, provider, contractAddress]);
 
   const encrypt = async (val: bigint) => {
@@ -158,41 +165,25 @@ export const Devnet = ({
         toHexString(encryption),
       );
     await tx.wait();
-    await getHandleBalance();
-  };
-
-  const decryptSecret = async () => {
-    const contract = new ethers.Contract(
-      contractAddress,
-      ['function requestSecret() external'],
-      provider,
-    );
-    const signer = await provider.getSigner();
-    const tx = await contract.connect(signer).requestSecret();
-    await tx.wait();
-  };
-
-  const refreshSecret = async () => {
-    const contract = new ethers.Contract(
-      contractAddress,
-      ['function revealedSecret() view returns(uint64)'],
-      readOnlyProvider,
-    );
-    const revealedSecret = await contract.revealedSecret();
-    const revealedSecretString =
-      revealedSecret === 0n ? '???' : revealedSecret.toString();
-    setDecryptedResult(revealedSecretString);
+    await getBalances(); // Updated this line
   };
 
   return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4 md:p-8">
+    <div className="max-w-3xl mx-auto space-y-6">
+    <Card className="border-none shadow-lg">
+
     <div>
       <dl>
+        <dt className="Devnet__title">My plain balance is:</dt>
+        <dd className="Devnet__dd">{balance.toString()} ETH</dd>
+        
         <dt className="Devnet__title">My encrypted balance is:</dt>
         <dd className="Devnet__dd">{handleBalance.toString()}</dd>
 
-        <button onClick={() => decrypt()}>
+        <Button onClick={() => decrypt()}>
           Reencrypt and decrypt my balance
-        </button>
+        </Button>
         <dd className="Devnet__dd">
           My decrypted private balance is: {decryptedBalance.toString()}
         </dd>
@@ -206,7 +197,7 @@ export const Devnet = ({
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Enter a number"
           />{' '}
-          <button onClick={handleConfirmAmount}>OK</button>
+          <Button onClick={handleConfirmAmount}>OK</Button>
           {chosenValue !== null && (
             <div>
               <p>You chose: {chosenValue}</p>
@@ -214,9 +205,9 @@ export const Devnet = ({
           )}
         </div>
 
-        <button onClick={() => encrypt(BigInt(chosenValue))}>
+        <Button onClick={() => encrypt(BigInt(chosenValue))}>
           Encrypt {chosenValue}
-        </button>
+        </Button>
         <dt className="Devnet__title">
           This is an encryption of {chosenValue}:
         </dt>
@@ -236,7 +227,7 @@ export const Devnet = ({
             onChange={(e) => setInputValueAddress(e.target.value)}
             placeholder="Receiver address"
           />
-          <button onClick={handleConfirmAddress}>OK</button>{' '}
+          <Button onClick={handleConfirmAddress}>OK</Button>{' '}
           {chosenAddress && (
             <div>
               <p>Chosen Address For Receiver: {chosenAddress}</p>
@@ -251,29 +242,15 @@ export const Devnet = ({
 
         <div>
           {chosenAddress !== '0x' && encryption && encryption.length > 0 && (
-            <button onClick={transferToken}>
+            <Button onClick={transferToken}>
               Transfer Encrypted Amount To Receiver
-            </button>
+            </Button>
           )}
-        </div>
-
-        <div>
-          <button onClick={decryptSecret} disabled={decryptedSecret !== '???'}>
-            Request Secret Decryption
-          </button>
-        </div>
-        <div>
-          <dd className="Devnet__dd">
-            The decrypted secret value is: {decryptedSecret}{' '}
-            <button
-              onClick={refreshSecret}
-              disabled={decryptedSecret !== '???'}
-            >
-              Refresh Decrypted Secret
-            </button>
-          </dd>
         </div>
       </dl>
     </div>
+          </Card>
+          </div>
+          </div>
   );
 };

@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BrowserProvider, Provider } from 'ethers';
 
-import './Connect.css';
 import { Eip1193Provider } from 'ethers';
-import { createFhevmInstance } from '../../fhevmjs';
+import { createFhevmInstance } from '../../src/fhevmjs';
 import { JsonRpcProvider } from 'ethers';
+import { Button } from '../ui/button';
+import { Copy } from 'lucide-react';
 
 const AUTHORIZED_CHAIN_ID = ['0xaa36a7', '0x2328', '0x7a69'];
 
@@ -68,6 +69,10 @@ export const Connect: React.FC<{
 
     return p;
   };
+
+  const handleCopyAddress = (text: string) => {
+    navigator.clipboard.writeText(text)
+  }
 
   useEffect(() => {
     const eth = window.ethereum;
@@ -152,9 +157,20 @@ export const Connect: React.FC<{
   const connectInfos = (
     <div className="Connect__info">
       {!connected && <button onClick={connect}>Connect your wallet</button>}
-      {connected && (
-        <div className="Connect__account">Connected with {account}</div>
-      )}
+                  {/* Connected Address */}
+                  <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="text-sm text-muted-foreground mb-2">Connected with</div>
+              <div className="flex items-center gap-2">
+                <div className="font-mono text-sm truncate">{account}</div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleCopyAddress(account.toString())}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
     </div>
   );
 
