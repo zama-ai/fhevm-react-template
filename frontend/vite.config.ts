@@ -21,9 +21,11 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: '@deployments', replacement: path.resolve(__dirname, '../hardhat/deployments') },
+      { find: '@', replacement: path.resolve(__dirname, '.') },
       { find: '@/components', replacement: path.resolve(__dirname, './components') },
       { find: '@/lib', replacement: path.resolve(__dirname, './lib') },
-      { find: '@/hooks', replacement: path.resolve(__dirname, './hooks') }
+      { find: '@/hooks', replacement: path.resolve(__dirname, './hooks') },
+      { find: '@/src', replacement: path.resolve(__dirname, './src') }
     ],
   },
   server: {

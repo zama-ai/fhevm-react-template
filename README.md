@@ -17,7 +17,7 @@ npm run deploy-sepolia
 
 > **Note:** Be careful to use your own private mnemonic key in this case, in the `.env` file (do not reuse the public values from `.env.example`!).
 
-After you succesfully run the Sepolia deployment script, go to the `frontend/` directory, and just run those two commands:
+After you successfully run the Sepolia deployment script, go to the `frontend/` directory, and just run those two commands:
 
 ```
 npm install

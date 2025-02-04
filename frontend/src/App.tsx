@@ -2,10 +2,8 @@ import { useEffect, useState } from 'react';
 import { Devnet } from '../components/Devnet';
 import { init } from './fhevmjs';
 import { Connect } from '../components/Connect';
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Copy, ExternalLink, Lock, Unlock, Send } from "lucide-react"
+import { ExternalLink } from "lucide-react"
 
 function App() {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -41,7 +39,7 @@ function App() {
       </CardContent>
 
       <CardFooter className="justify-center">
-            <a href="#" className="text-sm text-primary hover:text-primary/80 flex items-center gap-2">
+            <a href="https://docs.zama.ai/fhevm" className="text-sm text-primary hover:text-primary/80 flex items-center gap-2">
               See the documentation
               <ExternalLink className="h-4 w-4" />
             </a>

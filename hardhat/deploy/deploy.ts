@@ -25,6 +25,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const mintTx = await token.mint(alice, mintAmount);
     await mintTx.wait();
     console.log(`Alice minted ${mintAmount} tokens to herself`);
+    console.log(`Alice's account: ${alice.address}`);
   }
 };
 export default func;

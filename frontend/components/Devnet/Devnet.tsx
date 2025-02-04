@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getInstance } from '../../src/fhevmjs.ts';
 import { Eip1193Provider, Provider, ZeroAddress } from 'ethers';
 import { ethers } from 'ethers';
 import { Button } from "@/components/ui/Button"
 //import { useContract, useBalances, useEncryption } from '@/hooks/useContract';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-import { reencryptEuint64 } from '../../../hardhat/test/reencrypt.ts';
-import { Lock, Unlock } from 'lucide-react';
+import { reencryptEuint64 } from '@/lib/reencrypt.ts';
+import { Lock, Unlock, Loader2 } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton.tsx';
+import { Input } from '../ui/input.tsx';
 
 const toHexString = (bytes: Uint8Array) =>
   '0x' +
@@ -40,7 +41,8 @@ export const Devnet = ({
   const [chosenAddress, setChosenAddress] = useState('0x');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const [balance, setBalance] = useState('0');
+  const [isEncrypting, setIsEncrypting] = useState(false);
+  const [isTransferring, setIsTransferring] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -75,10 +77,6 @@ export const Devnet = ({
     loadData();
   }, []);
 
-  const handleConfirmAmount = () => {
-    setChosenValue(inputValue);
-  };
-
   const handleConfirmAddress = () => {
     const trimmedValue = inputValueAddress.trim().toLowerCase();
     if (ethers.isAddress(trimmedValue)) {
@@ -94,9 +92,8 @@ export const Devnet = ({
 
   const instance = getInstance();
 
-  const getBalances = async () => {
+  const getBalances = useCallback(async () => {
     if (contractAddress != ZeroAddress) {
-      // Get encrypted token balance
       const contract = new ethers.Contract(
         contractAddress,
         ['function balanceOf(address) view returns (uint256)'],
@@ -105,18 +102,17 @@ export const Devnet = ({
       const handleBalance = await contract.balanceOf(account);
       setHandleBalance(handleBalance.toString());
       setDecryptedBalance('???');
-
-      // Get native ETH balance
-      const ethBalance = await readOnlyProvider.getBalance(account);
-      setBalance(ethers.formatEther(ethBalance)); // Convert from wei to ETH
     }
-  };
+  }, [account, contractAddress, readOnlyProvider]);
 
   useEffect(() => {
-    getBalances();
-  }, [account, provider, contractAddress]);
+    void getBalances();
+  }, [getBalances]);
 
   const encrypt = async (val: bigint) => {
+    setChosenValue(inputValue);
+    setIsEncrypting(true);
+
     const now = Date.now();
     try {
       const result = await instance
@@ -129,6 +125,8 @@ export const Devnet = ({
     } catch (e) {
       console.error('Encryption error:', e);
       console.log(Date.now() - now);
+    } finally {
+      setIsEncrypting(false);
     }
   };
 
@@ -153,136 +151,159 @@ export const Devnet = ({
   };
 
   const transferToken = async () => {
-    const contract = new ethers.Contract(
-      contractAddress,
-      ['function transfer(address,bytes32,bytes) external returns (bool)'],
-      provider,
-    );
-    const signer = await provider.getSigner();
-    const tx = await contract
-      .connect(signer)
-      .transfer(
-        chosenAddress,
-        toHexString(handles[0]),
-        toHexString(encryption),
+    setIsTransferring(true);
+    try {
+      const contract = new ethers.Contract(
+        contractAddress,
+        ['function transfer(address,bytes32,bytes) external returns (bool)'],
+        provider,
       );
-    await tx.wait();
-    await getBalances(); // Updated this line
+      const signer = await provider.getSigner();
+      const tx = await contract
+        .connect(signer)
+        .transfer(
+          chosenAddress,
+          toHexString(handles[0]),
+          toHexString(encryption),
+        );
+      await tx.wait();
+      await getBalances();
+    } finally {
+      setIsTransferring(false);
+    }
   };
 
   return (
     <>
-                  {/* Balances */}
-                  <div className="grid gap-4 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium">ETH Balance</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold font-mono">{balance.toString()} ETH</div>
-                </CardContent>
-              </Card>
+          <div className="grid gap-4 md:grid-cols-1">
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium">Encrypted Balance</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs font-mono break-all text-muted-foreground">
-                  {handleBalance.toString()}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-
-            {/* Decrypt Section */}
+            {/* Encrypted Balance */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">Decrypted Private Balance</CardTitle>
+                <CardTitle className="text-base font-medium">Encrypted Balance</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <Skeleton className="h-8 w-48" /> : <div className="font-mono">???</div>
-                  <Button variant="outline" onClick={() => console.log("TeST")}>
-                        <>
-                        <Unlock className="mr-2 h-4 w-4" />
-                        Decrypt
-                      </>
-                  </Button>
+                <div className="font-mono text-sm break-all">
+                {handleBalance.toString()}
+                </div>
+                <div className="flex items-center justify-between border-t pt-4">
+                  <div className="space-y-1">
+                    <div className="text-sm text-gray-600">Decrypted Private Balance</div>
+                    <div className="font-mono text-xl">{decryptedBalance.toString()}</div>
+                  </div>
+                  <Button variant="outline" onClick={() => decrypt()}>
+                    <>
+                      <Unlock className="mr-2 h-4 w-4" />
+                      Decrypt
+                    </>
+                </Button>
                 </div>
               </CardContent>
             </Card>
 
-      <dl>
 
-        <Button onClick={() => decrypt()}>
-          Reencrypt and decrypt my balance
-        </Button>
-        <dd className="Devnet__dd">
-          My decrypted private balance is: {decryptedBalance.toString()}
-        </dd>
 
-        <dd className="Devnet__dd">Chose an amount to transfer:</dd>
 
-        <div>
-          <input
-            type="number"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Enter a number"
-          />{' '}
-          <Button onClick={handleConfirmAmount}>OK</Button>
-          {chosenValue !== null && (
-            <div>
-              <p>You chose: {chosenValue}</p>
+      {/* Transfer Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium">Transfer Tokens</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-sm text-gray-600">Amount</label>
+            <div className="flex gap-2">
+              <Input
+                type="number"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Enter a number"
+              />{' '}
+              <Button 
+                onClick={() => encrypt(BigInt(inputValue))}
+                disabled={isEncrypting}
+              >
+                {isEncrypting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Encrypting...
+                  </>
+                ) : (
+                  <>Encrypt {inputValue}</>
+                )}
+              </Button>
             </div>
-          )}
-        </div>
+          </div>
 
-        <Button onClick={() => encrypt(BigInt(chosenValue))}>
-          Encrypt {chosenValue}
-        </Button>
-        <dt className="Devnet__title">
-          This is an encryption of {chosenValue}:
-        </dt>
-        <dd className="Devnet__dd">
-          <pre className="Devnet__pre">
-            Handle: {handles.length ? toHexString(handles[0]) : ''}
-          </pre>
-          <pre className="Devnet__pre">
-            Input Proof: {encryption ? toHexString(encryption) : ''}
-          </pre>
-        </dd>
 
-        <div>
-          <input
-            type="text"
-            value={inputValueAddress}
-            onChange={(e) => setInputValueAddress(e.target.value)}
-            placeholder="Receiver address"
-          />
-          <Button onClick={handleConfirmAddress}>OK</Button>{' '}
+
+          <div className="space-y-2">
+            <label className="text-sm text-gray-600">Receiver Address</label>
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                value={inputValueAddress}
+                onChange={(e) => setInputValueAddress(e.target.value)}
+                placeholder="0x...."
+              />
+              <Button className="px-6" onClick={handleConfirmAddress}>OK</Button>{' '}
+              </div>
+                {errorMessage && (
+                  <div style={{ color: 'red' }}>
+                    <p>{errorMessage}</p>
+                  </div>
+                )}
+          </div>
+
+          <div className="space-y-2">
+            <div className="text-sm text-gray-600">
+              This is an encryption of {chosenValue}:
+            </div>
+            <div className="space-y-1">
+              <div className="font-mono text-sm break-all">
+              Handle: {handles.length ? toHexString(handles[0]) : ''}
+              </div>
+              <div className="font-mono text-sm break-all">
+              Input Proof: {encryption ? toHexString(encryption) : ''}
+              </div>
+            </div>
+          </div>
+
           {chosenAddress && (
-            <div>
-              <p>Chosen Address For Receiver: {chosenAddress}</p>
+          <div className="space-y-2">
+            <div className="text-sm text-gray-600">
+              Chosen Address For Receiver:
             </div>
-          )}
-          {errorMessage && (
-            <div style={{ color: 'red' }}>
-              <p>{errorMessage}</p>
+            <div className="space-y-1">
+              <div className="font-mono text-sm break-all">
+               {chosenAddress}
+              </div>
             </div>
+          </div>
           )}
-        </div>
 
-        <div>
-          {chosenAddress !== '0x' && encryption && encryption.length > 0 && (
-            <Button onClick={transferToken}>
-              Transfer Encrypted Amount To Receiver
-            </Button>
-          )}
-        </div>
-      </dl>
+          <div>
+            {chosenAddress !== '0x' && encryption && encryption.length > 0 && (
+              <Button 
+                className="w-full" 
+                size="lg" 
+                onClick={transferToken}
+                disabled={isTransferring}
+              >
+                {isTransferring ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Transferring...
+                  </>
+                ) : (
+                  'Transfer Encrypted Amount To Receiver'
+                )}
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
     </>
   );
 };
