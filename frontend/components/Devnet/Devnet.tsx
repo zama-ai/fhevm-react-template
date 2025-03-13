@@ -2,13 +2,12 @@ import { useEffect, useState, useCallback } from 'react';
 import { getInstance } from '../../src/fhevmjs.ts';
 import { Eip1193Provider, Provider, ZeroAddress } from 'ethers';
 import { ethers } from 'ethers';
-import { Button } from "@/components/ui/Button"
+import { Button } from '@/components/ui/button';
 //import { useContract, useBalances, useEncryption } from '@/hooks/useContract';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { reencryptEuint64 } from '@/lib/reencrypt.ts';
-import { Lock, Unlock, Loader2 } from 'lucide-react';
-import { Skeleton } from '../ui/skeleton.tsx';
+import { Unlock, Loader2 } from 'lucide-react';
 import { Input } from '../ui/input.tsx';
 
 const toHexString = (bytes: Uint8Array) =>
@@ -27,22 +26,23 @@ export const Devnet = ({
   readOnlyProvider,
 }: DevnetProps) => {
   const [contractAddress, setContractAddress] = useState(ZeroAddress);
+  const [tokenSymbol, setTokenSymbol] = useState('');
 
   const [handleBalance, setHandleBalance] = useState('0');
   const [decryptedBalance, setDecryptedBalance] = useState('???');
+  const [lastUpdated, setLastUpdated] = useState<string>('Never');
+  const [isDecrypting, setIsDecrypting] = useState(false);
 
   const [handles, setHandles] = useState<Uint8Array[]>([]);
   const [encryption, setEncryption] = useState<Uint8Array>();
 
-  const [inputValue, setInputValue] = useState(''); // Track the input
-  const [chosenValue, setChosenValue] = useState('0'); // Track the confirmed value
+  const [transferAmount, setTransferAmount] = useState('');
+  const [isEncrypting, setIsEncrypting] = useState(false);
+  const [isTransferring, setIsTransferring] = useState(false);
 
   const [inputValueAddress, setInputValueAddress] = useState('');
   const [chosenAddress, setChosenAddress] = useState('0x');
   const [errorMessage, setErrorMessage] = useState('');
-
-  const [isEncrypting, setIsEncrypting] = useState(false);
-  const [isTransferring, setIsTransferring] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -66,6 +66,15 @@ export const Devnet = ({
         }
 
         setContractAddress(MyConfidentialERC20.address);
+
+        // Fetch token symbol
+        const contract = new ethers.Contract(
+          MyConfidentialERC20.address,
+          ['function symbol() view returns (string)'],
+          readOnlyProvider,
+        );
+        const symbol = await contract.symbol();
+        setTokenSymbol(symbol);
       } catch (error) {
         console.error(
           'Error loading data - you probably forgot to deploy the token contract before running the front-end server:',
@@ -75,12 +84,14 @@ export const Devnet = ({
     };
 
     loadData();
-  }, []);
+  }, [readOnlyProvider]);
 
-  const handleConfirmAddress = () => {
+  useEffect(() => {
     const trimmedValue = inputValueAddress.trim().toLowerCase();
-    if (ethers.isAddress(trimmedValue)) {
-      // getAddress returns the checksummed address
+    if (trimmedValue === '') {
+      setChosenAddress('0x');
+      setErrorMessage('');
+    } else if (ethers.isAddress(trimmedValue)) {
       const checksummedAddress = ethers.getAddress(trimmedValue);
       setChosenAddress(checksummedAddress);
       setErrorMessage('');
@@ -88,7 +99,7 @@ export const Devnet = ({
       setChosenAddress('0x');
       setErrorMessage('Invalid Ethereum address.');
     }
-  };
+  }, [inputValueAddress]);
 
   const instance = getInstance();
 
@@ -109,28 +120,8 @@ export const Devnet = ({
     void getBalances();
   }, [getBalances]);
 
-  const encrypt = async (val: bigint) => {
-    setChosenValue(inputValue);
-    setIsEncrypting(true);
-
-    const now = Date.now();
-    try {
-      const result = await instance
-        .createEncryptedInput(contractAddress, account)
-        .add64(val)
-        .encrypt();
-      console.log(`Took ${(Date.now() - now) / 1000}s`);
-      setHandles(result.handles);
-      setEncryption(result.inputProof);
-    } catch (e) {
-      console.error('Encryption error:', e);
-      console.log(Date.now() - now);
-    } finally {
-      setIsEncrypting(false);
-    }
-  };
-
   const decrypt = async () => {
+    setIsDecrypting(true);
     const signer = await provider.getSigner();
     try {
       const clearBalance = await reencryptEuint64(
@@ -140,19 +131,38 @@ export const Devnet = ({
         contractAddress,
       );
       setDecryptedBalance(clearBalance.toString());
+      setLastUpdated(new Date().toLocaleString());
     } catch (error) {
       if (error === 'Handle is not initialized') {
-        // if handle is uninitialized - i.e equal to 0 - we know for sure that the balance is null
         setDecryptedBalance('0');
       } else {
         throw error;
       }
+    } finally {
+      setIsDecrypting(false);
     }
   };
 
   const transferToken = async () => {
-    setIsTransferring(true);
+    if (!transferAmount) return;
+
+    setIsEncrypting(true);
     try {
+      // Encrypt the amount first
+      const result = await instance
+        .createEncryptedInput(contractAddress, account)
+        .add64(BigInt(transferAmount))
+        .encrypt();
+
+      setHandles(result.handles);
+      setEncryption(result.inputProof);
+
+      console.log('Handle:', toHexString(result.handles[0]));
+      console.log('Input Proof:', toHexString(result.inputProof));
+
+      // Proceed with transfer
+      setIsEncrypting(false);
+      setIsTransferring(true);
       const contract = new ethers.Contract(
         contractAddress,
         ['function transfer(address,bytes32,bytes) external returns (bool)'],
@@ -163,147 +173,135 @@ export const Devnet = ({
         .connect(signer)
         .transfer(
           chosenAddress,
-          toHexString(handles[0]),
-          toHexString(encryption),
+          toHexString(result.handles[0]),
+          toHexString(result.inputProof),
         );
       await tx.wait();
       await getBalances();
+
+      // Clear the form
+      setTransferAmount('');
+      setInputValueAddress('');
+    } catch (error) {
+      console.error('Transfer failed:', error);
     } finally {
+      setIsEncrypting(false);
       setIsTransferring(false);
     }
   };
 
   return (
     <>
-          <div className="grid gap-4 md:grid-cols-1">
-
-            {/* Encrypted Balance */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base font-medium">Encrypted Balance</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="font-mono text-sm break-all">
-                {handleBalance.toString()}
+      <div className="grid gap-4 md:grid-cols-1">
+        {/* Encrypted Balance */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base font-medium">
+              Encrypted Balance
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between pt-4">
+              <div>
+                <div className="font-mono text-xl">
+                  {decryptedBalance.toString()} {tokenSymbol}
                 </div>
-                <div className="flex items-center justify-between border-t pt-4">
-                  <div className="space-y-1">
-                    <div className="text-sm text-gray-600">Decrypted Private Balance</div>
-                    <div className="font-mono text-xl">{decryptedBalance.toString()}</div>
-                  </div>
-                  <Button variant="outline" onClick={() => decrypt()}>
-                    <>
-                      <Unlock className="mr-2 h-4 w-4" />
-                      Decrypt
-                    </>
-                </Button>
+                <div className="font-mono text-gray-600 text-sm">
+                  Last updated: {lastUpdated}
                 </div>
-              </CardContent>
-            </Card>
-
-
-
-
-      {/* Transfer Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-sm font-medium">Transfer Tokens</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm text-gray-600">Amount</label>
-            <div className="flex gap-2">
-              <Input
-                type="number"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Enter a number"
-              />{' '}
-              <Button 
-                onClick={() => encrypt(BigInt(inputValue))}
-                disabled={isEncrypting}
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => decrypt()}
+                disabled={isDecrypting}
               >
-                {isEncrypting ? (
+                {isDecrypting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Encrypting...
+                    Decrypting...
                   </>
                 ) : (
-                  <>Encrypt {inputValue}</>
+                  <>
+                    <Unlock className="mr-2 h-4 w-4" />
+                    Decrypt
+                  </>
                 )}
               </Button>
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-
-
-          <div className="space-y-2">
-            <label className="text-sm text-gray-600">Receiver Address</label>
-            <div className="flex gap-2">
+        {/* Transfer Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">
+              Transfer Tokens
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm text-gray-600">Recepient Address</label>
               <Input
                 type="text"
                 value={inputValueAddress}
                 onChange={(e) => setInputValueAddress(e.target.value)}
                 placeholder="0x...."
               />
-              <Button className="px-6" onClick={handleConfirmAddress}>OK</Button>{' '}
-              </div>
-                {errorMessage && (
-                  <div style={{ color: 'red' }}>
-                    <p>{errorMessage}</p>
-                  </div>
-                )}
-          </div>
+              {errorMessage && (
+                <div style={{ color: 'red' }}>
+                  <p>{errorMessage}</p>
+                </div>
+              )}
+            </div>
 
-          <div className="space-y-2">
-            <div className="text-sm text-gray-600">
-              This is an encryption of {chosenValue}:
-            </div>
-            <div className="space-y-1">
-              <div className="font-mono text-sm break-all">
-              Handle: {handles.length ? toHexString(handles[0]) : ''}
+            <div className="space-y-2">
+              <label className="text-sm text-gray-600">Amount</label>
+              <div className="flex gap-2">
+                <Input
+                  type="number"
+                  min="0"
+                  value={transferAmount}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === '' || parseFloat(value) >= 0) {
+                      setTransferAmount(value);
+                    }
+                  }}
+                  placeholder="Enter amount to transfer"
+                />
               </div>
-              <div className="font-mono text-sm break-all">
-              Input Proof: {encryption ? toHexString(encryption) : ''}
-              </div>
             </div>
-          </div>
 
-          {chosenAddress && (
-          <div className="space-y-2">
-            <div className="text-sm text-gray-600">
-              Chosen Address For Receiver:
-            </div>
-            <div className="space-y-1">
-              <div className="font-mono text-sm break-all">
-               {chosenAddress}
-              </div>
-            </div>
-          </div>
-          )}
-
-          <div>
-            {chosenAddress !== '0x' && encryption && encryption.length > 0 && (
-              <Button 
-                className="w-full" 
-                size="lg" 
+            <div>
+              <Button
+                className="w-full"
+                size="lg"
                 onClick={transferToken}
-                disabled={isTransferring}
+                disabled={
+                  isTransferring ||
+                  isEncrypting ||
+                  !transferAmount ||
+                  chosenAddress === '0x'
+                }
               >
-                {isTransferring ? (
+                {isEncrypting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Encrypting amount...
+                  </>
+                ) : isTransferring ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Transferring...
                   </>
                 ) : (
-                  'Transfer Encrypted Amount To Receiver'
+                  'Transfer Tokens'
                 )}
               </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </>
   );
 };

@@ -6,8 +6,9 @@ import { Eip1193Provider } from 'ethers';
 import { createFhevmInstance } from '../../src/fhevmjs';
 import { JsonRpcProvider } from 'ethers';
 import { Copy, Check } from 'lucide-react';
-import { Button } from "@/components/ui/Button"
+import { Button } from '@/components/ui/button';
 import { formatAddress } from '@/lib/helper';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const AUTHORIZED_CHAIN_ID = ['0xaa36a7', '0x2328', '0x7a69'];
 
@@ -78,7 +79,7 @@ export const Connect: React.FC<{
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 1000); // Reset after 1 second
-  }
+  };
 
   useEffect(() => {
     const eth = window.ethereum;
@@ -141,6 +142,12 @@ export const Connect: React.FC<{
     }
   }, []);
 
+  const disconnect = useCallback(() => {
+    setConnected(false);
+    setAccount('');
+    setEthBalance('0');
+  }, []);
+
   const child = useMemo<React.ReactNode>(() => {
     if (!account || !provider) {
       return null;
@@ -149,7 +156,9 @@ export const Connect: React.FC<{
     if (!validNetwork) {
       return (
         <div className="p-4 space-y-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <p className="text-sm text-muted-foreground">You're not on the correct network</p>
+          <p className="text-sm text-muted-foreground">
+            You're not on the correct network
+          </p>
           <Button onClick={switchNetwork} className="w-full">
             Switch to {import.meta.env.MOCKED ? 'Hardhat' : 'Sepolia'}
           </Button>
@@ -162,50 +171,78 @@ export const Connect: React.FC<{
     }
 
     return children(account, provider, readOnlyProvider);
-  }, [account, provider, children, validNetwork, loading, readOnlyProvider, switchNetwork]);
+  }, [
+    account,
+    provider,
+    children,
+    validNetwork,
+    loading,
+    readOnlyProvider,
+    switchNetwork,
+  ]);
 
   if (error) {
     return <p>No wallet has been found.</p>;
   }
 
   const connectInfos = (
-    <div className="Connect__info">
-      {!connected && (
-        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <Button onClick={connect} className="w-full" size="lg">
-            Connect your wallet
-          </Button>
-        </div>
-      )}
-      {/* Connected Address */}
-      {connected &&
-      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-        <div className="flex justify-between items-start">
-          <div>
-            <div className="text-sm text-muted-foreground mb-2">Connected with</div>
-            <div className="flex items-center gap-2">
-              <div className="font-mono text-sm truncate">{formatAddress(account)}</div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleCopyAddress(account.toString())}
-              >
-                {copied ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base font-medium">Wallet</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {!connected && (
+          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <Button onClick={connect} className="w-full" size="lg">
+              Connect your wallet
+            </Button>
+          </div>
+        )}
+        {/* Connected Address */}
+        {connected && (
+          <div className=" bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div className="flex justify-between items-start">
+              <div>
+                <div className="text-sm text-muted-foreground mb-2">
+                  Connected Address
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="font-mono text-sm truncate">
+                    {formatAddress(account)}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleCopyAddress(account.toString())}
+                  >
+                    {copied ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+              <div>
+                <div className="text-sm text-right text-muted-foreground mb-2">
+                  Balance:
+                </div>
+                <span className="font-mono">
+                  {Number(ethBalance).toFixed(4)} ETH
+                </span>
+              </div>
             </div>
+            <Button
+              onClick={disconnect}
+              variant="outline"
+              className="w-full mt-4"
+            >
+              Disconnect Wallet
+            </Button>
           </div>
-          <div>
-            <div className="text-sm text-muted-foreground mb-2">Balance:</div>
-            <span className="font-mono">{Number(ethBalance).toFixed(4)} ETH</span>
-          </div>
-        </div>
-      </div>
-}
-    </div>
+        )}
+      </CardContent>
+    </Card>
   );
 
   return (

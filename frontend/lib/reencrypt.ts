@@ -1,5 +1,5 @@
-import { Signer } from "ethers";
-import { FhevmInstance } from "fhevmjs/node";
+import { Signer, TypedDataDomain } from 'ethers';
+import { FhevmInstance } from 'fhevmjs';
 
 const EBOOL_T = 0;
 const EUINT4_T = 1;
@@ -16,17 +16,17 @@ const EBYTES256_T = 11;
 
 export function verifyType(handle: bigint, expectedType: number) {
   if (handle === 0n) {
-    throw "Handle is not initialized";
+    throw 'Handle is not initialized';
   }
 
   if (handle.toString(2).length > 256) {
-    throw "Handle is not a bytes32";
+    throw 'Handle is not a bytes32';
   }
 
   const typeCt = handle >> 8n;
 
   if (Number(typeCt % 256n) !== expectedType) {
-    throw "Wrong encrypted type for the handle";
+    throw 'Wrong encrypted type for the handle';
   }
 }
 
@@ -37,7 +37,9 @@ export async function reencryptEbool(
   contractAddress: string,
 ): Promise<boolean> {
   verifyType(handle, EBOOL_T);
-  return (await reencryptHandle(signer, instance, handle, contractAddress)) === 1n;
+  return (
+    (await reencryptHandle(signer, instance, handle, contractAddress)) === 1n
+  );
 }
 
 export async function reencryptEuint4(
@@ -107,8 +109,13 @@ export async function reencryptEaddress(
   contractAddress: string,
 ): Promise<string> {
   verifyType(handle, EUINT160_T);
-  const addressAsUint160: bigint = await reencryptHandle(signer, instance, handle, contractAddress);
-  const handleStr = "0x" + addressAsUint160.toString(16).padStart(40, "0");
+  const addressAsUint160: bigint = await reencryptHandle(
+    signer,
+    instance,
+    handle,
+    contractAddress,
+  );
+  const handleStr = '0x' + addressAsUint160.toString(16).padStart(40, '0');
   return handleStr;
 }
 
@@ -161,19 +168,23 @@ async function reencryptHandle(
   instance: FhevmInstance,
   handle: bigint,
   contractAddress: string,
-): Promise<any> {
-  const { publicKey: publicKey, privateKey: privateKey } = instance.generateKeypair();
+): Promise<bigint> {
+  const { publicKey, privateKey } = instance.generateKeypair();
   const eip712 = instance.createEIP712(publicKey, contractAddress);
-  const signature = await signer.signTypedData(eip712.domain, { Reencrypt: eip712.types.Reencrypt }, eip712.message);
+  const signature = await signer.signTypedData(
+    eip712.domain as TypedDataDomain,
+    { Reencrypt: eip712.types.Reencrypt },
+    eip712.message as Record<string, any>,
+  );
 
   const reencryptedHandle = await instance.reencrypt(
     handle,
     privateKey,
     publicKey,
-    signature.replace("0x", ""),
+    signature.replace('0x', ''),
     contractAddress,
     await signer.getAddress(),
   );
 
-  return reencryptedHandle;
+  return BigInt(reencryptedHandle.toString());
 }

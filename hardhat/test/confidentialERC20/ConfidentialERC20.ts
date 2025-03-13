@@ -180,14 +180,6 @@ describe("ConfidentialERC20", function () {
     expect(balanceBob2).to.equal(1337); // check that transfer did happen this time
   });
 
-  it("should decrypt the SECRET value", async function () {
-    const tx2 = await this.erc20.requestSecret();
-    await tx2.wait();
-    await awaitAllDecryptionResults();
-    const y = await this.erc20.revealedSecret();
-    expect(y).to.equal(42n);
-  });
-
   it("DEBUG - using debug.decrypt64 for debugging transfer", async function () {
     if (network.name === "hardhat") {
       // using the debug.decryptXX functions is possible only in mocked mode

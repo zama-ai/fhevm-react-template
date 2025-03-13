@@ -66,6 +66,8 @@ You can edit the CI script in [.github/workflows/ci.yml](./.github/workflows/ci.
 
 ### Pre Requisites
 
+Install [pnpm](https://pnpm.io/installation)
+
 Before being able to run any command, you need to create a `.env` file and set a BIP-39 compatible mnemonic as the `MNEMONIC`
 environment variable. You can follow the example in `.env.example` or start with the following command:
 
@@ -78,7 +80,7 @@ If you don't already have a mnemonic, you can use this [website](https://iancole
 Then, install all needed dependencies - please **_make sure to use Node v20_** or more recent:
 
 ```sh
-npm install
+pnpm install
 ```
 
 ### Compile
@@ -86,7 +88,7 @@ npm install
 Compile the smart contracts with Hardhat:
 
 ```sh
-npm run compile
+pnpm compile
 ```
 
 ### TypeChain
@@ -94,7 +96,7 @@ npm run compile
 Compile the smart contracts and generate TypeChain bindings:
 
 ```sh
-npm run typechain
+pnpm typechain
 ```
 
 ### Test
@@ -102,7 +104,7 @@ npm run typechain
 Run the tests with Hardhat - this will run the tests on a local hardhat node in mocked mode (i.e the FHE operations and decryptions will be simulated by default):
 
 ```sh
-npm run test
+pnpm test
 ```
 
 ### Lint Solidity
@@ -110,7 +112,7 @@ npm run test
 Lint the Solidity code:
 
 ```sh
-npm run lint:sol
+pnpm lint:sol
 ```
 
 ### Lint TypeScript
@@ -118,7 +120,7 @@ npm run lint:sol
 Lint the TypeScript code:
 
 ```sh
-npm run lint:ts
+pnpm lint:ts
 ```
 
 
@@ -127,7 +129,7 @@ npm run lint:ts
 Delete the smart contract artifacts, the coverage reports and the Hardhat cache:
 
 ```sh
-npm run clean
+pnpm clean
 ```
 
 ### Mocked mode
@@ -137,7 +139,7 @@ encrypted types are not really encrypted, and the tests are run on the original 
 network instance. To run the tests in mocked mode, you can use directly the following command:
 
 ```bash
-npm run test
+pnpm test
 ```
 
 You can still use all the usual specific [hardhat network methods](https://hardhat.org/hardhat-network/docs/reference#hardhat-network-methods), such as `evm_snapshot`, `evm_mine`, `evm_increaseTime`, etc, which are very helpful in a testing context. Another useful hardhat feature, is the [console.log](https://hardhat.org/hardhat-network/docs/reference#console.log) function which can be used in fhevm smart contracts in mocked mode as well.
@@ -146,7 +148,7 @@ To analyze the coverage of the tests (in mocked mode necessarily, as this cannot
 can use this command :
 
 ```bash
-npm run coverage
+pnpm coverage
 ```
 
 Then open the file `coverage/index.html`. You can see there which line or branch for each contract which has been
@@ -179,10 +181,9 @@ If you don't own already Sepolia test tokens, you can for example use a free fau
 
 Another faster way to test the coprocessor on Sepolia is to simply run the following command:
 ```
-npm run deploy-sepolia
+pnpm deploy-sepolia
 ```
-This would automatically make Alice's account deploy an instance of the `MyConfidentialERC20` example contract on Sepolia, and then make Alice mint to herself `10000` tokens.
-
+This would automatically deploy an instance of the `MyConfidentialERC20` example contract on Sepolia.
 
 ### Etherscan verification
 
@@ -198,7 +199,27 @@ As a concrete example, to verify the deployed `MyConfidentialERC20` from previou
 npx hardhat verify-deployed --address [CONFIDENTIAL_ERC20_ADDRESS] --contract contracts/MyConfidentialERC20.sol:MyConfidentialERC20 --args "Naraggara,NARA" --network sepolia
 ```
 
-Note that you should replace the address placeholder `[CONFIDENTIAL_ERC20_ADDRESS]` by the concrete address that is logged when you run the `npm run deploy-sepolia` deployment script.
+Note that you should replace the address placeholder `[CONFIDENTIAL_ERC20_ADDRESS]` by the concrete address that is logged when you run the `pnpm deploy-sepolia` deployment script.
+
+### Interacting with the Contract
+
+Once you have deployed your contract to Sepolia (using `pnpm deploy-sepolia`), you can interact with it using the following commands:
+
+```sh
+# Mint new tokens (encrypted amount)
+npx hardhat mint --to <recipient-address> --amount <amount> --network sepolia
+
+# Check the total supply
+npx hardhat totalSupply --network sepolia
+
+# Transfer tokens to another address (encrypted amount)
+npx hardhat transfer --privatekey <private-key> --to <recipient-address> --amount <amount> --network sepolia
+
+# Check encrypted balance of an account
+npx hardhat balance --privatekey <private-key> --network sepolia
+```
+
+> **Note**: All token amounts in transactions are automatically encrypted to maintain confidentiality on the blockchain.
 
 ### Syntax Highlighting
 

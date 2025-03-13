@@ -7,9 +7,12 @@ import { build, preview } from 'vite';
       MODE: 'production',
       DEV: false,
       PROD: true,
+      preview: {
+        port: 3000
+      }
     });
     console.log('Preview server is running...');
-    console.log('Listening on http://localhost:4173\n');
+    console.log('Listening on http://localhost:3000\n');
 
     const watcher = await build({
       build: {
