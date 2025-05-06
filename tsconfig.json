@@ -10,10 +10,10 @@
       "@/*": ["./src/*"]
     },
     "noImplicitAny": false,
-    "noUnusedParameters": false,
+    "noUnusedParameters": true,
     "skipLibCheck": true,
     "allowJs": true,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     "strictNullChecks": false
   }
 }

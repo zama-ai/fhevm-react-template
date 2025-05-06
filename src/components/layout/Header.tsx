@@ -31,7 +31,7 @@ const Header = () => {
   const navItems = [
     { name: 'Dashboard', path: '/' },
     { name: 'Transfer', path: '/transfer' },
-    { name: 'Swap', path: '/swap' },
+    { name: 'Fhevm', path: '/fhevm' },
   ];
 
   const onNavItemClick = () => {
@@ -115,7 +115,7 @@ const Header = () => {
                     <SheetTitle></SheetTitle>
                   </SheetHeader>
                   <div className="mt-4 w-full max-w-xs flex flex-col ">
-                    {navItems.map((item) => (
+                    {/* {navItems.map((item) => (
                       <Link
                         key={item.path}
                         to={item.path}
@@ -132,7 +132,7 @@ const Header = () => {
                           {item.name}
                         </div>
                       </Link>
-                    ))}
+                    ))} */}
                     <div className="flex mt-8 px-4 flex-col gap-4">
                       <div className="text-sm text-">Connected wallet:</div>
                       <div className="flex justify-left w-full max-w-xs">

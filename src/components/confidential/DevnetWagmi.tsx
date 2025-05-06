@@ -1,59 +1,73 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Unlock, Loader2 } from "lucide-react";
-import { Input } from "@/components/ui/input.tsx";
-import { useAccount, useConfig } from "wagmi";
-import { sepolia } from "wagmi/chains";
-import { type BaseError } from "wagmi";
-import { VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS } from "@/config/env";
-import { useEncryptedBalance } from "@/hooks/token/useEncryptedBalance";
-import { useConfidentialTransfer } from "@/hooks/token/transfer/useConfidentialTransfer";
-import { useSigner } from "@/hooks/useSigner";
-import { useAddressValidation } from "@/hooks/useAddressValidation";
-import { useTokenBalance } from "@/hooks/token/useTokenBalance";
-import { useWallet } from "@/hooks/useWallet";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Unlock, Loader2 } from 'lucide-react';
+import { Input } from '@/components/ui/input.tsx';
+import { sepolia } from 'wagmi/chains';
+import { type BaseError } from 'wagmi';
+import { VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS } from '@/config/env';
+import { useEncryptedBalance } from '@/hooks/token/useEncryptedBalance';
+import { useConfidentialTransfer } from '@/hooks/token/transfer/useConfidentialTransfer';
+import { useSigner } from '@/hooks/useSigner';
+import { useAddressValidation } from '@/hooks/useAddressValidation';
+import { useTokenBalance } from '@/hooks/token/useTokenBalance';
+import { useWallet } from '@/hooks/useWallet';
 
 export const DevnetWagmi = () => {
   const { address } = useWallet();
-  const chain = sepolia;
   const contractAddress = VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS;
   const { signer } = useSigner();
 
-  const [transferAmount, setTransferAmount] = useState("");
-  const [inputValueAddress, setInputValueAddress] = useState("");
+  const [transferAmount, setTransferAmount] = useState('');
+  const [inputValueAddress, setInputValueAddress] = useState('');
   const { chosenAddress, errorMessage } =
     useAddressValidation(inputValueAddress);
 
   const tokenBalance = useTokenBalance({
     address,
-    tokenAddress: contractAddress || "native",
+    tokenAddress: contractAddress || 'native',
     enabled: !!address,
   });
 
   // Use custom hooks
-  const { decryptedBalance, lastUpdated, isDecrypting, decrypt } =
-    useEncryptedBalance({
-      signer,
-    });
+  const {
+    decryptedBalance,
+    lastUpdated,
+    isDecrypting,
+    decrypt: decryptBalance,
+    error: decryptionError,
+  } = useEncryptedBalance({
+    signer,
+  });
 
   const {
-    transfer,
+    transfer: confidentialTransfer,
     isEncrypting,
     isPending,
     isConfirming,
     isConfirmed,
-    transferHash,
-    transferError,
-  } = useConfidentialTransfer({
-    userAddress: address,
-    chain,
-  });
+    hash: transferHash,
+    error: transferError,
+  } = useConfidentialTransfer();
 
   const handleTransfer = async () => {
-    if (await transfer(contractAddress, transferAmount, chosenAddress)) {
-      setTransferAmount("");
-      setInputValueAddress("");
+    await confidentialTransfer(
+      contractAddress,
+      transferAmount,
+      chosenAddress as `0x${string}`,
+      6,
+    );
+  };
+
+  const handleDecrypt = async () => {
+    if (!signer) {
+      console.error('Signer not initialized - please connect your wallet');
+      return;
+    }
+    try {
+      await decryptBalance(tokenBalance.rawBalance, contractAddress);
+    } catch (error) {
+      console.error('Failed to decrypt balance:', error);
     }
   };
 
@@ -71,7 +85,7 @@ export const DevnetWagmi = () => {
             <div className="flex items-center justify-between pt-4">
               <div>
                 <div className="font-mono text-xl">
-                  {decryptedBalance.toString()} {tokenBalance.symbol}
+                  {decryptedBalance?.toString()} {tokenBalance.symbol}
                 </div>
                 <div className="font-mono text-gray-600 text-sm">
                   Last updated: {lastUpdated}
@@ -80,7 +94,7 @@ export const DevnetWagmi = () => {
               <Button
                 variant="outline"
                 onClick={() =>
-                  decrypt(tokenBalance.rawBalance, contractAddress)
+                  decryptBalance(tokenBalance.rawBalance, contractAddress)
                 }
                 disabled={isDecrypting}
               >
@@ -117,7 +131,7 @@ export const DevnetWagmi = () => {
                 placeholder="0x...."
               />
               {errorMessage && (
-                <div style={{ color: "red" }}>
+                <div style={{ color: 'red' }}>
                   <p>{errorMessage}</p>
                 </div>
               )}
@@ -132,7 +146,7 @@ export const DevnetWagmi = () => {
                   value={transferAmount}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (value === "" || parseFloat(value) >= 0) {
+                    if (value === '' || parseFloat(value) >= 0) {
                       setTransferAmount(value);
                     }
                   }}
@@ -150,7 +164,7 @@ export const DevnetWagmi = () => {
                   isPending ||
                   isEncrypting ||
                   !transferAmount ||
-                  chosenAddress === "0x"
+                  chosenAddress === '0x'
                 }
               >
                 {isEncrypting ? (
@@ -164,7 +178,7 @@ export const DevnetWagmi = () => {
                     Confirming transaction...
                   </>
                 ) : (
-                  "Transfer Tokens"
+                  'Transfer Tokens'
                 )}
               </Button>
             </div>
@@ -173,7 +187,7 @@ export const DevnetWagmi = () => {
             {isConfirmed && <div>Transaction confirmed.</div>}
             {transferError && (
               <div>
-                Error:{" "}
+                Error:{' '}
                 {(transferError as BaseError).shortMessage ||
                   transferError.message}
               </div>
