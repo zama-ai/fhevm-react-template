@@ -1,4 +1,4 @@
-import { mainnet, sepolia, polygon } from 'wagmi/chains';
+import { mainnet, sepolia } from 'wagmi/chains';
 import {
   VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS,
   VITE_AUCTION_TOKEN_CONTRACT_ADDRESS,
@@ -28,17 +28,6 @@ export const getNativeToken = (chainId: number) => {
         isEncrypted: false,
         isDecrypted: false,
         logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
-      };
-    case polygon.id:
-      return {
-        id: '1',
-        symbol: 'MATIC',
-        name: 'Polygon',
-        address: 'native',
-        decimals: 18,
-        isEncrypted: false,
-        isDecrypted: false,
-        logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polygon/info/logo.png',
       };
     default:
       return {
@@ -127,29 +116,6 @@ export const getDefaultTokens = (chainId: number) => {
           logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png',
         },
       ];
-    case polygon.id:
-      return [
-        {
-          id: '2',
-          symbol: 'WBTC',
-          name: 'Wrapped Bitcoin (Polygon)',
-          address: '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
-          decimals: 8,
-          isEncrypted: false,
-          isDecrypted: false,
-          logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6/logo.png',
-        },
-        {
-          id: '3',
-          symbol: 'USDC',
-          name: 'USD Coin (Polygon)',
-          address: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
-          decimals: 6,
-          isEncrypted: false,
-          isDecrypted: false,
-          logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359/logo.png',
-        },
-      ];
     default:
       return [
         {
@@ -164,24 +130,4 @@ export const getDefaultTokens = (chainId: number) => {
         },
       ];
   }
-};
-
-// Helper function to get a price for a token (in a real app, you'd use an API)
-export const getTokenPrice = (symbol: string, chainId?: number): number => {
-  // If it's MATIC on Polygon network, it's the native token
-  if (symbol === 'MATIC' && chainId === polygon.id) {
-    return 1.1; // Native MATIC price
-  }
-
-  const prices: Record<string, number> = {
-    ETH: 1940,
-    MATIC: 1.1,
-    WETH: 1940,
-    UNI: 9.8,
-    USDC: 1.0,
-    WBTC: 49000,
-    cUSDC: 1.0, // Add price for confidential USDC
-  };
-
-  return prices[symbol] || 1;
 };

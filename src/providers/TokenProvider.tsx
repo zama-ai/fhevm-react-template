@@ -1,14 +1,10 @@
-import { ReactNode, useState, useEffect } from "react";
-import { useWallet } from "@/hooks/useWallet";
-import { toast } from "sonner";
-import { useAccount, useChainId } from "wagmi";
-import TokenContext from "@/providers/TokenContext";
-import { Token } from "@/types/tokenTypes";
-import {
-  getNativeToken,
-  getDefaultTokens,
-  getTokenPrice,
-} from "@/utils/tokenUtils";
+import { ReactNode, useState, useEffect } from 'react';
+import { useWallet } from '@/hooks/useWallet';
+import { toast } from 'sonner';
+import { useAccount, useChainId } from 'wagmi';
+import TokenContext from '@/providers/TokenContext';
+import { Token } from '@/types/tokenTypes';
+import { getNativeToken, getDefaultTokens } from '@/utils/tokenUtils';
 
 export const TokenProvider = ({ children }: { children: ReactNode }) => {
   const { isConnected } = useWallet();
@@ -31,15 +27,15 @@ export const TokenProvider = ({ children }: { children: ReactNode }) => {
       const initialTokens = [
         {
           ...nativeToken,
-          balance: "0",
-          rawBalance: "0",
+          balance: '0',
+          rawBalance: '0',
           value: 0,
           change24h: 0,
         },
         ...otherTokens.map((token) => ({
           ...token,
-          balance: "0",
-          rawBalance: "0",
+          balance: '0',
+          rawBalance: '0',
           value: 0,
           change24h: 0,
         })),
@@ -58,7 +54,7 @@ export const TokenProvider = ({ children }: { children: ReactNode }) => {
   // Function to fetch real balances for all tokens
   const fetchTokenBalances = async (
     walletAddress: string,
-    currentChainId: number
+    currentChainId: number,
   ) => {
     try {
       // Get the native token based on current chain
@@ -73,8 +69,8 @@ export const TokenProvider = ({ children }: { children: ReactNode }) => {
       // Create the native token with balance placeholder - real balance will be fetched by useTokenBalance in TokenCard
       const nativeTokenWithBalance = {
         ...nativeToken,
-        balance: "0",
-        rawBalance: "0",
+        balance: '0',
+        rawBalance: '0',
         value: 0,
         change24h: nativeChange24h,
       };
@@ -84,8 +80,8 @@ export const TokenProvider = ({ children }: { children: ReactNode }) => {
         const change24h = Math.random() * 10 - 5; // Random value between -5% and +5%
         return {
           ...token,
-          balance: "0",
-          rawBalance: "0",
+          balance: '0',
+          rawBalance: '0',
           value: 0,
           change24h,
         };
@@ -96,8 +92,8 @@ export const TokenProvider = ({ children }: { children: ReactNode }) => {
 
       setTokens(allTokens);
     } catch (error) {
-      console.error("Error initializing tokens:", error);
-      toast.error("Failed to load token data");
+      console.error('Error initializing tokens:', error);
+      toast.error('Failed to load token data');
     } finally {
       setIsLoading(false);
     }
@@ -112,8 +108,8 @@ export const TokenProvider = ({ children }: { children: ReactNode }) => {
               balance: newBalance,
               isDecrypted: true,
             }
-          : token
-      )
+          : token,
+      ),
     );
   };
 

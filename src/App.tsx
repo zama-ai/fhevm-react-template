@@ -12,7 +12,6 @@ import { TransactionProvider } from '@/providers/TransactionProvider';
 import { createAppKit } from '@reown/appkit/react';
 
 import Header from './components/layout/Header';
-import Dashboard from './pages/Dashboard';
 import Transfer from './pages/Transfer';
 import Fhevm from './pages/Fhevm';
 import NotFound from './pages/NotFound';
@@ -61,8 +60,7 @@ function App() {
                     <Header />
                     <AnimatePresence mode="wait">
                       <Routes>
-                        <Route path="/" element={<Dashboard />} />
-                        <Route path="/transfer" element={<Transfer />} />
+                        <Route path="/" element={<Transfer />} />
                         <Route path="/fhevm" element={<Fhevm />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>

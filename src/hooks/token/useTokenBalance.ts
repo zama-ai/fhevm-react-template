@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useBalance, useReadContract, useChainId } from 'wagmi';
-// import { formatUnits } from "viem";
-import { mainnet, sepolia, polygon } from 'wagmi/chains';
+import { mainnet, sepolia } from 'wagmi/chains';
 import { formatUnits } from '@/lib/helper';
 import { erc20Abi } from '@/utils/erc20Abi';
 import { useSigner } from '../useSigner';
 import { useEncryptedBalance } from './useEncryptedBalance';
-import { Signer } from 'ethers';
 
 interface UseTokenBalanceProps {
   address?: string;
@@ -101,11 +99,7 @@ export function useTokenBalance({
         setRawBalance(nativeBalanceData.data.value);
 
         // Get the appropriate token price based on the current network
-        let nativePrice = 1940; // Default ETH price
-
-        if (chainId === polygon.id) {
-          nativePrice = 1.1; // MATIC price
-        }
+        const nativePrice = 1940; // Default ETH price
 
         setValue(parseFloat(formattedBalance) * nativePrice);
       }
@@ -213,7 +207,6 @@ export function useTokenBalance({
 
   // Get the appropriate native token symbol based on the chain
   const getNativeSymbol = () => {
-    if (chainId === polygon.id) return 'MATIC';
     return 'ETH'; // Default for Ethereum networks (mainnet, sepolia, etc.)
   };
 
@@ -221,7 +214,6 @@ export function useTokenBalance({
   const getNativeName = () => {
     if (chainId === mainnet.id) return 'Ethereum';
     if (chainId === sepolia.id) return 'Sepolia ETH';
-    if (chainId === polygon.id) return 'Polygon';
     return 'Ethereum'; // Default
   };
 

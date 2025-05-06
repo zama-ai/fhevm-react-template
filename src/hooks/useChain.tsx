@@ -1,6 +1,6 @@
-import { Chain } from "viem";
-import { useChainId } from "wagmi";
-import { mainnet, sepolia, polygon, optimism, arbitrum } from "wagmi/chains";
+import { Chain } from 'viem';
+import { useChainId } from 'wagmi';
+import { mainnet, sepolia } from 'wagmi/chains';
 
 export const useChain = () => {
   const chainId = useChainId();
@@ -13,15 +13,6 @@ export const useChain = () => {
       break;
     case sepolia.id:
       chain = sepolia;
-      break;
-    case polygon.id:
-      chain = polygon;
-      break;
-    case optimism.id:
-      chain = optimism;
-      break;
-    case arbitrum.id:
-      chain = arbitrum;
       break;
     default:
       // Default to mainnet if chainId is not recognized
