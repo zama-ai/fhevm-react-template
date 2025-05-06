@@ -37,7 +37,7 @@ const AmountInputField = ({
           </span>
           {selectedToken.isConfidential && (
             <Button
-              variant="ghost"
+              variant="secondary"
               size="sm"
               onClick={handleDecrypt}
               className="h-8 text-xs"

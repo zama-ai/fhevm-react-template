@@ -1,46 +1,41 @@
 // Update this page (the content is just a fallback if you fail to update the page)
-import { DevnetWagmi } from "@/components/confidential/DevnetWagmi";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useWallet } from "@/hooks/useWallet";
-import { useAccount, useChainId } from "wagmi";
-import { sepolia } from "wagmi/chains";
+import { DevnetWagmi } from '@/components/confidential/DevnetWagmi';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useWallet } from '@/hooks/useWallet';
+import { useAccount, useChainId } from 'wagmi';
+import { sepolia } from 'wagmi/chains';
+import PageTransition from '@/components/layout/PageTransition';
+import { motion } from 'framer-motion';
+import WalletNotConnected from '@/components/wallet/WalletNotConnected';
+import UniversalTransferForm from '@/components/transfers/UniversalTransferForm';
 
 const Fhevm = () => {
-  const { address } = useWallet();
-
-  const chainId = useChainId();
-
-  const isOnSepolia = chainId === sepolia.id;
-
-  // If not on Sepolia, show switch chain message
-  if (!isOnSepolia) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-        <div className="w-full max-w-2xl space-y-4 p-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base font-medium">
-                Wrong Network
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center space-y-4">
-                <p>This application only works on Sepolia testnet.</p>
-                <p>Please switch your network to Sepolia to continue.</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+  const { isConnected } = useWallet();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <div className="w-full max-w-2xl space-y-4 p-4">
-        {address && <DevnetWagmi />}
+    <PageTransition>
+      <div className="container mx-auto mt-10 px-4 pt-24 pb-16">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mb-8 text-center"
+        >
+          <h1 className="font-medium text-4xl mb-4">Send Assets</h1>
+          {/* <p className="text-muted-foreground text-md">
+            Transfer your assets to any address securely and easily.
+          </p> */}
+        </motion.div>
+
+        {isConnected ? (
+          <div className="mt-8 max-w-md mx-auto">
+            <DevnetWagmi />
+          </div>
+        ) : (
+          <WalletNotConnected />
+        )}
       </div>
-    </div>
+    </PageTransition>
   );
 };
 

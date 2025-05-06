@@ -93,9 +93,7 @@ export const DevnetWagmi = () => {
               </div>
               <Button
                 variant="outline"
-                onClick={() =>
-                  decryptBalance(tokenBalance.rawBalance, contractAddress)
-                }
+                onClick={handleDecrypt}
                 disabled={isDecrypting}
               >
                 {isDecrypting ? (
