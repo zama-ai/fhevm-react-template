@@ -212,9 +212,8 @@ export function useTokenBalance({
 
   // Get the appropriate native token name based on the chain
   const getNativeName = () => {
-    if (chainId === mainnet.id) return 'Ethereum';
     if (chainId === sepolia.id) return 'Sepolia ETH';
-    return 'Ethereum'; // Default
+    return 'Sepolia ETH'; // Default
   };
 
   const decrypt = async () => {

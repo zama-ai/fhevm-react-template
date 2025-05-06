@@ -1,5 +1,5 @@
 // Update this page (the content is just a fallback if you fail to update the page)
-import { DevnetWagmi } from '@/components/confidential/DevnetWagmi';
+import { DevnetWagmi } from '@/components/transfers/DevnetWagmi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useWallet } from '@/hooks/useWallet';
 import { useAccount, useChainId } from 'wagmi';
@@ -21,10 +21,12 @@ const Fhevm = () => {
           transition={{ duration: 0.3 }}
           className="mb-8 text-center"
         >
-          <h1 className="font-medium text-4xl mb-4">Send Assets</h1>
-          {/* <p className="text-muted-foreground text-md">
-            Transfer your assets to any address securely and easily.
-          </p> */}
+          <h1 className="font-medium text-4xl mb-4">
+            Send Assets Confidentaily
+          </h1>
+          <p className="text-muted-foreground text-md">
+            Learn more in our documentation
+          </p>
         </motion.div>
 
         {isConnected ? (

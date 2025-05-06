@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Menu } from 'lucide-react';
-import SwitchNetwork from '@/components/wallet/SwitchNetwork';
 import {
   Sheet,
   SheetContent,
@@ -47,10 +46,7 @@ const Header = () => {
     >
       <div className="md:px-0 px-5 mx-auto font-telegraf">
         <div className="flex items-center justify-between">
-          <Link
-            to="/"
-            className="flex mr-5 lg:mr-60 md:mr-32 items-center space-x-2"
-          >
+          <Link to="/" className="flex mr-5 md:mr-32 items-center space-x-2">
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -91,7 +87,6 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center gap-2">
-            <SwitchNetwork />
             <div className="hidden md:block">
               <ConnectWallet />
             </div>
