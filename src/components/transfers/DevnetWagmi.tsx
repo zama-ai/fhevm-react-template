@@ -14,6 +14,7 @@ import { useTokenBalance } from '@/hooks/token/useTokenBalance';
 import { useWallet } from '@/hooks/useWallet';
 import { motion, AnimatePresence } from 'framer-motion';
 import TransferSuccessMessage from './TransferSuccessMessage';
+import RecipientInputField from './RecipientInputField';
 
 export const DevnetWagmi = () => {
   const { address } = useWallet();
@@ -129,7 +130,7 @@ export const DevnetWagmi = () => {
               {confidentialIsSuccess ? (
                 <TransferSuccessMessage
                   amount={transferAmount}
-                  symbol={selectedToken?.symbol || ''}
+                  symbol={tokenBalance?.symbol || ''}
                   hash={hash}
                   isConfirmed={isConfirmed}
                   isConfirming={isConfirming}
@@ -144,25 +145,14 @@ export const DevnetWagmi = () => {
                   onSubmit={handleTransfer}
                   className="space-y-6"
                 >
-                  <div className="space-y-2">
-                    <label className="text-sm text-gray-600">
-                      Recepient Address
-                    </label>
-                    <Input
-                      type="text"
-                      value={inputValueAddress}
-                      onChange={(e) => setInputValueAddress(e.target.value)}
-                      placeholder="0x...."
-                    />
-                    {errorMessage && (
-                      <div style={{ color: 'red' }}>
-                        <p>{errorMessage}</p>
-                      </div>
-                    )}
-                  </div>
+                  <RecipientInputField
+                    recipient={inputValueAddress}
+                    setRecipient={setInputValueAddress}
+                    isPending={confidentialIsPending}
+                  />
 
                   <div className="space-y-2">
-                    <label className="text-sm text-gray-600">Amount</label>
+                    <label className="text-sm">Amount</label>
                     <div className="flex gap-2">
                       <Input
                         type="number"
@@ -174,14 +164,14 @@ export const DevnetWagmi = () => {
                             setTransferAmount(value);
                           }
                         }}
-                        placeholder="Enter amount to transfer"
+                        placeholder="0.0"
                       />
                     </div>
                   </div>
 
-                  <div>
+                  <div className="flex px-8  mt-6 justify-center items-center ">
                     <Button
-                      className="w-full"
+                      className=""
                       size="lg"
                       onClick={handleTransfer}
                       disabled={
@@ -207,7 +197,6 @@ export const DevnetWagmi = () => {
                     </Button>
                   </div>
 
-                  {hash && <div>Transaction Hash: {hash}</div>}
                   {isConfirming && <div>Waiting for confirmation...</div>}
                   {isConfirmed && <div>Transaction confirmed.</div>}
                   {transferError && (
