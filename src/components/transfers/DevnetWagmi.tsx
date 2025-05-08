@@ -3,12 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Unlock, Loader2 } from 'lucide-react';
 import { type BaseError } from 'wagmi';
-import { VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS } from '@/config/env';
+import { VITE_CONF_TOKEN_ADDRESS } from '@/config/env';
 import { useConfidentialTransfer } from '@/hooks/transfer/useConfidentialTransfer';
-import { useSigner } from '@/hooks/useSigner';
+import { useSigner } from '@/hooks/wallet/useSigner';
 import { useAddressValidation } from '@/hooks/useAddressValidation';
 import { useTokenBalance } from '@/hooks/transfer/useTokenBalance';
-import { useWallet } from '@/hooks/useWallet';
+import { useWallet } from '@/hooks/wallet/useWallet';
 import { motion, AnimatePresence } from 'framer-motion';
 import TransferSuccessMessage from './TransferSuccessMessage';
 import RecipientInputField from './RecipientInputField';
@@ -17,9 +17,10 @@ import TransferFormError from './TransferFormError';
 import AmountInputField from './AmountInputField';
 import { useFhevm } from '@/providers/FhevmProvider';
 import TransactionStatus from './TransactionStatus';
+import { validateForm } from '@/lib/utils/formValidation';
 
 export const DevnetWagmi = () => {
-  const { address } = useWallet();
+  const { address, isSepoliaChain } = useWallet();
   const { signer } = useSigner();
   const { instanceStatus } = useFhevm();
 
@@ -30,7 +31,7 @@ export const DevnetWagmi = () => {
 
   const tokenBalance = useTokenBalance({
     address,
-    tokenAddress: VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS,
+    tokenAddress: VITE_CONF_TOKEN_ADDRESS,
     enabled: !!address,
     isConfidential: true,
   });
@@ -49,48 +50,22 @@ export const DevnetWagmi = () => {
     resetTransfer: confidentialResetTransfer,
   } = useConfidentialTransfer();
 
-  const validateForm = (): boolean => {
-    if (!VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS) {
-      setFormError('Please select contract address');
-      return false;
-    }
-
-    if (!recipient || !/^0x[a-fA-F0-9]{40}$/.test(recipient)) {
-      setFormError('Please enter a valid Ethereum address');
-      return false;
-    }
-
-    if (
-      !transferAmount ||
-      isNaN(Number(transferAmount)) ||
-      Number(transferAmount) <= 0
-    ) {
-      setFormError('Please enter a valid amount');
-      return false;
-    }
-
-    // // Use the real-time balance from useTokenBalance if available
-    // const currentBalance = tokenBalance?.balance;
-
-    // if (Number(transferAmount) > Number(currentBalance)) {
-    //   setFormError(
-    //     `Insufficient balance. You have ${currentBalance} ${selectedToken.symbol}`,
-    //   );
-    //   return false;
-    // }
-
-    setFormError('');
-    return true;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    if (
+      !validateForm({
+        isSepoliaChain,
+        recipient,
+        amount: transferAmount,
+        setFormError,
+      })
+    )
+      return;
 
     try {
       await confidentialTransfer(
-        VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS,
+        VITE_CONF_TOKEN_ADDRESS,
         transferAmount,
         chosenAddress as `0x${string}`,
         6,

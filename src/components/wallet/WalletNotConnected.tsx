@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { useWallet } from "@/hooks/useWallet";
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import { useWallet } from '@/hooks/wallet/useWallet';
 
 const WalletNotConnected = () => {
   const { isConnected, openConnectModal } = useWallet();

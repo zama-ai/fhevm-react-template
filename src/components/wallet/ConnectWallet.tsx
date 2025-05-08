@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { Wallet } from 'lucide-react';
-import { useWallet } from '@/hooks/useWallet';
+import { useWallet } from '@/hooks/wallet/useWallet';
 import { useAppKitAccount } from '@reown/appkit/react';
 import blockies from 'ethereum-blockies';
 

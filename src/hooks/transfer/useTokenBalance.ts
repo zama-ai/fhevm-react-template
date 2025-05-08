@@ -3,7 +3,7 @@ import { useBalance, useReadContract, useChainId } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { formatUnits } from '@/lib/helper';
 import { confidentialErc20Abi } from '@/abi/confidentialErc20Abi';
-import { useSigner } from '../useSigner';
+import { useSigner } from '../wallet/useSigner';
 import { useDecryptValue } from '../fhevm/useDecryptValue';
 
 interface UseTokenBalanceProps {

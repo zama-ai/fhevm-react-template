@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { getInstance } from '@/lib/fhevm/fhevmjs';
-import { reencryptEuint64 } from '@/lib/reencrypt';
+import { reencryptEuint64 } from '@/lib/fhevm/reencrypt';
 import { Signer } from 'ethers';
 import { FhevmInstance } from 'fhevmjs';
 import { useFhevm } from '@/providers/FhevmProvider';
@@ -32,7 +32,7 @@ export const useDecryptValue = ({ signer }: useDecryptValueProps) => {
       }
 
       const instance = getInstance();
-      
+
       // Note this only works for values who are euint64
       // TODO: make hook more universal
       const clearBalance = await reencryptEuint64(

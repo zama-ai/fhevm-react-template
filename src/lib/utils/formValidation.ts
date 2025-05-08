@@ -1,20 +1,17 @@
 import { Token } from '@/types/tokenTypes';
+import { VITE_CONF_TOKEN_ADDRESS } from '@/config/env';
 
 interface ValidateFormParams {
   isSepoliaChain: boolean;
-  sourceToken: Token | null;
-  targetToken: Token | null;
+  recipient: string;
   amount: string;
-  tokenBalance: { isLoading: boolean; balance: string };
   setFormError: (error: string) => void;
 }
 
 export const validateForm = ({
   isSepoliaChain,
-  sourceToken,
-  targetToken,
+  recipient,
   amount,
-  tokenBalance,
   setFormError,
 }: ValidateFormParams): boolean => {
   if (!isSepoliaChain) {
@@ -22,29 +19,18 @@ export const validateForm = ({
     return false;
   }
 
-  if (!sourceToken) {
-    setFormError('Please select a token to wrap');
+  if (!VITE_CONF_TOKEN_ADDRESS) {
+    setFormError('Please select contract address');
     return false;
   }
 
-  if (!targetToken) {
-    setFormError('No confidential version available for this token');
+  if (!recipient || !/^0x[a-fA-F0-9]{40}$/.test(recipient)) {
+    setFormError('Please enter a valid Ethereum address');
     return false;
   }
 
   if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
     setFormError('Please enter a valid amount');
-    return false;
-  }
-
-  const currentBalance = !tokenBalance.isLoading
-    ? tokenBalance.balance
-    : sourceToken.balance;
-
-  if (Number(amount) > Number(currentBalance)) {
-    setFormError(
-      `Insufficient balance. You have ${currentBalance} ${sourceToken.symbol}`,
-    );
     return false;
   }
 

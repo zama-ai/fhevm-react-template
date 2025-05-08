@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { createFhevmInstance, getFhevmStatus } from '@/lib/fhevm/fhevmjs';
 import { init } from '@/lib/fhevm/fhevmjs';
-import { useWallet } from '@/hooks/useWallet';
+import { useWallet } from '@/hooks/wallet/useWallet';
 import { FhevmStatus } from '@/lib/fhevm/fhevmjs';
 
 interface FhevmContextType {
