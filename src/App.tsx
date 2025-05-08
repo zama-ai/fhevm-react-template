@@ -10,7 +10,6 @@ import { ThemeProvider } from '@/providers/ThemeProvider';
 import { createAppKit } from '@reown/appkit/react';
 
 import Header from './components/layout/Header';
-import Transfer from './pages/Transfer';
 import Fhevm from './pages/Fhevm';
 import NotFound from './pages/NotFound';
 import { projectId, metadata, networks, wagmiAdapter } from './config';

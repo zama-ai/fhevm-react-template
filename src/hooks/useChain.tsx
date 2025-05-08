@@ -15,8 +15,8 @@ export const useChain = () => {
       chain = sepolia;
       break;
     default:
-      // Default to mainnet if chainId is not recognized
-      chain = mainnet;
+      // Default to sepolia if chainId is not recognized
+      chain = sepolia;
   }
 
   return {

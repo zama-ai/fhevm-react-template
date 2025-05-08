@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useBalance, useReadContract, useChainId } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { formatUnits } from '@/lib/helper';
-import { erc20Abi } from '@/utils/erc20Abi';
+import { confidentialErc20Abi } from '@/abi/confidentialErc20Abi';
 import { useSigner } from '../useSigner';
-import { useEncryptedBalance } from './useEncryptedBalance';
+import { useDecryptValue } from '../fhevm/useDecryptValue';
 
 interface UseTokenBalanceProps {
   address?: string;
@@ -32,19 +32,19 @@ export function useTokenBalance({
   const { signer } = useSigner();
 
   const {
-    decryptedBalance,
+    decryptedValue: decryptedBalance,
     lastUpdated,
     isDecrypting,
     decrypt: decryptBalance,
     error: decryptionError,
-  } = useEncryptedBalance({
+  } = useDecryptValue({
     signer,
   });
 
   // Remove tokenData and add separate queries for symbol and decimals
   const tokenSymbolData = useReadContract({
     address: isNativeToken ? undefined : (tokenAddress as `0x${string}`),
-    abi: erc20Abi,
+    abi: confidentialErc20Abi,
     functionName: 'symbol',
     query: {
       enabled: enabled && !isNativeToken && !!tokenAddress,
@@ -53,7 +53,7 @@ export function useTokenBalance({
 
   const tokenDecimalsData = useReadContract({
     address: isNativeToken ? undefined : (tokenAddress as `0x${string}`),
-    abi: erc20Abi,
+    abi: confidentialErc20Abi,
     functionName: 'decimals',
     query: {
       enabled: enabled && !isNativeToken && !!tokenAddress,
@@ -71,7 +71,7 @@ export function useTokenBalance({
   // ERC20 token balance query using balanceOf
   const tokenBalanceData = useReadContract({
     address: isNativeToken ? undefined : (tokenAddress as `0x${string}`),
-    abi: erc20Abi,
+    abi: confidentialErc20Abi,
     functionName: 'balanceOf',
     args: address ? [address as `0x${string}`] : undefined,
     query: {

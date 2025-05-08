@@ -4,10 +4,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Unlock, Loader2 } from 'lucide-react';
 import { type BaseError } from 'wagmi';
 import { VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS } from '@/config/env';
-import { useConfidentialTransfer } from '@/hooks/token/transfer/useConfidentialTransfer';
+import { useConfidentialTransfer } from '@/hooks/transfer/useConfidentialTransfer';
 import { useSigner } from '@/hooks/useSigner';
 import { useAddressValidation } from '@/hooks/useAddressValidation';
-import { useTokenBalance } from '@/hooks/token/useTokenBalance';
+import { useTokenBalance } from '@/hooks/transfer/useTokenBalance';
 import { useWallet } from '@/hooks/useWallet';
 import { motion, AnimatePresence } from 'framer-motion';
 import TransferSuccessMessage from './TransferSuccessMessage';
@@ -135,7 +135,7 @@ export const DevnetWagmi = () => {
                     : '•••••'}{' '}
                   {tokenBalance.symbol}
                 </div>
-                <div className="pt-1 font-mono text-gray-600 text-xs max-w-56">
+                <div className="pt-1 font-mono text-gray-600 dark:text-gray-400 text-xs max-w-56">
                   Last updated: {tokenBalance.lastUpdated}
                 </div>
               </div>
@@ -206,7 +206,6 @@ export const DevnetWagmi = () => {
                     amount={transferAmount}
                     setAmount={setTransferAmount}
                     selectedToken={tokenBalance}
-                    displayBalance={tokenBalance.balance}
                     isPending={confidentialIsPending}
                   />
 
@@ -216,7 +215,7 @@ export const DevnetWagmi = () => {
                     isEncrypting={isEncrypting}
                     isPending={confidentialIsPending}
                     selectedToken={tokenBalance}
-                    amount={transferAmount}
+                    transferAmount={transferAmount}
                     chosenAddress={chosenAddress}
                   />
                 </motion.form>

@@ -5,12 +5,12 @@ import { Signer } from 'ethers';
 import { FhevmInstance } from 'fhevmjs';
 import { useFhevm } from '@/providers/FhevmProvider';
 
-interface UseEncryptedBalanceProps {
+interface useDecryptValueProps {
   signer: Signer | null;
 }
 
-export const useEncryptedBalance = ({ signer }: UseEncryptedBalanceProps) => {
-  const [decryptedBalance, setDecryptedBalance] = useState<bigint | null>(null);
+export const useDecryptValue = ({ signer }: useDecryptValueProps) => {
+  const [decryptedValue, setDecryptedValue] = useState<bigint | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>('Never');
   const [isDecrypting, setIsDecrypting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,15 +26,15 @@ export const useEncryptedBalance = ({ signer }: UseEncryptedBalanceProps) => {
       if (instanceStatus !== 'ready')
         throw new Error('Create instance not initialized');
       if (!handle || handle === 0n) {
-        setDecryptedBalance(0n);
+        setDecryptedValue(0n);
         setLastUpdated(new Date().toLocaleString());
         return;
       }
 
       const instance = getInstance();
-      // console.log(getInstance);
-      // Use type assertion to safely pass the instance
-      // console.log(handle, contractAddress);
+      
+      // Note this only works for values who are euint64
+      // TODO: make hook more universal
       const clearBalance = await reencryptEuint64(
         signer,
         instance as FhevmInstance,
@@ -43,12 +43,12 @@ export const useEncryptedBalance = ({ signer }: UseEncryptedBalanceProps) => {
       );
       // console.log(clearBalance.toString());
 
-      setDecryptedBalance(clearBalance);
+      setDecryptedValue(clearBalance);
       setLastUpdated(new Date().toLocaleString());
     } catch (error) {
       console.error('Decryption error:', error);
       if (error === 'Handle is not initialized') {
-        setDecryptedBalance(0n);
+        setDecryptedValue(0n);
       } else {
         setError(
           error instanceof Error ? error.message : 'Failed to decrypt balance',
@@ -61,7 +61,7 @@ export const useEncryptedBalance = ({ signer }: UseEncryptedBalanceProps) => {
   };
 
   return {
-    decryptedBalance,
+    decryptedValue,
     lastUpdated,
     isDecrypting,
     decrypt,

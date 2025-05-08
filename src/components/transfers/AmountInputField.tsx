@@ -8,9 +8,6 @@ interface AmountInputFieldProps {
   amount: string;
   setAmount: (value: string) => void;
   selectedToken: Token | null;
-  displayBalance: string;
-  handleDecrypt: () => void;
-  isDecrypting: boolean;
   isPending: boolean;
 }
 
@@ -18,9 +15,6 @@ const AmountInputField = ({
   amount,
   setAmount,
   selectedToken,
-  displayBalance,
-  handleDecrypt,
-  isDecrypting,
   isPending,
 }: AmountInputFieldProps) => {
   if (!selectedToken) return null;
