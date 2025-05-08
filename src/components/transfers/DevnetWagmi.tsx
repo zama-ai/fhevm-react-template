@@ -1,12 +1,9 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Unlock, Loader2 } from 'lucide-react';
-import { Input } from '@/components/ui/input.tsx';
-import { sepolia } from 'wagmi/chains';
 import { type BaseError } from 'wagmi';
 import { VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS } from '@/config/env';
-import { useEncryptedBalance } from '@/hooks/token/useEncryptedBalance';
 import { useConfidentialTransfer } from '@/hooks/token/transfer/useConfidentialTransfer';
 import { useSigner } from '@/hooks/useSigner';
 import { useAddressValidation } from '@/hooks/useAddressValidation';
@@ -17,8 +14,9 @@ import TransferSuccessMessage from './TransferSuccessMessage';
 import RecipientInputField from './RecipientInputField';
 import TransferButton from './TransferButton';
 import TransferFormError from './TransferFormError';
-import AmountInputField from './AmountInputField2';
+import AmountInputField from './AmountInputField';
 import { useFhevm } from '@/providers/FhevmProvider';
+import TransactionStatus from './TransactionStatus';
 
 export const DevnetWagmi = () => {
   const { address } = useWallet();
@@ -26,10 +24,9 @@ export const DevnetWagmi = () => {
   const { instanceStatus } = useFhevm();
 
   const [transferAmount, setTransferAmount] = useState('');
-  const [inputValueAddress, setInputValueAddress] = useState('');
+  const [recipient, setRecipient] = useState('');
   const [formError, setFormError] = useState<string>('');
-  const { chosenAddress, errorMessage } =
-    useAddressValidation(inputValueAddress);
+  const { chosenAddress, errorMessage } = useAddressValidation(recipient);
 
   const tokenBalance = useTokenBalance({
     address,
@@ -48,7 +45,7 @@ export const DevnetWagmi = () => {
     isPending: confidentialIsPending,
     isError,
     error,
-    isSuccess: confidentialIsSuccess,
+    isSuccess,
     resetTransfer: confidentialResetTransfer,
   } = useConfidentialTransfer();
 
@@ -58,7 +55,7 @@ export const DevnetWagmi = () => {
       return false;
     }
 
-    if (!inputValueAddress || !/^0x[a-fA-F0-9]{40}$/.test(inputValueAddress)) {
+    if (!recipient || !/^0x[a-fA-F0-9]{40}$/.test(recipient)) {
       setFormError('Please enter a valid Ethereum address');
       return false;
     }
@@ -118,7 +115,7 @@ export const DevnetWagmi = () => {
 
   const handleReset = (clearTransfer?: () => void) => {
     setTransferAmount('');
-    setInputValueAddress('');
+    setRecipient('');
     if (clearTransfer) {
       clearTransfer();
     }
@@ -169,7 +166,7 @@ export const DevnetWagmi = () => {
         <Card>
           <CardContent className="p-8">
             <AnimatePresence mode="wait">
-              {confidentialIsSuccess ? (
+              {isSuccess ? (
                 <TransferSuccessMessage
                   amount={transferAmount}
                   symbol={tokenBalance?.symbol || ''}
@@ -200,8 +197,8 @@ export const DevnetWagmi = () => {
                   )}
 
                   <RecipientInputField
-                    recipient={inputValueAddress}
-                    setRecipient={setInputValueAddress}
+                    recipient={recipient}
+                    setRecipient={setRecipient}
                     isPending={confidentialIsPending}
                   />
 
@@ -213,11 +210,13 @@ export const DevnetWagmi = () => {
                     isPending={confidentialIsPending}
                   />
 
+                  <TransactionStatus hash={hash} isConfirmed={isSuccess} />
+
                   <TransferButton
                     isEncrypting={isEncrypting}
                     isPending={confidentialIsPending}
                     selectedToken={tokenBalance}
-                    transferAmount={transferAmount}
+                    amount={transferAmount}
                     chosenAddress={chosenAddress}
                   />
                 </motion.form>

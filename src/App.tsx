@@ -4,11 +4,9 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { WagmiProvider } from 'wagmi';
-import { TokenProvider } from '@/providers/TokenProvider';
 import { AnimatePresence } from 'framer-motion';
 import { FhevmProvider } from '@/providers/FhevmProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
-import { TransactionProvider } from '@/providers/TransactionProvider';
 import { createAppKit } from '@reown/appkit/react';
 
 import Header from './components/layout/Header';
@@ -51,24 +49,19 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <FhevmProvider>
-            <TokenProvider>
-              <TransactionProvider>
-                <ThemeProvider>
-                  <Toaster />
-                  <Sonner />
-                  <BrowserRouter>
-                    <Header />
-                    <AnimatePresence mode="wait">
-                      <Routes>
-                        <Route path="/" element={<Transfer />} />
-                        <Route path="/fhevm" element={<Fhevm />} />
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </AnimatePresence>
-                  </BrowserRouter>
-                </ThemeProvider>
-              </TransactionProvider>
-            </TokenProvider>
+            <ThemeProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Header />
+                <AnimatePresence mode="wait">
+                  <Routes>
+                    <Route path="/" element={<Fhevm />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </AnimatePresence>
+              </BrowserRouter>
+            </ThemeProvider>
           </FhevmProvider>
         </TooltipProvider>
       </QueryClientProvider>

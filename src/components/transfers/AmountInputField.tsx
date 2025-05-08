@@ -27,31 +27,9 @@ const AmountInputField = ({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between gap-2">
-        <Label htmlFor="amount" className="font-medium">
-          Amount
-        </Label>
-        <div className="flex items-center gap-4">
-          <span className="text-xs text-muted-foreground">
-            Balance: {displayBalance} {selectedToken.symbol}
-          </span>
-          {selectedToken.isConfidential && (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleDecrypt}
-              className="h-8 text-xs"
-              disabled={isDecrypting}
-            >
-              {isDecrypting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <>Decrypt</>
-              )}
-            </Button>
-          )}
-        </div>
-      </div>
+      <Label htmlFor="amount" className="font-medium">
+        Amount
+      </Label>
       <div className="relative">
         <Input
           id="amount"
@@ -66,19 +44,6 @@ const AmountInputField = ({
         <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
           <span className="text-muted-foreground">{selectedToken.symbol}</span>
         </div>
-      </div>
-
-      <div className="flex justify-end">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="text-xs h-auto py-1"
-          onClick={() => setAmount(displayBalance)}
-          disabled={isPending}
-        >
-          Use Max
-        </Button>
       </div>
     </div>
   );

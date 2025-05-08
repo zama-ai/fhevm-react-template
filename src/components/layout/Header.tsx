@@ -28,8 +28,8 @@ const Header = () => {
   }, []);
 
   const navItems = [
-    { name: 'Transfer', path: '/' },
-    { name: 'Fhevm', path: '/fhevm' },
+    { name: 'Fhevm', path: '/' },
+    { name: 'Docs', path: 'https://docs.zama.ai/fhevm' },
   ];
 
   const onNavItemClick = () => {

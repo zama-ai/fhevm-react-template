@@ -1,9 +1,6 @@
 // Update this page (the content is just a fallback if you fail to update the page)
 import { DevnetWagmi } from '@/components/transfers/DevnetWagmi';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useWallet } from '@/hooks/useWallet';
-import { useAccount, useChainId } from 'wagmi';
-import { sepolia } from 'wagmi/chains';
 import PageTransition from '@/components/layout/PageTransition';
 import { motion } from 'framer-motion';
 import WalletNotConnected from '@/components/wallet/WalletNotConnected';
@@ -31,7 +28,7 @@ const Fhevm = () => {
             >
               documentation
             </a>{' '}
-            for more information
+            for more information.
           </p>
         </motion.div>
 

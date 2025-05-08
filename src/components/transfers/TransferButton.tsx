@@ -6,6 +6,8 @@ interface TransferButtonProps {
   isEncrypting: boolean;
   isPending: boolean;
   selectedToken: Token | null;
+  transferAmount: string;
+  chosenAddress: `0x${string}`;
 }
 
 const TransferButton = ({
