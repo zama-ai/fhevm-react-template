@@ -11,7 +11,7 @@ A modern React template for building decentralized applications (dApps) with Ful
 - **Tailwind**: Utility-first CSS framework for rapid UI development
 - **@reown/appkit**: Comprehensive toolkit for Web3 authentication including social logins and multi-wallet support
 - **@radix-ui**: Unstyled, accessible UI components for building high-quality design systems and web apps
-  
+
 ## Prerequisites
 
 - Node.js (v20 or higher)
@@ -21,15 +21,17 @@ A modern React template for building decentralized applications (dApps) with Ful
 ## Getting Started
 
 1. Fork the following repository:
-[https://github.com/zama-ai/fhevm-react-template](https://github.com/zama-ai/fhevm-react-template)
+   [https://github.com/zama-ai/fhevm-react-template](https://github.com/zama-ai/fhevm-react-template)
 
 2. Clone your repository:
+
 ```bash
 git clone https://github.com/your-username/fhevm-react-template
 cd fhevm-react-template
 ```
 
 1. Install dependencies:
+
 ```bash
 npm install
 # or
@@ -38,11 +40,13 @@ pnpm install
 ```
 
 1. Configure environment variables:
+
 ```bash
 cp .env.example .env
 ```
 
 Update `.env` with your specific configuration:
+
 - `VITE_ACL_ADDRESS`: fhevm specific
 - `VITE_KMS_ADDRESS`: fhevm specific
 - `VITE_GATEWAY_URL`: fhevm specific
@@ -52,6 +56,7 @@ Update `.env` with your specific configuration:
 ## Development
 
 Start the development server:
+
 ```bash
 npm run dev
 # or
@@ -64,6 +69,7 @@ Visit [http://localhost:5173/](http://localhost:5173/) to view your application.
 ## Production Build
 
 Create a production-ready build:
+
 ```bash
 npm run build
 # or
@@ -84,6 +90,7 @@ For faster development without testnet tokens, you can use a mocked fhevm:
 ### Using Sepolia Testnet
 
 For testing with real network conditions, deploy your dApp to Sepolia testnet:
+
 1. Ensure you have Sepolia testnet ETH
 2. Configure your `.env` with Sepolia network details
 3. Deploy and test your contracts
@@ -98,6 +105,7 @@ For testing with real network conditions, deploy your dApp to Sepolia testnet:
 ## Support
 
 For questions and support:
+
 - [fhevm Discord Community](https://discord.gg/zamaai)
 - [GitHub Issues](https://github.com/zama-ai/fhevm-react-template/issues)
 

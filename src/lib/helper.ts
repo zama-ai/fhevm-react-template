@@ -20,17 +20,17 @@ const formatTime = (seconds: number, shortFormat: boolean = false): string => {
     parts.push(`${days}${shortFormat ? 'd' : ` day${days !== 1 ? 's' : ''}`}`);
   if (hours > 0)
     parts.push(
-      `${hours}${shortFormat ? 'h' : ` hour${hours !== 1 ? 's' : ''}`}`
+      `${hours}${shortFormat ? 'h' : ` hour${hours !== 1 ? 's' : ''}`}`,
     );
   if (minutes > 0)
     parts.push(
-      `${minutes}${shortFormat ? 'm' : ` minute${minutes !== 1 ? 's' : ''}`}`
+      `${minutes}${shortFormat ? 'm' : ` minute${minutes !== 1 ? 's' : ''}`}`,
     );
   if (remainingSeconds > 0)
     parts.push(
       `${remainingSeconds}${
         shortFormat ? 's' : ` second${remainingSeconds !== 1 ? 's' : ''}`
-      }`
+      }`,
     );
 
   return parts.join(shortFormat ? ' ' : ', ');
