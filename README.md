@@ -15,7 +15,7 @@ A modern React template for building decentralized applications (dApps) with Ful
 ## Prerequisites
 
 - Node.js (v20 or higher)
-- npm or yarn package manager
+- npm, yarn, or pnpm package manager
 - MetaMask or another Ethereum wallet
 
 ## Getting Started
@@ -23,7 +23,7 @@ A modern React template for building decentralized applications (dApps) with Ful
 1. Fork the following repository:
 [https://github.com/zama-ai/fhevm-react-template](https://github.com/zama-ai/fhevm-react-template)
 
-2. Clone the repository:
+2. Clone your repository:
 ```bash
 git clone https://github.com/your-username/fhevm-react-template
 cd fhevm-react-template
@@ -32,6 +32,9 @@ cd fhevm-react-template
 1. Install dependencies:
 ```bash
 npm install
+# or
+yarn install
+pnpm install
 ```
 
 1. Configure environment variables:
@@ -40,17 +43,20 @@ cp .env.example .env
 ```
 
 Update `.env` with your specific configuration:
-- Gateway URL
-- ACL address
-- KMS address
-- VITE_PROJECT_ID - get it from https://reown.com/
-- VITE_CONF_TOKEN_ADDRESS - the confidential token address you have deployed
+- `VITE_ACL_ADDRESS`: fhevm specific
+- `VITE_KMS_ADDRESS`: fhevm specific
+- `VITE_GATEWAY_URL`: fhevm specific
+- `VITE_PROJECT_ID`: Obtain your project ID by signing up at [reown.com](https://reown.com/). This enables social login and multi-wallet support.
+- `VITE_CONF_TOKEN_ADDRESS`: The address of your deployed confidential ERC20 token contract on Sepolia testnet. You'll get this after deploying the smart contract.
 
 ## Development
 
 Start the development server:
 ```bash
 npm run dev
+# or
+yarn dev
+pnpm dev
 ```
 
 Visit [http://localhost:5173/](http://localhost:5173/) to view your application.
@@ -60,6 +66,9 @@ Visit [http://localhost:5173/](http://localhost:5173/) to view your application.
 Create a production-ready build:
 ```bash
 npm run build
+# or
+yarn build
+pnpm build
 ```
 
 ## Development Options
