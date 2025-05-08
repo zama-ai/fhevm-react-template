@@ -1,69 +1,97 @@
-# Welcome to your Lovable project
+# Fhevm React Template
 
-## Project info
+A modern React template for building decentralized applications (dApps) with Fully Homomorphic Encryption (FHE) capabilities using fhevmjs.
 
-**URL**: https://lovable.dev/projects/c8f5d231-4eef-4ffa-a28a-c01a3ecffe11
+## Features
 
-## How can I edit this code?
+- **fhevmjs**: Fully Homomorphic Encryption for Ethereum Virtual Machine
+- **React**: Modern UI framework for building interactive interfaces
+- **Vite**: Next-generation frontend build tool
+- **Wagmi**: React hooks for Ethereum
+- **Tailwind**: 
+- **@reown/appkit**: Social login integration and multi-wallet connectivity
+- **@radix/ui**: UI components for quick prototyping
+  
+## Prerequisites
 
-There are several ways of editing your application.
+- Node.js (v20 or higher)
+- npm or yarn package manager
+- MetaMask or another Ethereum wallet
 
-**Use Lovable**
+## Getting Started
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c8f5d231-4eef-4ffa-a28a-c01a3ecffe11) and start prompting.
+1. Fork the following repository:
+[https://github.com/zama-ai/fhevm-react-template](https://github.com/zama-ai/fhevm-react-template)
 
-Changes made via Lovable will be committed automatically to this repo.
+2. Clone the repository:
+```bash
+git clone https://github.com/your-username/fhevm-react-template
+cd fhevm-react-template
+```
 
-**Use your preferred IDE**
+1. Install dependencies:
+```bash
+npm install
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. Configure environment variables:
+```bash
+cp .env.example .env
+```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Update `.env` with your specific configuration:
+- Gateway URL
+- ACL address
+- KMS address
+- VITE_PROJECT_ID - get it from https://reown.com/
+- VITE_CONF_TOKEN_ADDRESS - the confidential token address you have deployed
 
-Follow these steps:
+## Development
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Visit [http://localhost:5173/](http://localhost:5173/) to view your application.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Production Build
 
-**Use GitHub Codespaces**
+Create a production-ready build:
+```bash
+npm run build
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Development Options
 
-## What technologies are used for this project?
+### Using the Mocked Coprocessor
 
-This project is built with .
+For faster development without testnet tokens, you can use a mocked fhevm:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. Check out the `ConfidentialERC20` example in the [`mockedFrontend` branch](https://github.com/zama-ai/fhevm-react-template/tree/mockedFrontend)
+2. Follow the branch-specific README for setup instructions
+3. Develop and test your dApp locally before deploying to Sepolia
 
-## How can I deploy this project?
+### Using Sepolia Testnet
 
-Simply open [Lovable](https://lovable.dev/projects/c8f5d231-4eef-4ffa-a28a-c01a3ecffe11) and click on Share -> Publish.
+For testing with real network conditions, deploy your dApp to Sepolia testnet:
+1. Ensure you have Sepolia testnet ETH
+2. Configure your `.env` with Sepolia network details
+3. Deploy and test your contracts
 
-## I want to use a custom domain - is that possible?
+## Learn More
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+- [fhevm Documentation](https://docs.zama.ai/fhevm)
+- [React Documentation](https://reactjs.org/)
+- [Vite Documentation](https://vitejs.dev/)
+- [Wagmi Documentation](https://wagmi.sh/)
+
+## Support
+
+For questions and support:
+- [fhevm Discord Community](https://discord.gg/zamaai)
+- [GitHub Issues](https://github.com/zama-ai/fhevm-react-template/issues)
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
