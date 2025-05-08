@@ -8,9 +8,9 @@ A modern React template for building decentralized applications (dApps) with Ful
 - **React**: Modern UI framework for building interactive interfaces
 - **Vite**: Next-generation frontend build tool
 - **Wagmi**: React hooks for Ethereum
-- **Tailwind**: 
-- **@reown/appkit**: Social login integration and multi-wallet connectivity
-- **@radix/ui**: UI components for quick prototyping
+- **Tailwind**: Utility-first CSS framework for rapid UI development
+- **@reown/appkit**: Comprehensive toolkit for Web3 authentication including social logins and multi-wallet support
+- **@radix-ui**: Unstyled, accessible UI components for building high-quality design systems and web apps
   
 ## Prerequisites
 
