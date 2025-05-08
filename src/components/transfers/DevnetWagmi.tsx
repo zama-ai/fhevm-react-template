@@ -15,32 +15,27 @@ import { useWallet } from '@/hooks/useWallet';
 import { motion, AnimatePresence } from 'framer-motion';
 import TransferSuccessMessage from './TransferSuccessMessage';
 import RecipientInputField from './RecipientInputField';
+import TransferButton from './TransferButton';
+import TransferFormError from './TransferFormError';
+import AmountInputField from './AmountInputField2';
+import { useFhevm } from '@/providers/FhevmProvider';
 
 export const DevnetWagmi = () => {
   const { address } = useWallet();
-  const contractAddress = VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS;
   const { signer } = useSigner();
+  const { instanceStatus } = useFhevm();
 
   const [transferAmount, setTransferAmount] = useState('');
   const [inputValueAddress, setInputValueAddress] = useState('');
+  const [formError, setFormError] = useState<string>('');
   const { chosenAddress, errorMessage } =
     useAddressValidation(inputValueAddress);
 
   const tokenBalance = useTokenBalance({
     address,
-    tokenAddress: contractAddress || 'native',
+    tokenAddress: VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS,
     enabled: !!address,
-  });
-
-  // Use custom hooks
-  const {
-    decryptedBalance,
-    lastUpdated,
-    isDecrypting,
-    decrypt: decryptBalance,
-    error: decryptionError,
-  } = useEncryptedBalance({
-    signer,
+    isConfidential: true,
   });
 
   const {
@@ -51,19 +46,62 @@ export const DevnetWagmi = () => {
     isConfirmed,
     hash,
     isPending: confidentialIsPending,
-    isError: confidentialIsError,
-    error: transferError,
+    isError,
+    error,
     isSuccess: confidentialIsSuccess,
     resetTransfer: confidentialResetTransfer,
   } = useConfidentialTransfer();
 
-  const handleTransfer = async () => {
-    await confidentialTransfer(
-      contractAddress,
-      transferAmount,
-      chosenAddress as `0x${string}`,
-      6,
-    );
+  const validateForm = (): boolean => {
+    if (!VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS) {
+      setFormError('Please select contract address');
+      return false;
+    }
+
+    if (!inputValueAddress || !/^0x[a-fA-F0-9]{40}$/.test(inputValueAddress)) {
+      setFormError('Please enter a valid Ethereum address');
+      return false;
+    }
+
+    if (
+      !transferAmount ||
+      isNaN(Number(transferAmount)) ||
+      Number(transferAmount) <= 0
+    ) {
+      setFormError('Please enter a valid amount');
+      return false;
+    }
+
+    // // Use the real-time balance from useTokenBalance if available
+    // const currentBalance = tokenBalance?.balance;
+
+    // if (Number(transferAmount) > Number(currentBalance)) {
+    //   setFormError(
+    //     `Insufficient balance. You have ${currentBalance} ${selectedToken.symbol}`,
+    //   );
+    //   return false;
+    // }
+
+    setFormError('');
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    try {
+      await confidentialTransfer(
+        VITE_PAYMENT_TOKEN_CONTRACT_ADDRESS,
+        transferAmount,
+        chosenAddress as `0x${string}`,
+        6,
+      );
+    } catch (error) {
+      console.error('Transfer error:', error);
+      setFormError('Transfer failed. Please try again.');
+    }
   };
 
   const handleDecrypt = async () => {
@@ -72,7 +110,7 @@ export const DevnetWagmi = () => {
       return;
     }
     try {
-      await decryptBalance(tokenBalance.rawBalance, contractAddress);
+      await tokenBalance.decrypt();
     } catch (error) {
       console.error('Failed to decrypt balance:', error);
     }
@@ -95,19 +133,23 @@ export const DevnetWagmi = () => {
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-mono text-xl">
-                  {decryptedBalance ? decryptedBalance.toString() : '•••••'}{' '}
+                  {tokenBalance.balance
+                    ? tokenBalance.balance.toString()
+                    : '•••••'}{' '}
                   {tokenBalance.symbol}
                 </div>
-                <div className="pt-1 font-mono text-gray-600 text-sm">
-                  Last updated: {lastUpdated}
+                <div className="pt-1 font-mono text-gray-600 text-xs max-w-56">
+                  Last updated: {tokenBalance.lastUpdated}
                 </div>
               </div>
               <Button
                 variant="outline"
                 onClick={handleDecrypt}
-                disabled={isDecrypting}
+                disabled={
+                  tokenBalance.isDecrypting || instanceStatus !== 'ready'
+                }
               >
-                {isDecrypting ? (
+                {tokenBalance.isDecrypting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Decrypting...
@@ -142,70 +184,42 @@ export const DevnetWagmi = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  onSubmit={handleTransfer}
+                  onSubmit={handleSubmit}
                   className="space-y-6"
                 >
+                  {/* Form error */}
+                  {formError && <TransferFormError message={formError} />}
+
+                  {/* Transfer error */}
+                  {isError && error && (
+                    <TransferFormError
+                      message={
+                        (error as BaseError).shortMessage || 'Transfer failed'
+                      }
+                    />
+                  )}
+
                   <RecipientInputField
                     recipient={inputValueAddress}
                     setRecipient={setInputValueAddress}
                     isPending={confidentialIsPending}
                   />
 
-                  <div className="space-y-2">
-                    <label className="text-sm">Amount</label>
-                    <div className="flex gap-2">
-                      <Input
-                        type="number"
-                        min="0"
-                        value={transferAmount}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (value === '' || parseFloat(value) >= 0) {
-                            setTransferAmount(value);
-                          }
-                        }}
-                        placeholder="0.0"
-                      />
-                    </div>
-                  </div>
+                  <AmountInputField
+                    amount={transferAmount}
+                    setAmount={setTransferAmount}
+                    selectedToken={tokenBalance}
+                    displayBalance={tokenBalance.balance}
+                    isPending={confidentialIsPending}
+                  />
 
-                  <div className="flex px-8  mt-6 justify-center items-center ">
-                    <Button
-                      className=""
-                      size="lg"
-                      onClick={handleTransfer}
-                      disabled={
-                        isPending ||
-                        isEncrypting ||
-                        !transferAmount ||
-                        chosenAddress === '0x'
-                      }
-                    >
-                      {isEncrypting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Encrypting amount...
-                        </>
-                      ) : isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Confirming transaction...
-                        </>
-                      ) : (
-                        'Transfer Tokens'
-                      )}
-                    </Button>
-                  </div>
-
-                  {isConfirming && <div>Waiting for confirmation...</div>}
-                  {isConfirmed && <div>Transaction confirmed.</div>}
-                  {transferError && (
-                    <div>
-                      Error:{' '}
-                      {(transferError as BaseError).shortMessage ||
-                        transferError.message}
-                    </div>
-                  )}
+                  <TransferButton
+                    isEncrypting={isEncrypting}
+                    isPending={confidentialIsPending}
+                    selectedToken={tokenBalance}
+                    transferAmount={transferAmount}
+                    chosenAddress={chosenAddress}
+                  />
                 </motion.form>
               )}
             </AnimatePresence>

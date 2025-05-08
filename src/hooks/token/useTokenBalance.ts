@@ -225,6 +225,7 @@ export function useTokenBalance({
   return {
     balance,
     rawBalance,
+    lastUpdated,
     decryptedBalance,
     value,
     decrypt,

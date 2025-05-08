@@ -12,12 +12,20 @@ const TransferButton = ({
   isEncrypting,
   isPending,
   selectedToken,
+  transferAmount,
+  chosenAddress,
 }: TransferButtonProps) => {
   return (
     <div className="flex px-8  mt-6 justify-center items-center ">
       <Button
         type="submit"
-        disabled={isPending || isEncrypting || !selectedToken}
+        disabled={
+          isPending ||
+          isEncrypting ||
+          !selectedToken ||
+          !transferAmount ||
+          chosenAddress === '0x'
+        }
         className=" group px-5"
       >
         {isEncrypting ? (
