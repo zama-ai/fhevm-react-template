@@ -1,5 +1,5 @@
 // Update this page (the content is just a fallback if you fail to update the page)
-import { DevnetWagmi } from '@/components/transfers/DevnetWagmi';
+import { ConfidentialTransferForm } from '@/components/transfers/ConfidentialTransferForm';
 import { useWallet } from '@/hooks/wallet/useWallet';
 import PageTransition from '@/components/layout/PageTransition';
 import { motion } from 'framer-motion';
@@ -34,7 +34,7 @@ const Fhevm = () => {
 
         {isConnected ? (
           <div className="mt-8 max-w-md mx-auto">
-            <DevnetWagmi />
+            <ConfidentialTransferForm />
           </div>
         ) : (
           <WalletNotConnected />

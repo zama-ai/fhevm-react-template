@@ -19,7 +19,7 @@ import { useFhevm } from '@/providers/FhevmProvider';
 import TransactionStatus from './TransactionStatus';
 import { validateForm } from '@/lib/utils/formValidation';
 
-export const DevnetWagmi = () => {
+export const ConfidentialTransferForm = () => {
   const { address, isSepoliaChain } = useWallet();
   const { signer } = useSigner();
   const { instanceStatus } = useFhevm();
