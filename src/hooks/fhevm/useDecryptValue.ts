@@ -33,7 +33,7 @@ export const useDecryptValue = ({ signer }: useDecryptValueProps) => {
 
       const instance = getInstance();
 
-      // Note this only works for values who are euint64
+      // Note this only works for values which are euint64
       // TODO: make hook more universal
       const clearBalance = await reencryptEuint64(
         signer,
