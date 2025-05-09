@@ -41,7 +41,6 @@ export const useDecryptValue = ({ signer }: useDecryptValueProps) => {
         BigInt(handle),
         contractAddress,
       );
-      // console.log(clearBalance.toString());
 
       setDecryptedValue(clearBalance);
       setLastUpdated(new Date().toLocaleString());
