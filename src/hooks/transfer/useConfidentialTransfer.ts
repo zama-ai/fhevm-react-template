@@ -10,8 +10,12 @@ import { useEncrypt } from '@/hooks/fhevm/useEncrypt';
 export const useConfidentialTransfer = () => {
   const { address } = useWallet();
   const { chain } = useChain();
-  const [recipientAddress, setRecipientAddress] = useState<`0x${string}`>(null);
-  const [contractAddress, setContractAddress] = useState<`0x${string}`>(null);
+  const [recipientAddress, setRecipientAddress] = useState<
+    `0x${string}` | null
+  >(null);
+  const [contractAddress, setContractAddress] = useState<`0x${string}` | null>(
+    null,
+  );
   const { encryptAmount, isEncrypting, encryptedAmount, resetEncrypt } =
     useEncrypt();
   const {

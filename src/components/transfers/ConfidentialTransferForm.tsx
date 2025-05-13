@@ -27,7 +27,7 @@ export const ConfidentialTransferForm = () => {
   const [transferAmount, setTransferAmount] = useState('');
   const [recipient, setRecipient] = useState('');
   const [formError, setFormError] = useState<string>('');
-  const { chosenAddress, errorMessage } = useAddressValidation(recipient);
+  const { chosenAddress } = useAddressValidation(recipient);
 
   const tokenBalance = useTokenBalance({
     address,

@@ -1,5 +1,5 @@
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
-import { mainnet, sepolia } from '@reown/appkit/networks';
+import { sepolia } from '@reown/appkit/networks';
 import type { AppKitNetwork } from '@reown/appkit/networks';
 import { VITE_PROJECT_ID } from './env';
 
@@ -19,10 +19,7 @@ export const metadata = {
 };
 
 // for custom networks visit -> https://docs.reown.com/appkit/react/core/custom-networks
-export const networks = [mainnet, sepolia] as [
-  AppKitNetwork,
-  ...AppKitNetwork[],
-];
+export const networks = [sepolia] as [AppKitNetwork, ...AppKitNetwork[]];
 
 //Set up the Wagmi Adapter (Config)
 export const wagmiAdapter = new WagmiAdapter({

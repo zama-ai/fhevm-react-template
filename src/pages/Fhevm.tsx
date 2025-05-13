@@ -1,4 +1,3 @@
-// Update this page (the content is just a fallback if you fail to update the page)
 import { ConfidentialTransferForm } from '@/components/transfers/ConfidentialTransferForm';
 import { useWallet } from '@/hooks/wallet/useWallet';
 import PageTransition from '@/components/layout/PageTransition';

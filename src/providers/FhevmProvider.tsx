@@ -24,7 +24,6 @@ export function FhevmProvider({ children }: { children: ReactNode }) {
   const [instanceStatus, setInstanceStatus] =
     useState<FhevmStatus>('uninitialized');
   const { isConnected, isSepoliaChain } = useWallet();
-  const [loading, setLoading] = useState(true);
 
   // Handle initial FHEVM library initialization
   useEffect(() => {

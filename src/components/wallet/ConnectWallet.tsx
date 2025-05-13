@@ -67,7 +67,7 @@ const ConnectWallet = () => {
             transition={{ duration: 0.2 }}
           >
             <Button
-              variant="white"
+              variant="secondary"
               className="flex cursor-pointer items-center text-lg sm:text-sm sm:px-4 sm:py-3 py-6  gap-2"
               onClick={() => openConnectModal()}
             >
