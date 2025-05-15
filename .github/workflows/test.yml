@@ -23,3 +23,9 @@ jobs:
       - run: npm ci
       - run: npm run prettier:check
       - run: npm run build
+        env:
+          NEXT_PUBLIC_ACL_ADDRESS: '0xFee8407e2f5e3Ee68ad77cAE98c434e637f516e5'
+          NEXT_PUBLIC_KMS_ADDRESS: '0x9D6891A6240D6130c54ae243d8005063D05fE14b'
+          NEXT_PUBLIC_GATEWAY_URL: 'https://gateway.sepolia.zama.ai/'
+          NEXT_PUBLIC_PROJECT_ID: '00000000000000000000000000000000'
+          NEXT_PUBLIC_CONF_TOKEN_ADDRESS: '0x0000000000000000000000000000000000000000'

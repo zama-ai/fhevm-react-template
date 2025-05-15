@@ -1,42 +1,70 @@
-import { useEffect, useState } from 'react';
-import { Devnet } from './components/Devnet';
-import { init } from './fhevmjs';
-import './App.css';
-import { Connect } from './components/Connect';
+import { Toaster } from '@/components/ui/toaster';
+import { Toaster as Sonner } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { WagmiProvider } from 'wagmi';
+import { AnimatePresence } from 'framer-motion';
+import { FhevmProvider } from '@/providers/FhevmProvider';
+import { ThemeProvider } from '@/providers/ThemeProvider';
+import { createAppKit } from '@reown/appkit/react';
+
+import Header from './components/layout/Header';
+import Fhevm from './pages/Fhevm';
+import NotFound from './pages/NotFound';
+import { projectId, metadata, networks, wagmiAdapter } from './config';
+
+const queryClient = new QueryClient();
+
+createAppKit({
+  adapters: [wagmiAdapter],
+  defaultAccountTypes: { eip155: 'eoa' },
+  enableWalletGuide: false,
+  projectId,
+  networks,
+  metadata,
+  enableCoinbase: false,
+  coinbasePreference: 'smartWalletOnly',
+  themeMode: 'light' as const,
+  themeVariables: {
+    '--w3m-border-radius-master': '0',
+    '--w3m-font-family': 'Telegraf',
+  },
+  features: {
+    legalCheckbox: true,
+    analytics: true,
+    swaps: false,
+    send: false,
+    history: false,
+    connectMethodsOrder: ['email', 'social', 'wallet'],
+  },
+});
 
 function App() {
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  useEffect(() => {
-    // Trick to avoid double init with HMR
-    if (window.fhevmjsInitialized) return;
-    window.fhevmjsInitialized = true;
-    init()
-      .then(() => {
-        setIsInitialized(true);
-      })
-      .catch((e) => {
-        console.log(e);
-        setIsInitialized(false);
-      });
-  }, []);
-
-  if (!isInitialized) return null;
-
+  if (!import.meta.env.VITE_KMS_ADDRESS)
+    throw new Error('Missing VITE_KMS_ADDRESS environment variable');
   return (
-    <>
-      <h1>fhevmjs</h1>
-      <Connect>
-        {(account, provider) => (
-          <Devnet account={account} provider={provider} />
-        )}
-      </Connect>
-      <p className="read-the-docs">
-        <a href="https://docs.zama.ai/fhevm">
-          See the documentation for more information
-        </a>
-      </p>
-    </>
+    <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <FhevmProvider>
+            <ThemeProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Header />
+                <AnimatePresence mode="wait">
+                  <Routes>
+                    <Route path="/" element={<Fhevm />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </AnimatePresence>
+              </BrowserRouter>
+            </ThemeProvider>
+          </FhevmProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
 
