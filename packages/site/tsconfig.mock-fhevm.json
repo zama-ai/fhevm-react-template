@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"],
+      "@/fhevm-react/useFhevm": ["./fhevm/debug/hook/useFhevm"],
+      "@/fhevm-react/fhevmReactConfig": ["./fhevm/debug/hook/fhevmReactConfig"],
+      "@/fhevm-react/hook": ["./fhevm/hook/*"]
+    }
+  }
+}

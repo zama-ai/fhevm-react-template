@@ -1,0 +1,1 @@
+export const HARDHAT_NODE_CHAIN_ID = 31337;
