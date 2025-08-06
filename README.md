@@ -106,7 +106,7 @@ For testing with real network conditions, deploy your dApp to Sepolia testnet:
 
 For questions and support:
 
-- [fhevm Discord Community](https://discord.gg/zamaai)
+- [fhevm Discord Community](https://discord.com/invite/zama)
 - [GitHub Issues](https://github.com/zama-ai/fhevm-react-template/issues)
 
 ## License
