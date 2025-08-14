@@ -6,6 +6,13 @@ and provides a simple development frontend for interacting with the `FHECounter.
 
 This template also illustrates how to run your FHEVM-dApp on both Sepolia as well as a local Hardhat Node (much faster).
 
+## Features
+
+- **@zama-fhe/relayer-sdk**: Fully Homomorphic Encryption for Ethereum Virtual Machine
+- **React**: Modern UI framework for building interactive interfaces
+- **Next.js**: Next-generation frontend build tool
+- **Tailwind**: Utility-first CSS framework for rapid UI development
+
 ## Requirements
 
 - You need to have Metamask browser extension installed on your browser.
@@ -23,7 +30,7 @@ This template also illustrates how to run your FHEVM-dApp on both Sepolia as wel
 
 2. From the repo root, run:
 ```sh
-# Clones fhevm-hardhat-template into packages/, removes its .git
+# Clones fhevm-hardhat-template into 'packages/', removes its .git
 node ./scripts/preinstall.mjs
 ```
 
@@ -75,3 +82,15 @@ To clean Metamask cache:
 - Select the Hardhat network
 - Goto settings > advanced
 - Click "Clear Activity Tab" red button.
+
+## Documentation
+
+- [FHEVM Documentation](https://docs.zama.ai/protocol/solidity-guides/)
+- [FHEVM Hardhat](https://docs.zama.ai/protocol/solidity-guides/development-guide/hardhat)
+- [@zama-fhe/relayer-sdk Documentation](https://docs.zama.ai/protocol/relayer-sdk-guides/)
+- [Setting up MNEMONIC and INFURA_API_KEY](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional)
+- [React Documentation](https://reactjs.org/)
+
+## License
+
+This project is licensed under the BSD-3-Clause-Clear License - see the LICENSE file for details.

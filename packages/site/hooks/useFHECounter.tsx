@@ -47,6 +47,10 @@ function getFHECounterByChainId(chainId: number | undefined): {
   const entry =
     FHECounterAddresses[chainId.toString() as keyof typeof FHECounterAddresses];
 
+  if (!("address" in entry) || entry.address === ethers.ZeroAddress) {
+    return { abi: FHECounterABI.abi };
+  }  
+
   return {
     address: entry?.address as `0x${string}` | undefined,
     chainId: entry?.chainId,
@@ -113,6 +117,10 @@ export const useFHECounter = (parameters: {
 
     //chainIdRef.current = chainId;
     fheCounterAddressRef.current = c.address;
+
+    if (!c.address) {
+      setMessage(`FHECounter deployment not found for chainId=${chainId}.`);
+    }
 
     return c;
   }, [chainId]);

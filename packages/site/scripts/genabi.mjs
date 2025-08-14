@@ -68,7 +68,7 @@ function readDeployment(chainName, chainId, contractName) {
     console.error(
       `${line}Unable to locate '${chainDeploymentDir}' directory.\n\n1. Goto '${dirname}' directory\n2. Run 'npx hardhat deploy --network ${chainName}'.${line}`
     );
-    return undefined;
+    return "0x0000000000000000000000000000000000000000";
   }
 
   const jsonString = fs.readFileSync(

@@ -1,7 +1,13 @@
 {
-  "name": "site",
-  "version": "0.1.0",
+  "name": "fhevm-react-template",
+  "version": "0.3.0",
   "private": true,
+  "license": "BSD-3-Clause-Clear",
+  "homepage": "https://github.com/zama-ai/fhevm-react-template/blob/main/packages/site/README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zama-ai/fhevm-react-template.git"
+  },
   "scripts": {
     "clean": "rimraf .next",
     "dev": "npm run clean && npm run genabi && next dev --turbopack",
