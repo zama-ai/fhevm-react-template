@@ -136,6 +136,8 @@ By following these steps, you can ensure that MetaMask syncs correctly with your
 - [@zama-fhe/relayer-sdk Documentation](https://docs.zama.ai/protocol/relayer-sdk-guides/)
 - [Setting up MNEMONIC and INFURA_API_KEY](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional)
 - [React Documentation](https://reactjs.org/)
+- [FHEVM Discord Community](https://discord.com/invite/zama)
+- [GitHub Issues](https://github.com/zama-ai/fhevm-react-template/issues)
 
 ## License
 
