@@ -22,16 +22,22 @@ export interface UseMetaMaskEthersSignerState {
     (ethersSigner: ethers.JsonRpcSigner | undefined) => boolean
   >;
   ethersBrowserProvider: ethers.BrowserProvider | undefined;
+  ethersReadonlyProvider: ethers.ContractRunner | undefined;
   ethersSigner: ethers.JsonRpcSigner | undefined;
+  initialMockChains: Readonly<Record<number, string>> | undefined;
 }
 
-function useMetaMaskEthersSignerInternal(): UseMetaMaskEthersSignerState {
+function useMetaMaskEthersSignerInternal(parameters: { initialMockChains?: Readonly<Record<number, string>> }): UseMetaMaskEthersSignerState {
+  const { initialMockChains } = parameters;
   const { provider, chainId, accounts, isConnected, connect, error } = useMetaMask();
   const [ethersSigner, setEthersSigner] = useState<
     ethers.JsonRpcSigner | undefined
   >(undefined);
   const [ethersBrowserProvider, setEthersBrowserProvider] = useState<
     ethers.BrowserProvider | undefined
+  >(undefined);
+  const [ethersReadonlyProvider, setEthersReadonlyProvider] = useState<
+    ethers.ContractRunner | undefined
   >(undefined);
 
   const chainIdRef = useRef<number | undefined>(chainId);
@@ -62,15 +68,31 @@ function useMetaMaskEthersSignerInternal(): UseMetaMaskEthersSignerState {
       ethersSignerRef.current = undefined;
       setEthersSigner(undefined);
       setEthersBrowserProvider(undefined);
+      setEthersReadonlyProvider(undefined);
       return;
     }
 
+    console.warn(`[useMetaMaskEthersSignerInternal] create new ethers.BrowserProvider(), chainId=${chainId}`);
+
     const bp: ethers.BrowserProvider = new ethers.BrowserProvider(provider);
+    let rop: ethers.ContractRunner = bp;
+    const rpcUrl: string | undefined = initialMockChains?.[chainId];
+    if (rpcUrl) {
+      // Try to avoid using MetaMask Eip1193Provider for view functions in mock mode
+      // MetaMask keeps a cache value of all view function calls. When using a dev node, this can be problematic and 
+      // lead to nasty bugs. See README for more infos.
+      rop = new ethers.JsonRpcProvider(rpcUrl);
+      console.warn(`[useMetaMaskEthersSignerInternal] create new readonly provider ethers.JsonRpcProvider(${rpcUrl}), chainId=${chainId}`);
+    } else {
+      console.warn(`[useMetaMaskEthersSignerInternal] use ethers.BrowserProvider() as readonly provider, chainId=${chainId}`);
+    }
+
     const s = new ethers.JsonRpcSigner(bp, accounts[0]);
     ethersSignerRef.current = s;
     setEthersSigner(s);
     setEthersBrowserProvider(bp);
-  }, [provider, chainId, isConnected, accounts]);
+    setEthersReadonlyProvider(rop);
+  }, [provider, chainId, isConnected, accounts, initialMockChains]);
 
   return {
     sameChain,
@@ -81,8 +103,10 @@ function useMetaMaskEthersSignerInternal(): UseMetaMaskEthersSignerState {
     isConnected,
     connect,
     ethersBrowserProvider,
+    ethersReadonlyProvider,
     ethersSigner,
-    error
+    error,
+    initialMockChains
   };
 }
 
@@ -90,10 +114,15 @@ const MetaMaskEthersSignerContext = createContext<UseMetaMaskEthersSignerState |
   undefined
 );
 
-export const MetaMaskEthersSignerProvider: React.FC<{ children: ReactNode; }> = ({
-  children,
+interface MetaMaskEthersSignerProviderProps {
+  children: ReactNode;
+  initialMockChains: Readonly<Record<number, string>>;
+}
+
+export const MetaMaskEthersSignerProvider: React.FC<MetaMaskEthersSignerProviderProps> = ({
+  children, initialMockChains
 }) => {
-  const props = useMetaMaskEthersSignerInternal();
+  const props = useMetaMaskEthersSignerInternal({ initialMockChains });
   return (
     <MetaMaskEthersSignerContext.Provider value={props}>
       {children}

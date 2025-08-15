@@ -12,6 +12,8 @@ This template also illustrates how to run your FHEVM-dApp on both Sepolia as wel
 
 ## Local Hardhat Network (to add in MetaMask if needed)
 
+To run the template using Hardhat Node, you need to [register the following network in your MetaMask browser extension:](https://support.metamask.io/configure/networks/how-to-add-a-custom-network-rpc)
+
 - Name: Hardhat
 - RPC URL: http://127.0.0.1:8545
 - Chain ID: 31337

@@ -33,12 +33,12 @@ if (!fs.existsSync(outdir)) {
 }
 
 const deploymentsDir = path.join(dir, "deployments");
-if (!fs.existsSync(deploymentsDir)) {
-  console.error(
-    `${line}Unable to locate 'deployments' directory.\n\n1. Goto '${dirname}' directory\n2. Run 'npx hardhat deploy --network ${chainName}'.${line}`
-  );
-  process.exit(1);
-}
+// if (!fs.existsSync(deploymentsDir)) {
+//   console.error(
+//     `${line}Unable to locate 'deployments' directory.\n\n1. Goto '${dirname}' directory\n2. Run 'npx hardhat deploy --network ${chainName}'.${line}`
+//   );
+//   process.exit(1);
+// }
 
 function deployOnHardhatNode() {
   if (process.platform === "win32") {
@@ -56,7 +56,7 @@ function deployOnHardhatNode() {
   }
 }
 
-function readDeployment(chainName, chainId, contractName) {
+function readDeployment(chainName, chainId, contractName, optional) {
   const chainDeploymentDir = path.join(deploymentsDir, chainName);
 
   if (!fs.existsSync(chainDeploymentDir) && chainId === 31337) {
@@ -68,7 +68,10 @@ function readDeployment(chainName, chainId, contractName) {
     console.error(
       `${line}Unable to locate '${chainDeploymentDir}' directory.\n\n1. Goto '${dirname}' directory\n2. Run 'npx hardhat deploy --network ${chainName}'.${line}`
     );
-    return "0x0000000000000000000000000000000000000000";
+    if (!optional) {
+      process.exit(1);
+    }
+    return undefined;
   }
 
   const jsonString = fs.readFileSync(
@@ -82,8 +85,14 @@ function readDeployment(chainName, chainId, contractName) {
   return obj;
 }
 
-const deployLocalhost = readDeployment("localhost", 31337, CONTRACT_NAME);
-const deploySepolia = readDeployment("sepolia", 11155111, CONTRACT_NAME);
+// Auto deployed on Linux/Mac (will fail on windows)
+const deployLocalhost = readDeployment("localhost", 31337, CONTRACT_NAME, false /* optional */);
+
+// Sepolia is optional
+let deploySepolia = readDeployment("sepolia", 11155111, CONTRACT_NAME, true /* optional */);
+if (!deploySepolia) {
+  deploySepolia= { abi: deployLocalhost.abi, address: "0x0000000000000000000000000000000000000000" };
+}
 
 if (deployLocalhost && deploySepolia) {
   if (
@@ -95,6 +104,7 @@ if (deployLocalhost && deploySepolia) {
     process.exit(1);
   }
 }
+
 
 const tsCode = `
 /*

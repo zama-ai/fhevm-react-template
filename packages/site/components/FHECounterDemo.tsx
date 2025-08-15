@@ -20,9 +20,10 @@ export const FHECounterDemo = () => {
     isConnected,
     connect,
     ethersSigner,
-    ethersBrowserProvider,
+    ethersReadonlyProvider,
     sameChain,
     sameSigner,
+    initialMockChains,
   } = useMetaMaskEthersSigner();
 
   //////////////////////////////////////////////////////////////////////////////
@@ -36,9 +37,7 @@ export const FHECounterDemo = () => {
   } = useFhevm({
     provider,
     chainId,
-    initialMockChains: {
-      31337: "http://localhost:8545",
-    },
+    initialMockChains,
     enabled: true, // use enabled to dynamically create the instance on-demand
   });
 
@@ -52,10 +51,10 @@ export const FHECounterDemo = () => {
   const fheCounter = useFHECounter({
     instance: fhevmInstance,
     fhevmDecryptionSignatureStorage, // is global, could be invoked directly in useFHECounter hook
-    provider,
+    eip1193Provider: provider,
     chainId,
     ethersSigner,
-    ethersBrowserProvider,
+    ethersReadonlyProvider,
     sameChain,
     sameSigner,
   });
@@ -70,13 +69,19 @@ export const FHECounterDemo = () => {
   // - 1x "Decrement" button (to decrement the FHECounter)
   //////////////////////////////////////////////////////////////////////////////
 
+  // const buttonClass =
+  //   "inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-4 font-semibold text-white shadow-sm " +
+  //   "transition-colors duration-200 hover:bg-blue-700 active:bg-blue-800 " +
+  //   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 " +
+  //   "disabled:opacity-50 disabled:pointer-events-none";
+
   const buttonClass =
-    "inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-4 font-semibold text-white shadow-sm " +
+    "inline-flex items-center justify-center rounded-xl bg-black px-4 py-4 font-semibold text-white shadow-sm " +
     "transition-colors duration-200 hover:bg-blue-700 active:bg-blue-800 " +
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 " +
     "disabled:opacity-50 disabled:pointer-events-none";
 
-  const titleClass = "font-semibold text-gray-600 text-lg mt-5";
+  const titleClass = "font-semibold text-black text-lg mt-4";
 
   if (!isConnected) {
     return (
@@ -94,7 +99,13 @@ export const FHECounterDemo = () => {
 
   return (
     <div className="grid w-full gap-4">
-      <div className="col-span-full mx-20 mt-4 px-5 pb-5 rounded-lg bg-white border-2 border-gray-400 bg-opacity-50">
+      <div className="col-span-full mx-20 bg-black text-white">
+        <p className="font-semibold  text-3xl m-4">
+          <span className="font-mono">FHECounter.sol</span> React Minimal
+          Template
+        </p>
+      </div>
+      <div className="col-span-full mx-20 mt-4 px-5 pb-4 rounded-lg bg-white border-2 border-black">
         <p className={titleClass}>Chain Infos</p>
         {printProperty("ChainId", chainId)}
         {printProperty(
@@ -113,28 +124,37 @@ export const FHECounterDemo = () => {
         <p className={titleClass}>Contract</p>
         {printProperty("FHECounter", fheCounter.contractAddress)}
       </div>
-      <div className="col-span-full mx-20 px-5 pb-5 rounded-lg bg-white border-2 border-gray-400 bg-opacity-50">
-        <p className={titleClass}>FHEVM instance</p>
-        {printProperty("Fhevm Instance", fhevmInstance ? "OK" : "undefined")}
-        {printProperty("Fhevm Status", fhevmStatus)}
-        {printProperty("Fhevm Error", fhevmError ?? "No Error")}
-
-        <p className={titleClass}>Status</p>
-        {printProperty("isRefreshing", fheCounter.isRefreshing)}
-        {printProperty("isDecrypting", fheCounter.isDecrypting)}
-        {printProperty("isIncOrDec", fheCounter.isIncOrDec)}
-
+      <div className="col-span-full mx-20">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="rounded-lg bg-white border-2 border-black pb-4 px-4">
+            <p className={titleClass}>FHEVM instance</p>
+            {printProperty(
+              "Fhevm Instance",
+              fhevmInstance ? "OK" : "undefined"
+            )}
+            {printProperty("Fhevm Status", fhevmStatus)}
+            {printProperty("Fhevm Error", fhevmError ?? "No Error")}
+          </div>
+          <div className="rounded-lg bg-white border-2 border-black pb-4 px-4">
+            <p className={titleClass}>Status</p>
+            {printProperty("isRefreshing", fheCounter.isRefreshing)}
+            {printProperty("isDecrypting", fheCounter.isDecrypting)}
+            {printProperty("isIncOrDec", fheCounter.isIncOrDec)}
+            {printProperty("canGetCount", fheCounter.canGetCount)}
+            {printProperty("canDecrypt", fheCounter.canDecrypt)}
+            {printProperty("canIncOrDec", fheCounter.canIncOrDec)}
+          </div>
+        </div>
+      </div>
+      <div className="col-span-full mx-20 px-4 pb-4 rounded-lg bg-white border-2 border-black">
         <p className={titleClass}>Count Handle</p>
         {printProperty("countHandle", fheCounter.handle)}
         {printProperty(
           "clear countHandle",
           fheCounter.isDecrypted ? fheCounter.clear : "Not decrypted"
         )}
-        {printProperty("canGetCount", fheCounter.canGetCount)}
-        {printProperty("canDecrypt", fheCounter.canDecrypt)}
-        {printProperty("canIncOrDec", fheCounter.canIncOrDec)}
       </div>
-      <div className="grid grid-cols-1 mx-20">
+      <div className="grid grid-cols-2 mx-20 gap-4">
         <button
           className={buttonClass}
           disabled={!fheCounter.canDecrypt}
@@ -146,7 +166,16 @@ export const FHECounterDemo = () => {
               ? `Decrypted clear counter value is ${fheCounter.clear}`
               : fheCounter.isDecrypting
                 ? "Decrypting..."
-                : "cannot decrypt anything"}
+                : "Nothing to decrypt"}
+        </button>
+        <button
+          className={buttonClass}
+          disabled={!fheCounter.canGetCount}
+          onClick={fheCounter.refreshCountHandle}
+        >
+          {fheCounter.canGetCount
+            ? "Refresh Count Handle"
+            : "FHECounter is not available"}
         </button>
       </div>
       <div className="grid grid-cols-2 mx-20 gap-4">
@@ -173,7 +202,7 @@ export const FHECounterDemo = () => {
               : "cannot decrement"}
         </button>
       </div>
-      <div className="col-span-full mx-20 p-5 rounded-lg bg-white border-2 border-gray-400 bg-opacity-50">
+      <div className="col-span-full mx-20 p-4 rounded-lg bg-white border-2 border-black">
         {printProperty("Message", fheCounter.message)}
       </div>
     </div>
@@ -184,7 +213,7 @@ function printProperty(name: string, value: unknown) {
   let displayValue: string;
 
   if (typeof value === "boolean") {
-    displayValue = value ? "true" : "false";
+    return printBooleanProperty(name, value);
   } else if (typeof value === "string" || typeof value === "number") {
     displayValue = String(value);
   } else if (typeof value === "bigint") {
@@ -199,11 +228,27 @@ function printProperty(name: string, value: unknown) {
     displayValue = JSON.stringify(value);
   }
   return (
-    <p className="text-gray-500">
+    <p className="text-black">
       {name}:{" "}
-      <span className="font-mono font-semibold text-gray-500">
-        {displayValue}
-      </span>
+      <span className="font-mono font-semibold text-black">{displayValue}</span>
+    </p>
+  );
+}
+
+function printBooleanProperty(name: string, value: boolean) {
+  if (value) {
+    return (
+      <p className="text-black">
+        {name}:{" "}
+        <span className="font-mono font-semibold text-green-500">true</span>
+      </p>
+    );
+  }
+
+  return (
+    <p className="text-black">
+      {name}:{" "}
+      <span className="font-mono font-semibold text-red-500">false</span>
     </p>
   );
 }

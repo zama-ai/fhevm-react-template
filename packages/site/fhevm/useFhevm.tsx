@@ -24,7 +24,7 @@ export function useFhevm(parameters: {
   error: Error | undefined;
   status: FhevmGoState;
 } {
-  const { provider, chainId, initialMockChains = { 31337: "http://localhost:8545" }, enabled = true } = parameters;
+  const { provider, chainId, initialMockChains, enabled = true } = parameters;
 
   const [instance, _setInstance] = useState<FhevmInstance | undefined>(
     undefined
