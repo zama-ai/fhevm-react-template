@@ -19,6 +19,8 @@ This template also illustrates how to run your FHEVM-dApp on both Sepolia as wel
 
 ## Local Hardhat Network (to add in MetaMask)
 
+Follow the step-by-step guide in the [Hardhat + MetaMask](https://docs.metamask.io/wallet/how-to/run-devnet/) documentation to set up your local devnet using Hardhat and MetaMask.
+
 - Name: Hardhat
 - RPC URL: http://127.0.0.1:8545
 - Chain ID: 31337
