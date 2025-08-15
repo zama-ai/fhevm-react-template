@@ -179,32 +179,6 @@ export const useFHECounter = (parameters: {
     const thisChainId = fheCounterRef.current.chainId;
     const thisFheCounterAddress = fheCounterRef.current.address;
 
-    // const payload = {
-    //   method: "eth_call",
-    //   params: [
-    //     {
-    //       to: "0x7553cb9124f974ee475e5ce45482f90d5b6076bc",
-    //       data: "0xa87d942c"
-    //     },
-    //     "latest"
-    //   ]
-    // };
-    // eip1193Provider?.request(payload).then((result) => {
-    //   console.log("EIP1193 RESULT = " + result);
-    // });
-
-    //{"action":"sendEip1193Request","payload":{"method":"eth_call","params":[{"to":"0x7553cb9124f974ee475e5ce45482f90d5b6076bc","data":"0xa87d942c"},"latest"]}}
-    // const jsonRpcProvider = new ethers.JsonRpcProvider("http://localhost:8545");
-    // jsonRpcProvider.on("debug", (arg) => {
-    //   console.log(JSON.stringify(arg));
-    // });
-    // const runner: ethers.ContractRunner = jsonRpcProvider;
-
-    /*
-{"action":"sendRpcPayload","payload":[{"method":"eth_chainId","params":[],"id":1,"jsonrpc":"2.0"},{"method":"eth_call","params":[{"to":"0x7553cb9124f974ee475e5ce45482f90d5b6076bc","data":"0xa87d942c"},"latest"],"id":2,"jsonrpc":"2.0"}]}
-useFHECounter.tsx:169 {"action":"receiveRpcResult","result":[{"jsonrpc":"2.0","id":1,"result":"0x7a69"},{"jsonrpc":"2.0","id":2,"result":"0xeff9232931685861530f61ed57fad0a25495905248ff0000000000007a690400"}]}
-*/
-
     const thisFheCounterContract = new ethers.Contract(
       thisFheCounterAddress,
       fheCounterRef.current.abi,
