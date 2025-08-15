@@ -14,7 +14,7 @@ async function checkIfHardhatNodeIsRunning() {
     console.error("   ----------------------");
     console.error("   ✅ 1. Open a new terminal window");
     console.error("   ✅ 2. Goto ./packages/fhevm-hardhat-template");
-    console.error("   ✅ 3. Run: npx hardhat deploy --network localhost");
+    console.error("   ✅ 3. Run: npx hardhat node --verbose");
     console.error("\n===============================================================================\n");
     console.error("\n");
     process.exit(1);

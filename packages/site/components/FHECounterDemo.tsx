@@ -4,6 +4,7 @@ import { useFhevm } from "../fhevm/useFhevm";
 import { useInMemoryStorage } from "../hooks/useInMemoryStorage";
 import { useMetaMaskEthersSigner } from "../hooks/metamask/useMetaMaskEthersSigner";
 import { useFHECounter } from "@/hooks/useFHECounter";
+import { errorNotDeployed } from "./ErrorNotDeployed";
 
 /*
  * Main FHECounter React component with 3 buttons
@@ -69,12 +70,6 @@ export const FHECounterDemo = () => {
   // - 1x "Decrement" button (to decrement the FHECounter)
   //////////////////////////////////////////////////////////////////////////////
 
-  // const buttonClass =
-  //   "inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-4 font-semibold text-white shadow-sm " +
-  //   "transition-colors duration-200 hover:bg-blue-700 active:bg-blue-800 " +
-  //   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 " +
-  //   "disabled:opacity-50 disabled:pointer-events-none";
-
   const buttonClass =
     "inline-flex items-center justify-center rounded-xl bg-black px-4 py-4 font-semibold text-white shadow-sm " +
     "transition-colors duration-200 hover:bg-blue-700 active:bg-blue-800 " +
@@ -91,18 +86,24 @@ export const FHECounterDemo = () => {
           disabled={isConnected}
           onClick={connect}
         >
-          Connect to MetaMask
+          <span className="text-4xl p-6">Connect to MetaMask</span>
         </button>
       </div>
     );
   }
 
+  if (fheCounter.isDeployed === false) {
+    return errorNotDeployed(chainId);
+  }
+
   return (
     <div className="grid w-full gap-4">
       <div className="col-span-full mx-20 bg-black text-white">
-        <p className="font-semibold  text-3xl m-4">
-          <span className="font-mono">FHECounter.sol</span> React Minimal
-          Template
+        <p className="font-semibold  text-3xl m-5">
+          FHEVM React Minimal Template -{" "}
+          <span className="font-mono font-normal text-gray-400">
+            FHECounter.sol
+          </span>
         </p>
       </div>
       <div className="col-span-full mx-20 mt-4 px-5 pb-4 rounded-lg bg-white border-2 border-black">
@@ -123,6 +124,7 @@ export const FHECounterDemo = () => {
 
         <p className={titleClass}>Contract</p>
         {printProperty("FHECounter", fheCounter.contractAddress)}
+        {printProperty("isDeployed", fheCounter.isDeployed)}
       </div>
       <div className="col-span-full mx-20">
         <div className="grid grid-cols-2 gap-4">

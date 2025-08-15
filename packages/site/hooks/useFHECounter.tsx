@@ -146,6 +146,13 @@ export const useFHECounter = (parameters: {
   // Count Handle
   //////////////////////////////////////////////////////////////////////////////
 
+  const isDeployed = useMemo(() => {
+    if (!fheCounter) {
+      return undefined;
+    }
+    return (Boolean(fheCounter.address) && fheCounter.address !== ethers.ZeroAddress);
+  }, [fheCounter]);
+
   const canGetCount = useMemo(() => {
     return fheCounter.address && ethersReadonlyProvider && !isRefreshing;
   }, [fheCounter.address, ethersReadonlyProvider, isRefreshing]);
@@ -505,5 +512,6 @@ useFHECounter.tsx:169 {"action":"receiveRpcResult","result":[{"jsonrpc":"2.0","i
     isDecrypting,
     isRefreshing,
     isIncOrDec,
+    isDeployed
   };
 };
