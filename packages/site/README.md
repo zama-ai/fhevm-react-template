@@ -80,7 +80,7 @@ Follows instructions in the [FHEVM documentation to setup your Hardhat project f
 npx hardhat deploy --network sepolia
 ```
 
-## Run frontend in mock mode
+## Run
 
 1. Start a local Hardhat node (new terminal):
 
@@ -88,19 +88,17 @@ npx hardhat deploy --network sepolia
 npx hardhat node --verbose
 ```
 
-2. From the `<root>/packages/site` run
+2. Open your Browser
+
+3. From your browser, open the MetaMask extension and select the Hardhat network
+
+4. From the `<root>/packages/site` run
 
 ```sh
 npm run dev:mock
 ```
+4. In your browser open `http://localhost:3000`
 
-3. In your browser open `http://localhost:3000`
-
-4. Open Metamask connect to local Hardhat node
-i. Select Add network.
-ii. Select Add a network manually.
-iii. Enter your Hardhat Network RPC URL, http://127.0.0.1:8545/ (or http://localhost:8545).
-iv. Enter your Hardhat Network chain ID, 31337 (or 0x539 in hexadecimal format).
 
 ## How to fix Hardhat Node + Metamask Errors ?
 
