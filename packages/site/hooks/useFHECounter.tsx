@@ -63,7 +63,7 @@ function getFHECounterByChainId(
   const entry =
     FHECounterAddresses[chainId.toString() as keyof typeof FHECounterAddresses];
 
-  if (!("address" in entry) || entry.address === ethers.ZeroAddress) {
+  if (!entry?.address || entry.address === ethers.ZeroAddress) {
     return { abi: FHECounterABI.abi, chainId };
   }
 
@@ -150,7 +150,9 @@ export const useFHECounter = (parameters: {
     if (!fheCounter) {
       return undefined;
     }
-    return (Boolean(fheCounter.address) && fheCounter.address !== ethers.ZeroAddress);
+    return (
+      Boolean(fheCounter.address) && fheCounter.address !== ethers.ZeroAddress
+    );
   }, [fheCounter]);
 
   const canGetCount = useMemo(() => {
@@ -486,6 +488,6 @@ export const useFHECounter = (parameters: {
     isDecrypting,
     isRefreshing,
     isIncOrDec,
-    isDeployed
+    isDeployed,
   };
 };
