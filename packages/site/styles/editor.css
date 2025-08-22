@@ -1,0 +1,180 @@
+.editor {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  background-color: var(--text-color);
+  min-width: 400px;
+  height: 540px;
+  margin-right: 1%;
+  border-radius: 7px;
+  box-shadow: rgba(0, 0, 0, 0.192) 0px 5px 15px;
+  overflow: hidden;
+  z-index: 122;
+  bottom: 21px !important;
+}
+
+.editor.hiden {
+  display: none;
+}
+
+.markdownEditor textarea {
+  height: 350px;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.header-edit {
+  background-color: var(--primary-color);
+  height: 9%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline-start: 5%;
+  padding-inline-end: 2%;
+  margin-bottom: 2%;
+}
+
+.header-edit p {
+  color: var(--text-color);
+  font-size: 15px;
+}
+
+.closeBtn {
+  color: var(--text-color);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px;
+  transition: 0.3s;
+  border-radius: 100%;
+}
+
+.closeBtn:hover {
+  background-color: rgba(128, 128, 128, 0.11);
+}
+
+.inputEditor {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-inline-start: 5%;
+
+  padding-inline-end: 2%;
+  grid-column-gap: 2%;
+
+  height: 36px;
+}
+
+.inputEditor .input1 {
+  border: none;
+  outline: none;
+  font-size: 14px;
+  padding: 6px;
+  width: 78%;
+}
+
+.inputEditor .input1::placeholder {
+  font-size: 14px;
+}
+
+.inputEditor .input2 {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: rgb(58, 58, 58);
+  width: 100%;
+  font-family: "RobotoRegular";
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+
+.inputEditor .input2::placeholder {
+  font-size: 14px;
+}
+
+.markdownEditor {
+  width: 100%;
+  height: 100%;
+}
+
+textarea {
+  width: 90%;
+  height: 49%;
+  padding-inline-start: 5%;
+  resize: none;
+  outline: none;
+  border: none;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  text-align: justify;
+  font-size: 16px;
+  padding-top: 2%;
+}
+
+.view {
+  padding-inline-start: 5%;
+  height: 59%;
+  max-width: 90%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  text-align: justify;
+  padding-top: 2%;
+}
+
+.view h1,
+.view h2 {
+  font-size: 14px;
+  font-family: "RobotoRegular";
+}
+
+.view p {
+  font-size: 17px;
+  font-family: "RobotoRegular";
+}
+
+.toolBoxEditor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-inline: 4%;
+}
+
+.toolBoxS {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.toolBoxS .mediumRegular {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.toolBoxS .mediumRegular:hover {
+  border-color: var(--primary-color);
+}
+
+.toolBoxEditor button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-column-gap: 6px;
+  width: 86px;
+  padding: 8px;
+  margin-right: 7%;
+  border-radius: 32px;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: 0.1s;
+  opacity: 1;
+}
+
+.toolBoxEditor button:hover {
+  opacity: 1;
+}
+
+.toolBoxEditor button span:nth-child(2) {
+  font-size: 17px;
+}
