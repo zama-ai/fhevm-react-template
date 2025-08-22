@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --primary-color: #fed218;
+  --background-color: #0e1120;
+  --text-color: #ffffff;
+  --sub-text-color: rgba(255, 255, 255, 0.7);
+}
+
+body {
+  margin: 0;
+}

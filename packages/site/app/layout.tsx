@@ -14,7 +14,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`text-foreground antialiased p-4`}>
+      <body className={`text-foreground antialiased`}>
         <Providers>{children}</Providers>
       </body>
     </html>
