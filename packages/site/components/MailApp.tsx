@@ -1,3 +1,10 @@
+import "../styles/mail-app.css";
+import MailEditor from "./mail/MailEditor";
+
 export default function MailApp() {
-  return <h1>MailApp Component</h1>;
+  return (
+    <div className="mailApp">
+      <MailEditor />
+    </div>
+  );
 }
