@@ -1,0 +1,228 @@
+.wallet-info {
+  height: 44px !important;
+  width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #111;
+  color: #555;
+  position: relative;
+  cursor: pointer;
+  font-family: "";
+}
+
+.wallet-info-address {
+  margin-top: 5px;
+  font-weight: 600;
+}
+
+.wallet-info::after {
+  content: "";
+  height: 10px;
+  width: 140px;
+  bottom: -10px;
+  position: absolute;
+  background-color: transparent;
+}
+
+.wallet-info:hover .modal {
+  display: block;
+}
+
+.modal {
+  height: 315px;
+  width: 350px;
+  position: absolute;
+  top: 50px;
+  right: -1px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow:
+    rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  padding: 20px;
+  display: none;
+  cursor: default;
+  z-index: 10000;
+}
+
+.modal:hover {
+  display: block;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.top .text {
+  margin-left: 12px;
+  font-family: Arial, Helvetica, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.top .text > div {
+  display: flex;
+  align-items: center;
+}
+
+.top .text > div div {
+  font-weight: 600;
+  font-size: 15px;
+  color: rgb(51, 51, 51) !important;
+  margin-right: 6px;
+}
+
+.top .text > div span {
+  font-family: "";
+}
+
+.top .text > div img {
+  height: 20px;
+  width: 20px;
+}
+
+.top .img {
+  height: 42px;
+  width: 42px;
+  background-color: black;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.top img {
+  height: 34px;
+  width: 34px;
+  margin-bottom: 4px;
+}
+
+.netWork {
+  font-size: 13px;
+  font-family: "";
+}
+
+.address {
+  font-size: 14px;
+  color: rgb(153, 153, 153);
+  margin-top: 25px;
+  display: flex;
+  align-items: center;
+}
+
+.address div:nth-child(2) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 10px;
+  color: black;
+  cursor: pointer;
+}
+
+.address div:nth-child(2) div {
+  transition: color 0.2s ease;
+}
+
+.address div:nth-child(2) i {
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.address div:nth-child(2):hover i::after {
+  content: "Copy";
+  position: absolute;
+  top: 18px;
+  right: 0;
+  height: 20px;
+  width: 50px;
+  color: var(--text-color);
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  font-size: 9px;
+}
+
+.address div:nth-child(2):hover div {
+  color: var(--primary-color) !important;
+}
+
+.address div:nth-child(2):hover {
+  color: var(--primary-color);
+}
+
+.address div:nth-child(2) div {
+  margin-right: 10px;
+}
+
+.domain div {
+  font-size: 14px;
+  color: rgb(153, 153, 153);
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.domain div a {
+  color: rgb(85, 202, 219);
+  margin-left: 5px;
+}
+
+.domain div span {
+  color: rgb(85, 202, 219);
+  margin-left: 5px;
+}
+
+.logout {
+  width: 180px;
+  line-height: 35px;
+  border-radius: 35px;
+  background: rgb(245, 245, 245);
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+  color: #111;
+}
+
+.bottom {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  margin-top: 20px;
+  border-top: 1px solid #eeeeee;
+  opacity: 0.6;
+  transition: opacity 0.3 ease;
+}
+
+.bottom:hover {
+  opacity: 1;
+}
+
+.withLove {
+  color: var(--text-color) !important;
+  margin-top: auto;
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  font-family: "";
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local(""),
+    url("https://fonts.cdnfonts.com/s/107528/Rangile.woff") format("woff");
+}
+
+.toast div:nth-child(2) {
+  padding-top: 5px;
+}
+
+a {
+  text-decoration: underline;
+}
