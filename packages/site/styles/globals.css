@@ -25,13 +25,16 @@ body {
   font-family: "GoogleSansMedium";
   src: url("./fonts/ProductSans-Medium.ttf");
 }
+
 .mediumSans {
   font-family: "GoogleSansMedium";
 }
+
 @font-face {
   font-family: "GoogleSansBold";
   src: url("./fonts/ProductSans-Bold.ttf");
 }
+
 .boldSans {
   font-family: "GoogleSansMedium";
 }
@@ -40,24 +43,30 @@ body {
   font-family: "GoogleSansRegular";
   src: url("./fonts/ProductSans-Regular.ttf");
 }
+
 .mediumRegular {
   font-family: "GoogleSansRegular";
 }
+
 @font-face {
   font-family: "GoogleSansThin";
   src: url("./fonts/ProductSans-Thin.ttf");
 }
+
 .mediumThin {
   font-family: "GoogleSansThin";
 }
+
 @font-face {
   font-family: "RobotoRegular";
   src: url("./fonts/Roboto-Regular.ttf");
 }
+
 @font-face {
   font-family: "RobotoBold";
   src: url("./fonts/Roboto-Bold.ttf");
 }
+
 .robotoBold {
   font-family: "RobotoBold";
 }

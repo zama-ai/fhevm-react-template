@@ -1,0 +1,155 @@
+.sideBar {
+  min-width: 254px;
+  background-color: var(--background-color);
+  height: 100vh;
+}
+
+.sideBar ul {
+  padding-left: 10px;
+}
+
+.sideBar ul li {
+  border-radius: 4px;
+}
+
+.sideBar ul li .mediumRegular {
+  border-radius: 4px;
+  font-family: "";
+  font-style: normal;
+  font-weight: 600;
+  src:
+    local(""),
+    url("https://fonts.cdnfonts.com/s/107528/Rangile.woff") format("woff");
+}
+
+.sideBar ul li span {
+  color: var(--text-color);
+}
+
+.sideBar ul .active {
+  background-color: rgb(65, 65, 65);
+}
+
+.navMenuTitle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: #272727d8;
+  font-size: 1.3em;
+  overflow: hidden;
+  justify-content: center;
+  height: 100px;
+}
+
+.navMenuTitle img {
+  height: 105px;
+  width: 105px;
+}
+
+.navMenuTitle div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  grid-column-gap: 3px;
+}
+
+.compose.mediumRegular {
+  width: 180px;
+  height: 35px;
+  background: rgb(255, 255, 255);
+  border-radius: 35px;
+  font-weight: bold;
+  color: rgb(51, 51, 51);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  margin-left: 34px;
+  border: none;
+  border: none;
+  margin-bottom: 30px;
+  cursor: pointer;
+  font-family: "";
+  font-style: normal;
+  src:
+    local(""),
+    url("https://fonts.cdnfonts.com/s/107528/Rangile.woff") format("woff");
+}
+
+.composeToggle {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background-color: #c2e7ff;
+  height: 56px;
+  min-width: 56px;
+  width: 56;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-column-gap: 9%;
+  font-size: 1em;
+  margin-left: 8%;
+  margin-top: 0.2%;
+  transition: 0.2s;
+}
+
+ul {
+  margin-top: 5%;
+}
+
+ul li {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 10%;
+  grid-column-gap: 8%;
+  color: rgb(73, 73, 73);
+  margin-bottom: 2%;
+  border-top-right-radius: 23px;
+  border-bottom-right-radius: 23px;
+  height: 33px;
+  cursor: pointer;
+  margin-right: 2%;
+  padding: 0 0 0 24px !important;
+}
+
+.navItemsToggle {
+  justify-content: center;
+}
+
+.active {
+  background-color: #d3e3fd;
+  color: #0b57d0;
+  font-family: "GoogleSansMedium";
+  pointer-events: none;
+}
+
+ul li:hover {
+  background-color: rgba(128, 128, 128, 0.13);
+  color: black;
+}
+
+ul li span:nth-child(1) {
+  font-size: 18px;
+}
+
+ul li span:nth-child(3) {
+  margin-left: auto;
+}
+
+.inbox-counter {
+  background-color: var(--primary-color);
+  width: 0px;
+  margin-left: auto;
+  margin-right: 20px;
+  width: 22px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 14px;
+}
