@@ -51,6 +51,7 @@ export interface UseMetaMaskState {
   isConnected: boolean;
   error: Error | undefined;
   connect: () => void;
+  disconnect: () => void;
 }
 
 function useMetaMaskInternal(): UseMetaMaskState {
@@ -95,6 +96,12 @@ function useMetaMaskInternal(): UseMetaMaskState {
     // Prompt connection
     _currentProvider.request({ method: "eth_requestAccounts" });
   }, [_currentProvider, accounts]);
+
+  const disconnect = useCallback(() => {
+    _setCurrentProvider(undefined);
+    _setChainId(undefined);
+    _setAccounts(undefined);
+  }, []);
 
   useEffect(() => {
     let next: Eip1193ProviderWithEvent | undefined = undefined;
@@ -294,6 +301,7 @@ function useMetaMaskInternal(): UseMetaMaskState {
     isConnected,
     error: eip6963Error,
     connect,
+    disconnect,
   };
 }
 
@@ -306,7 +314,7 @@ const MetaMaskContext = createContext<UseMetaMaskState | undefined>(undefined);
 export const MetaMaskProvider: React.FC<MetaMaskProviderProps> = ({
   children,
 }) => {
-  const { provider, chainId, accounts, isConnected, error, connect } =
+  const { provider, chainId, accounts, isConnected, error, connect, disconnect} =
     useMetaMaskInternal();
   return (
     <MetaMaskContext.Provider
@@ -317,6 +325,7 @@ export const MetaMaskProvider: React.FC<MetaMaskProviderProps> = ({
         isConnected,
         error,
         connect,
+        disconnect,
       }}
     >
       {children}
