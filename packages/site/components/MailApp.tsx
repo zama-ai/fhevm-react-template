@@ -1,6 +1,7 @@
 import "../styles/mail-app.css";
 import MailEditor from "./mail/MailEditor";
 import MailSidebar from "./mail/MailSidebar";
+import MailHeader from "./mail/MailHeader/index";
 
 import { useState } from "react";
 
@@ -25,6 +26,7 @@ export default function MailApp() {
           setActiveTab={setActiveTab}
           setIsOpenEditor={setIsOpenEditor}
         />
+        <MailHeader />
       </div>
     </div>
   );
