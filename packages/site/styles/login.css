@@ -55,26 +55,17 @@
 
   font-family: "";
   font-style: normal;
-  font-weight: 400;
-  src:
-    local(""),
-    url("https://fonts.cdnfonts.com/s/107528/Rangile.woff") format("woff");
+  font-weight: 600;
 }
 
 .mediumRegular {
   font-family: "";
   font-style: normal;
   font-weight: 400;
-  src:
-    local(""),
-    url("https://fonts.cdnfonts.com/s/107528/Rangile.woff") format("woff");
 }
 
 .inputEditor input {
   font-family: "" !important;
   font-style: normal !important;
   font-weight: 400 !important;
-  src:
-    local(""),
-    url("https://fonts.cdnfonts.com/s/107528/Rangile.woff") format("woff") !important;
 }

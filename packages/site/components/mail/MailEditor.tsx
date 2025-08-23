@@ -4,12 +4,19 @@ import { useState } from "react";
 import Blockies from "react-blockies";
 import ReactMarkdown from "react-markdown";
 
-export default function MailEditor() {
-  const [to, setTo] = useState("");
-  const [body, setBody] = useState("");
-  const [see, setSee] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
-  const [subject, setSubject] = useState("");
+type MailEditorProps = {
+  isOpenEditor: boolean;
+  setIsOpenEditor: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function MailEditor({
+  isOpenEditor,
+  setIsOpenEditor,
+}: MailEditorProps) {
+  const [to, setTo] = useState<string>("");
+  const [body, setBody] = useState<string>("");
+  const [see, setSee] = useState<boolean>(false);
+  const [subject, setSubject] = useState<string>("");
 
   const variants = {
     open: { y: 0, opacity: 1 },
@@ -17,7 +24,7 @@ export default function MailEditor() {
   };
 
   const closeAndReset = () => {
-    setIsOpen(false);
+    setIsOpenEditor(false);
     setTo("");
     setSubject("");
     setBody("");
@@ -27,11 +34,11 @@ export default function MailEditor() {
     <motion.div
       className="editor"
       initial={{ y: "100%", opacity: 0 }}
-      animate={isOpen ? variants.open : variants.closed}
+      animate={isOpenEditor ? variants.open : variants.closed}
     >
       <div className="header-edit">
         <p className="mediumRegular">New Message</p>
-        {isOpen && (
+        {isOpenEditor && (
           <motion.span
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -79,7 +86,7 @@ export default function MailEditor() {
       </div>
 
       <div className="markdownEditor">
-        {see === false ? (
+        {!see ? (
           <textarea
             className="mediumRegular"
             value={body}
@@ -90,6 +97,7 @@ export default function MailEditor() {
             <ReactMarkdown>{body}</ReactMarkdown>
           </div>
         )}
+
         <div className="toolBoxEditor">
           <div className="toolBoxS">
             <motion.button className="mediumRegular">
