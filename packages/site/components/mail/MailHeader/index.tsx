@@ -17,6 +17,7 @@ export type MailHeaderProps = {
   setActiveMailId: Dispatch<SetStateAction<number | null>>;
   selectedMailIds: number[];
   setSelectedMailIds: Dispatch<SetStateAction<number[]>>;
+  mailIds: number[];
   isReplying: boolean;
   setIsReplying: Dispatch<SetStateAction<boolean>>;
   isForwarding: boolean;
@@ -35,6 +36,7 @@ export default function MailHeader({
   setIsSelecting,
   activeMailId,
   setActiveMailId,
+  mailIds,
   selectedMailIds,
   setSelectedMailIds,
   isReplying,
@@ -69,6 +71,7 @@ export default function MailHeader({
           setIsForwarding={setIsForwarding}
           selectedMailIds={selectedMailIds}
           setSelectedMailIds={setSelectedMailIds}
+          mailIds={mailIds}
           bulkActionType={bulkActionType}
           setBulkActionType={setBulkActionType}
           executeBulkAction={executeBulkAction}
