@@ -1,3 +1,5 @@
+import { NativeCurrency, NetworkInfo } from "@/types";
+
 export const TAB_INDEXES = {
   INBOX: 0,
   STARRED: 1,
@@ -11,3 +13,22 @@ export const TAB_INDEXES = {
 export type TabKey = keyof typeof TAB_INDEXES;
 
 export type TabIndex = (typeof TAB_INDEXES)[TabKey];
+
+export const CHAIN_ID: string = "0xaa36a7";
+export const CHAIN_NAME: string = "Sepolia";
+export const SYMBOL: string = "SepoliaETH";
+
+export const NATIVE_CURRENCY: NativeCurrency = {
+  name: CHAIN_NAME,
+  symbol: SYMBOL,
+  decimals: 18,
+};
+
+export const RPC_URLS: string[] = ["https://sepolia.infura.io"];
+
+export const NETWORK_INFO: NetworkInfo = {
+  chainId: CHAIN_ID,
+  chainName: CHAIN_NAME,
+  nativeCurrency: NATIVE_CURRENCY,
+  rpcUrls: RPC_URLS,
+};
