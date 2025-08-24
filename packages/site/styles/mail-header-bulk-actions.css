@@ -1,0 +1,103 @@
+.header-tools-row {
+  margin-inline: 3px;
+  color: #4b4b4b;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-left: -7px;
+}
+
+.header-tools-row span {
+  font-size: 22px;
+  cursor: pointer;
+  margin-inline-end: 1%;
+  transition: 0.1s;
+  padding: 6px;
+}
+
+.header-tools-row span:hover,
+.tab-details span:hover {
+  background-color: rgba(128, 128, 128, 0.137);
+  border-radius: 100%;
+}
+
+.header-tools-row.disabled-action span {
+  opacity: 0.5;
+}
+
+.header-tools-row.disabled-action span:hover {
+  background-color: transparent;
+  cursor: default;
+}
+
+.delete-icon {
+  opacity: 1 !important;
+  cursor: pointer !important;
+}
+
+.delete-icon:hover {
+  background-color: rgba(128, 128, 128, 0.137) !important;
+}
+
+.tool-box-selection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.tool-box-selection {
+  font-size: 18px;
+}
+
+.bulk {
+  background-color: var(--primary-color);
+  border: none;
+  color: white;
+  height: 100%;
+  margin-left: 12%;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  height: 30px;
+  width: 30px;
+  border-radius: 30px;
+}
+
+.bulk-inactive {
+  background-color: transparent;
+  border: 1px solid gray;
+  color: gray;
+  pointer-events: none;
+}
+
+.bulk.mediumSans span:hover {
+  cursor: pointer !important;
+  background-color: rgba(128, 128, 128, 0.137) !important;
+}
+
+.bulk:hover {
+  background-color: white;
+  color: var(--primary-color);
+}
+
+.bulk .material-symbols-outlined {
+  margin-right: 0px !important;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-inline-start: 3%;
+  padding-inline-end: 0.2%;
+
+  cursor: pointer;
+  transition: 0.2s;
+  overflow: hidden;
+  border-left: 2px solid #0b57d000;
+  min-height: 45px;
+  margin-top: 1%;
+}
