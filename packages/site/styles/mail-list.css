@@ -1,0 +1,6 @@
+.mail-list {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: calc(100% - 120px);
+  width: 100%;
+}
