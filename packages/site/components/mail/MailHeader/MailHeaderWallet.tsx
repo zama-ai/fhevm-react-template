@@ -1,4 +1,4 @@
-import "../../../styles/mail-header-wallet.css";
+import "@/styles/mail-header-wallet.css";
 
 import { useRouter } from "next/navigation";
 import { useMetaMaskEthersSigner } from "@/hooks/metamask/useMetaMaskEthersSigner";

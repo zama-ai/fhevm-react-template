@@ -1,6 +1,6 @@
 "use client";
 
-import MailApp from "../../components/MailApp";
+import MailApp from "@/components/MailApp";
 
 export default function MailPage() {
   return <MailApp />;

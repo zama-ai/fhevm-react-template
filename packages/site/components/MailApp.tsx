@@ -1,4 +1,4 @@
-import "../styles/mail-app.css";
+import "@/styles/mail-app.css";
 
 import { useState, useRef } from "react";
 
@@ -8,8 +8,10 @@ import LoadingBar from "react-top-loading-bar";
 import MailEditor from "./mail/MailEditor";
 import MailSidebar from "./mail/MailSidebar";
 import MailHeader from "./mail/MailHeader/index";
+import MailItemList from "./mail/MailItemList";
 
-import { TAB_INDEXES, TabIndex } from "../constants/index";
+import { Mail } from "@/types";
+import { TAB_INDEXES, TabIndex } from "@/constants/index";
 
 export type LoadingBarRef = React.RefObject<{
   continuousStart: () => void;
@@ -27,10 +29,12 @@ export default function MailApp() {
   const [activeTabCount, setActiveTabCount] = useState<number>(0);
 
   const [searchValue, setSearchValue] = useState<string>("");
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [filteredMails, setFilteredMails] = useState<Mail[]>([]);
 
   const [isSelecting, setIsSelecting] = useState<boolean>(false);
-  const [activeMailId, setActiveMailId] = useState<string | null>(null);
-  const [selectedMailIds, setSelectedMailIds] = useState<string[]>([]);
+  const [activeMailId, setActiveMailId] = useState<number | null>(null);
+  const [selectedMailIds, setSelectedMailIds] = useState<number[]>([]);
 
   const [isReplying, setIsReplying] = useState<boolean>(false);
   const [isForwarding, setIsForwarding] = useState<boolean>(false);
@@ -38,6 +42,19 @@ export default function MailApp() {
   const [bulkActionType, setBulkActionType] = useState<string>("");
 
   const loadingBarRef = useRef<LoadingBarRef["current"]>(null);
+
+  const [mails, setMails] = useState<Mail[]>([]);
+  const refreshMap: Record<number, () => void> = {
+    [TAB_INDEXES.STARRED]: () => console.log("refresh starred"),
+    [TAB_INDEXES.SENT]: () => console.log("refresh sent"),
+    [TAB_INDEXES.ARCHIVE]: () => console.log("refresh archive"),
+    [TAB_INDEXES.SPAM]: () => console.log("refresh spam"),
+    [TAB_INDEXES.READ]: () => console.log("refresh read"),
+    [TAB_INDEXES.TRASH]: () => console.log("refresh trash"),
+  };
+  const refreshByTab = (tabIndex: number): (() => void) => {
+    return refreshMap[tabIndex] ?? (() => {});
+  };
 
   const executeBulkAction = async () => {};
 
@@ -75,6 +92,15 @@ export default function MailApp() {
             setBulkActionType={setBulkActionType}
             executeBulkAction={executeBulkAction}
             loadingBarRef={loadingBarRef}
+          />
+          <MailItemList
+            mails={mails}
+            filteredMails={filteredMails}
+            activeTab={activeTab}
+            isSearching={isSearching}
+            selectedMailIds={selectedMailIds}
+            setActiveMailId={setActiveMailId}
+            setSelectedMailIds={setSelectedMailIds}
           />
         </div>
       </div>

@@ -1,0 +1,120 @@
+.mail-item-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 45px;
+  cursor: pointer;
+  padding: 0 45px 0 43px;
+}
+
+.mail-item-list:hover {
+  background-color: #f6f6f6;
+}
+
+.mail-item-list-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 200px;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.mail-item-list-start span {
+  color: rgba(63, 63, 63, 0.34);
+  font-size: 19px;
+  margin-right: 5px;
+  margin-top: 6px;
+}
+
+.mail-item-list-start p,
+.mediumRegular.mark .boldSans,
+.mediumSans.hour {
+  font-family: "";
+  font-style: normal;
+  font-weight: 400;
+}
+
+.mark {
+  display: flex !important;
+  align-items: center;
+  width: 200px;
+  font-size: 15px;
+  font-weight: lighter;
+  flex-grow: 4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 10px;
+  margin-right: 12px;
+  position: relative;
+  top: 3px;
+}
+
+.mark span {
+  margin-right: 4px;
+}
+
+.mar span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 200px;
+}
+
+.mail-item-list-start .boldSans {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  top: 3px;
+}
+
+.body {
+  color: gray;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hour {
+  font-size: 13px;
+  font-weight: lighter;
+  position: relative;
+  top: 3px;
+  width: 80px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.no-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #272727;
+  font-size: 14px;
+  padding: 12px;
+  font-weight: 600;
+}
+
+.no-content > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.no-content img {
+  height: 90px;
+  width: 90px;
+  margin-bottom: 10px;
+}
+
+.no-content div,
+.no-content p {
+  font-size: 18px;
+  color: #111;
+}
