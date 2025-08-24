@@ -1,5 +1,5 @@
 import React from "react";
-import "../../../styles/mail-header-bulk-actions.css";
+import "@/styles/mail-header-bulk-actions.css";
 import { LoadingBarRef } from "../../MailApp";
 import { TAB_INDEXES, TabIndex } from "@/constants";
 
@@ -37,14 +37,14 @@ export type HeaderBulkActionsProps = {
   activeTab: TabIndex;
   isSelecting: boolean;
   setIsSelecting: (value: boolean) => void;
-  activeMailId: string | null;
-  setActiveMailId: (value: string | null) => void;
+  activeMailId: number | null;
+  setActiveMailId: (value: number | null) => void;
   isReplying: boolean;
   setIsReplying: (value: boolean) => void;
   isForwarding: boolean;
   setIsForwarding: (value: boolean) => void;
-  selectedMailIds: string[];
-  setSelectedMailIds: (ids: string[]) => void;
+  selectedMailIds: number[];
+  setSelectedMailIds: (ids: number[]) => void;
   bulkActionType: string;
   setBulkActionType: (value: string) => void;
   executeBulkAction: () => void | Promise<void>;

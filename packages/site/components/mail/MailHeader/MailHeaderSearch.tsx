@@ -1,4 +1,4 @@
-import "../../../styles/mail-header-search.css";
+import "@/styles/mail-header-search.css";
 import { ChangeEvent, useState, Dispatch, SetStateAction } from "react";
 
 type MailHeaderSearchProps = {

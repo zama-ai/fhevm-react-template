@@ -1,6 +1,6 @@
 "use client";
 
-import "../styles/mail-login.css";
+import "@/styles/mail-login.css";
 import { motion } from "framer-motion";
 
 export default function Login() {

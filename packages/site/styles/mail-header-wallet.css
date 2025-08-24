@@ -31,8 +31,8 @@
 }
 
 .modal {
-  height: 315px;
-  width: 350px;
+  height: 315px !important;
+  width: 350px !important;
   position: absolute;
   top: 50px;
   right: -1px;

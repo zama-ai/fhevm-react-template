@@ -1,7 +1,7 @@
-import "../../../styles/mail-header.css";
+import "@/styles/mail-header.css";
 
 import { Dispatch, SetStateAction } from "react";
-import { TabIndex } from "../../../constants";
+import { TabIndex } from "@/constants";
 import { LoadingBarRef } from "../../MailApp";
 import MailHeaderSearch from "./MailHeaderSearch";
 import MailHeaderWallet from "./MailHeaderWallet";
@@ -13,10 +13,10 @@ export type MailHeaderProps = {
   setSearchValue: Dispatch<SetStateAction<string>>;
   isSelecting: boolean;
   setIsSelecting: Dispatch<SetStateAction<boolean>>;
-  activeMailId: string | null;
-  setActiveMailId: Dispatch<SetStateAction<string | null>>;
-  selectedMailIds: string[];
-  setSelectedMailIds: Dispatch<SetStateAction<string[]>>;
+  activeMailId: number | null;
+  setActiveMailId: Dispatch<SetStateAction<number | null>>;
+  selectedMailIds: number[];
+  setSelectedMailIds: Dispatch<SetStateAction<number[]>>;
   isReplying: boolean;
   setIsReplying: Dispatch<SetStateAction<boolean>>;
   isForwarding: boolean;
