@@ -2,9 +2,22 @@
 
 import "@/styles/mail-login.css";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useMetaMaskEthersSigner } from "@/hooks/metamask/useMetaMaskEthersSigner";
 
 export default function Login() {
-  const onLogin = (): void => {};
+  const { push } = useRouter();
+  const { acount, isConnected, connect, switchToTestnetNetwork } = useMetaMaskEthersSigner();
+
+  function formatAccount(): string {
+    if (isConnected) return acount?.substring(0, 4) + "..." + acount?.slice(-4);
+    return "Connect Wallet";
+  }
+
+  async function onConnect(): Promise<void> {
+    await switchToTestnetNetwork()
+    isConnected ? push("/mail") : await connect();
+  }
 
   return (
     <motion.div className="login">
@@ -39,9 +52,9 @@ export default function Login() {
         exit={{ opacity: 0 }}
         transition={{ delay: 1 }}
         className="connect mediumSans"
-        onClick={onLogin}
+        onClick={onConnect}
       >
-        Connect Wallet
+        {formatAccount()}
       </motion.button>
     </motion.div>
   );
