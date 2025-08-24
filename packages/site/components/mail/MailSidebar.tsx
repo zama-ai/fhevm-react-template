@@ -1,4 +1,4 @@
-import "../../styles/side-bar.css";
+import "../../styles/mail-side-bar.css";
 import { motion } from "framer-motion";
 import { TAB_INDEXES, TabIndex } from "../../constants/index";
 
