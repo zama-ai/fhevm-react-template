@@ -1,0 +1,62 @@
+.searchbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-collapse: collapse;
+  width: 100%;
+  border-radius: 8px;
+  margin-right: 20px;
+}
+
+.input {
+  background-color: rgb(246, 246, 246);
+  height: 50px;
+  width: 100% !important;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  outline: none;
+  padding-left: 10px;
+  font-family: Arial, Helvetica, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.input input {
+  margin-top: 5px;
+  width: 87%;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  font-size: 17px;
+  background-color: rgb(246, 246, 246);
+  font-family: "";
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local(""),
+    url("https://fonts.cdnfonts.com/s/107545/kromosius-personal-use-only.woff")
+      format("woff");
+}
+
+.input img {
+  padding: 6px;
+  height: 29px;
+  width: 29px;
+  margin-right: 4px;
+  margin-top: 5px;
+}
+
+.input img:hover {
+  background-color: #27272727;
+  border-radius: 100%;
+  cursor: pointer;
+}
+
+.toolBox {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  grid-template-columns: 12px;
+  margin-left: 30px;
+}

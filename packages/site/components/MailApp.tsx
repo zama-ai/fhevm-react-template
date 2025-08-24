@@ -12,6 +12,8 @@ export default function MailApp() {
   const [activeTab, setActiveTab] = useState<TabIndex>(TAB_INDEXES.INBOX);
   const [activeTabCount, setActiveTabCount] = useState<number>(0);
 
+  const [searchValue, setSearchValue] = useState<string>("");
+
   return (
     <div className="mailApp">
       <MailEditor
@@ -19,14 +21,20 @@ export default function MailApp() {
         setIsOpenEditor={setIsOpenEditor}
       />
 
-      <div className="bodyMain">
+      <div className="mailBody">
         <MailSidebar
           activeTab={activeTab}
           activeTabCount={activeTabCount}
           setActiveTab={setActiveTab}
           setIsOpenEditor={setIsOpenEditor}
         />
-        <MailHeader />
+
+        <div className="mailContent">
+          <MailHeader
+            searchValue={searchValue}
+            setSearchValue={setSearchValue}
+          />
+        </div>
       </div>
     </div>
   );

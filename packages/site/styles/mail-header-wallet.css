@@ -1,6 +1,6 @@
 .wallet-info {
   height: 44px !important;
-  width: 140px;
+  min-width: 140px;
   display: flex;
   align-items: center;
   justify-content: center;

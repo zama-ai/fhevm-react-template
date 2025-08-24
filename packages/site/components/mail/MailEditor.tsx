@@ -1,4 +1,4 @@
-import "../../styles/editor.css";
+import "../../styles/mail-editor.css";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import Blockies from "react-blockies";
