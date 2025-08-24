@@ -1,6 +1,6 @@
 import "@/styles/mail-app.css";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { Toaster } from "react-hot-toast";
 import LoadingBar from "react-top-loading-bar";
@@ -9,6 +9,7 @@ import MailEditor from "./mail/MailEditor";
 import MailSidebar from "./mail/MailSidebar";
 import MailHeader from "./mail/MailHeader/index";
 import MailItemList from "./mail/MailItemList";
+import MailThread from "./mail/MailThread";
 
 import { Mail } from "@/types";
 import { TAB_INDEXES, TabIndex } from "@/constants/index";
@@ -40,8 +41,9 @@ export default function MailApp() {
   const [isForwarding, setIsForwarding] = useState<boolean>(false);
 
   const [bulkActionType, setBulkActionType] = useState<string>("");
-
   const loadingBarRef = useRef<LoadingBarRef["current"]>(null);
+
+  const [threadMails, setThreadMails] = useState<Mail[]>([]);
 
   const [mails, setMails] = useState<Mail[]>([]);
   const refreshMap: Record<number, () => void> = {
@@ -56,7 +58,23 @@ export default function MailApp() {
     return refreshMap[tabIndex] ?? (() => {});
   };
 
+  const getMailIds = (): number[] => {
+    return mails.map((mail) => mail.id);
+  };
+
   const executeBulkAction = async () => {};
+
+  const onReply = async () => {};
+
+  const onForward = async () => {};
+
+  useEffect(() => {
+    setIsSelecting(false);
+    setActiveMailId(null);
+    setIsReplying(false);
+    setIsForwarding(false);
+    setSelectedMailIds([]);
+  }, [activeTab]);
 
   return (
     <div className="mailApp">
@@ -81,6 +99,7 @@ export default function MailApp() {
             isSelecting={isSelecting}
             setIsSelecting={setIsSelecting}
             activeMailId={activeMailId}
+            mailIds={getMailIds()}
             setActiveMailId={setActiveMailId}
             selectedMailIds={selectedMailIds}
             setSelectedMailIds={setSelectedMailIds}
@@ -93,15 +112,26 @@ export default function MailApp() {
             executeBulkAction={executeBulkAction}
             loadingBarRef={loadingBarRef}
           />
-          <MailItemList
-            mails={mails}
-            filteredMails={filteredMails}
-            activeTab={activeTab}
-            isSearching={isSearching}
-            selectedMailIds={selectedMailIds}
-            setActiveMailId={setActiveMailId}
-            setSelectedMailIds={setSelectedMailIds}
-          />
+          {activeMailId === null ? (
+            <MailItemList
+              mails={mails}
+              filteredMails={filteredMails}
+              activeTab={activeTab}
+              isSearching={isSearching}
+              setIsSelecting={setIsSelecting}
+              selectedMailIds={selectedMailIds}
+              setActiveMailId={setActiveMailId}
+              setSelectedMailIds={setSelectedMailIds}
+            />
+          ) : (
+            <MailThread
+              activeMail={activeMailId !== null ? mails[activeMailId] : null}
+              threadMails={threadMails}
+              setThreadMails={setThreadMails}
+              onReply={onReply}
+              onForward={onForward}
+            />
+          )}
         </div>
       </div>
 

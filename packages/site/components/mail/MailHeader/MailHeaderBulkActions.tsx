@@ -45,6 +45,7 @@ export type HeaderBulkActionsProps = {
   setIsForwarding: (value: boolean) => void;
   selectedMailIds: number[];
   setSelectedMailIds: (ids: number[]) => void;
+  mailIds: number[];
   bulkActionType: string;
   setBulkActionType: (value: string) => void;
   executeBulkAction: () => void | Promise<void>;
@@ -63,6 +64,7 @@ export default function HeaderBulkActions({
   setIsForwarding,
   selectedMailIds,
   setSelectedMailIds,
+  mailIds,
   bulkActionType,
   setBulkActionType,
   executeBulkAction,
@@ -78,7 +80,8 @@ export default function HeaderBulkActions({
 
   const handleCheckboxClick = () => {
     setIsSelecting(!isSelecting);
-    if (isSelecting) setSelectedMailIds([]);
+    if (selectedMailIds.length === 0) setSelectedMailIds(mailIds);
+    else setSelectedMailIds([]);
   };
 
   const handleRefreshClick = async () => {

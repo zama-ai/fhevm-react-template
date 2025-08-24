@@ -11,6 +11,7 @@ export interface MailItemListProps {
   filteredMails: Mail[];
   activeTab: TabIndex;
   isSearching: boolean;
+  setIsSelecting: (value: boolean) => void;
   setSelectedMailIds: (ids: number[]) => void;
   setActiveMailId: (id: number) => void;
 }
@@ -21,11 +22,11 @@ const MailItemList: React.FC<MailItemListProps> = ({
   filteredMails,
   isSearching,
   activeTab,
+  setIsSelecting,
   setSelectedMailIds,
   setActiveMailId,
 }) => {
   const handleMailClick = (mail: Mail) => {
-    setSelectedMailIds([mail.id]);
     setActiveMailId(mail.id);
   };
 
@@ -39,6 +40,7 @@ const MailItemList: React.FC<MailItemListProps> = ({
     const addedMail = [...selectedMailIds, mailId];
     const newSelection = isAlreadyIds ? deselectedIds : addedMail;
     setSelectedMailIds(newSelection);
+    setIsSelecting(newSelection.length > 0);
   };
 
   const NoMailState = () => (

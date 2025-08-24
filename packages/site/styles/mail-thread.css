@@ -1,0 +1,111 @@
+.mail-thread {
+  margin-top: 32px;
+  width: 100%;
+  padding: 0 2%;
+}
+
+.mail-thread-list {
+  height: calc(100vh - 319px);
+  overflow-y: auto;
+  font-family: "Rangile", sans-serif;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.details-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.head {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.badge {
+  background-color: rgba(128, 128, 128, 0.123);
+  border: 1px solid transparent;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.message-wrapper {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 10px;
+}
+
+.message-wrapper img {
+    border-radius: 32px;
+}
+
+.message-wrapper.sender {
+  justify-content: flex-start;
+  flex-direction: row;
+}
+
+.message-wrapper.me {
+  flex-direction: row-reverse;
+}
+
+.identicon {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.message-content {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background-color: #f1f0f0;
+  position: relative;
+}
+
+.message-wrapper.me .message-content {
+  background-color: #fff176;
+}
+
+.message-wrapper.sender .message-content {
+  background-color: #dfe6e9;
+}
+
+.message-body {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.message-time {
+  font-size: 11px;
+  color: gray;
+  text-align: right;
+  display: block;
+}
+
+.reply-forward {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.reply-forward button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 16px;
+  border: 1px solid #dcdcdc;
+  border-radius: 20px;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.2s ease-in-out;
+}
+
+.reply-forward button span {
+  font-weight: 500;
+}
