@@ -61,7 +61,6 @@ const MailItemList: React.FC<MailItemListProps> = ({
         onCheckboxToggle={handleCheckboxToggle}
         isChecked={selectedMailIds.includes(mail.id)}
         isInboxTab={isInboxTab(activeTab)}
-        isSpam={mail.spam}
       />
     ));
 

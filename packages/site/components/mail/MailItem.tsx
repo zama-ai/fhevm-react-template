@@ -1,12 +1,11 @@
 import "@/styles/mail-list-item.css";
 import { motion } from "framer-motion";
-import { Mail } from "@/types";
+import { Mail, Box } from "@/types";
 
 export interface MailItemProps {
   mail: Mail;
   isChecked: boolean;
   isInboxTab: boolean;
-  isSpam: boolean;
   onMailClick: (mail: Mail) => void;
   onCheckboxToggle: (mailId: number) => void;
 }
@@ -15,11 +14,20 @@ const MailItem: React.FC<MailItemProps> = ({
   mail,
   isChecked,
   isInboxTab,
-  isSpam,
   onMailClick,
   onCheckboxToggle,
 }) => {
-  const { read: isRead, starred: isStarred } = mail;
+  const isReadMessage = (type: number): boolean => {
+    return type === Box.READ;
+  };
+
+  const isStarMessage = (type: number): boolean => {
+    return type === Box.STAR;
+  };
+
+  const isSpamMessage = (type: number): boolean => {
+    return type === Box.SPAM;
+  };
 
   const handleMailClick = () => onMailClick(mail);
 
@@ -48,7 +56,7 @@ const MailItem: React.FC<MailItemProps> = ({
         </span>
 
         {/* Star or Spam */}
-        {isInboxTab && isSpam ? (
+        {isInboxTab && isSpamMessage(mail.box) ? (
           <span
             className="material-symbols-outlined"
             style={{ color: "#FED218" }}
@@ -58,7 +66,7 @@ const MailItem: React.FC<MailItemProps> = ({
         ) : (
           <span
             className="material-symbols-outlined"
-            style={{ color: isStarred ? "#f4b400" : undefined }}
+            style={{ color: isStarMessage(mail.box) ? "#f4b400" : undefined }}
             onClick={handleStarClick}
           >
             star
@@ -66,7 +74,7 @@ const MailItem: React.FC<MailItemProps> = ({
         )}
 
         {/* Subject */}
-        <p className="boldSans" style={{ color: isRead ? "gray" : undefined }}>
+        <p className="boldSans" style={{ color: isReadMessage(mail.box) ? "gray" : undefined }}>
           {mail.subject}
         </p>
       </div>
@@ -74,7 +82,7 @@ const MailItem: React.FC<MailItemProps> = ({
       {/* Body */}
       <div
         className="mediumRegular mark"
-        style={{ color: isRead ? "gray" : undefined }}
+        style={{ color: isReadMessage(mail.box) ? "gray" : undefined }}
       >
         <span className="body">{mail.body}</span>
       </div>
@@ -82,7 +90,7 @@ const MailItem: React.FC<MailItemProps> = ({
       {/* Timestamp */}
       <p
         className="mediumSans hour"
-        style={{ color: isRead ? "gray" : undefined }}
+        style={{ color: isReadMessage(mail.box) ? "gray" : undefined }}
       >
         {mail.timeStamp}
       </p>

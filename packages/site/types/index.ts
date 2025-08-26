@@ -5,14 +5,22 @@ export type Mail = {
   from: string;
   to: string;
   time: string;
-  timeStamp: string;
-  box: string;
+  box: Box;
   subject: string;
   body: string;
-  read: boolean;
-  starred: boolean;
-  spam: boolean;
 };
+
+export enum Box {
+  INBOX,
+  STAR,
+  SENT,
+  ARCHIVE,
+  READ,
+  SPAM,
+  TRASH,
+  REPLY,
+}
+
 export interface NativeCurrency {
   name: string;
   symbol: string;
@@ -25,3 +33,13 @@ export interface NetworkInfo {
   nativeCurrency: NativeCurrency;
   rpcUrls: string[];
 }
+
+export type LoadingBarRef = React.RefObject<{
+  continuousStart: () => void;
+  staticStart: () => void;
+  start: () => void;
+  complete: () => void;
+  increase: (value: number) => void;
+  decrease: (value: number) => void;
+  getProgress: () => number;
+} | null>;

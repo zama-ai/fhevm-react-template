@@ -1,6 +1,6 @@
 import React from "react";
 import "@/styles/mail-header-bulk-actions.css";
-import { LoadingBarRef } from "../../MailApp";
+import { LoadingBarRef } from "@/types";
 import { TAB_INDEXES, TabIndex } from "@/constants";
 
 type BulkIconProps = {
