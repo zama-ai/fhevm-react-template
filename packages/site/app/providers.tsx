@@ -13,7 +13,7 @@ type Props = {
 export function Providers({ children }: Props) {
   return (
     <MetaMaskProvider>
-      <MetaMaskEthersSignerProvider initialMockChains={{ 31337: "http://localhost:8545" }}>
+      <MetaMaskEthersSignerProvider initialMockChains={{11155111: "https://eth-sepolia.g.alchemy.com/v2/pRrAQUdchAxHQKNS_UM61"}}>
         <InMemoryStorageProvider>{children}</InMemoryStorageProvider>
       </MetaMaskEthersSignerProvider>
     </MetaMaskProvider>

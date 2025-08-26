@@ -11,20 +11,18 @@ import MailHeader from "./mail/MailHeader/index";
 import MailItemList from "./mail/MailItemList";
 import MailThread from "./mail/MailThread";
 
-import { Mail } from "@/types";
+import { useFHEZmail } from "@/hooks/useFHEZmail";
+import { useInMemoryStorage } from "@/hooks/useInMemoryStorage";
+
+import { Mail, LoadingBarRef } from "@/types";
 import { TAB_INDEXES, TabIndex } from "@/constants/index";
 
-export type LoadingBarRef = React.RefObject<{
-  continuousStart: () => void;
-  staticStart: () => void;
-  start: () => void;
-  complete: () => void;
-  increase: (value: number) => void;
-  decrease: (value: number) => void;
-  getProgress: () => number;
-} | null>;
-
 export default function MailApp() {
+  const { storage: fhevmDecryptionSignatureStorage } = useInMemoryStorage();
+  const { isInitialized, sendMail } = useFHEZmail({
+    fhevmDecryptionSignatureStorage,
+  });
+
   const [isOpenEditor, setIsOpenEditor] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<TabIndex>(TAB_INDEXES.INBOX);
   const [activeTabCount, setActiveTabCount] = useState<number>(0);
@@ -69,6 +67,10 @@ export default function MailApp() {
   const onForward = async () => {};
 
   useEffect(() => {
+    if (isInitialized) {}
+  }, [isInitialized]);
+
+  useEffect(() => {
     setIsSelecting(false);
     setActiveMailId(null);
     setIsReplying(false);
@@ -81,6 +83,7 @@ export default function MailApp() {
       <MailEditor
         isOpenEditor={isOpenEditor}
         setIsOpenEditor={setIsOpenEditor}
+        sendMail={sendMail}
       />
 
       <div className="mailBody">

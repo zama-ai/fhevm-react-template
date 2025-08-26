@@ -2,7 +2,7 @@ import "@/styles/mail-header.css";
 
 import { Dispatch, SetStateAction } from "react";
 import { TabIndex } from "@/constants";
-import { LoadingBarRef } from "../../MailApp";
+import { LoadingBarRef } from "@/types";
 import MailHeaderSearch from "./MailHeaderSearch";
 import MailHeaderWallet from "./MailHeaderWallet";
 import MailHeaderBulkActions from "./MailHeaderBulkActions";

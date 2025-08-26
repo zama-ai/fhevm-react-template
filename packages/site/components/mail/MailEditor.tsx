@@ -7,10 +7,12 @@ import ReactMarkdown from "react-markdown";
 type MailEditorProps = {
   isOpenEditor: boolean;
   setIsOpenEditor: React.Dispatch<React.SetStateAction<boolean>>;
+  sendMail: (to: string, subject: string, body: string) => void | Promise<void>;
 };
 
 export default function MailEditor({
   isOpenEditor,
+  sendMail,
   setIsOpenEditor,
 }: MailEditorProps) {
   const [to, setTo] = useState<string>("");
@@ -23,11 +25,15 @@ export default function MailEditor({
     closed: { y: "110%", opacity: 1 },
   };
 
-  const closeAndReset = () => {
+  const closeAndReset = (): void => {
     setIsOpenEditor(false);
     setTo("");
     setSubject("");
     setBody("");
+  };
+
+  const handleSendMail = (): void => {
+    sendMail(to, subject, body);
   };
 
   return (
@@ -100,7 +106,7 @@ export default function MailEditor({
 
         <div className="toolBoxEditor">
           <div className="toolBoxS">
-            <motion.button className="mediumRegular">
+            <motion.button className="mediumRegular" onClick={handleSendMail}>
               <span>Send</span>
               <span className="material-symbols-outlined">send</span>
             </motion.button>

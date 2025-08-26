@@ -19,9 +19,7 @@ export default function MailHeaderWallet() {
   return (
     <div className="wallet-info">
       <div className="wallet-info-address">
-        {acount
-          ? acount?.substring(0, 4) + "..." + acount?.slice(-4)
-          : "Not connected"}
+        {acount ? acount?.substring(0, 4) + "..." + acount?.slice(-4) : "Not connected"}
       </div>
 
       <div className="modal">
@@ -62,10 +60,7 @@ export default function MailHeaderWallet() {
         <div className="domain">
           <div>
             Faucet:{" "}
-            <a
-              href="https://www.alchemy.com/faucets/ethereum-sepolia"
-              target="_blank"
-            >
+            <a href="https://www.alchemy.com/faucets/ethereum-sepolia" target="_blank">
               Target
             </a>
           </div>
