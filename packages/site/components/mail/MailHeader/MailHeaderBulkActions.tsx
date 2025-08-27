@@ -1,6 +1,5 @@
 import React from "react";
 import "@/styles/mail-header-bulk-actions.css";
-import { LoadingBarRef } from "@/types";
 import { TAB_INDEXES, TabIndex } from "@/constants";
 
 type BulkIconProps = {
@@ -39,9 +38,7 @@ export type HeaderBulkActionsProps = {
   setIsSelecting: (value: boolean) => void;
   activeMailId: number | null;
   setActiveMailId: (value: number | null) => void;
-  isReplying: boolean;
   setIsReplying: (value: boolean) => void;
-  isForwarding: boolean;
   setIsForwarding: (value: boolean) => void;
   selectedMailIds: number[];
   setSelectedMailIds: (ids: number[]) => void;
@@ -49,7 +46,6 @@ export type HeaderBulkActionsProps = {
   bulkActionType: string;
   setBulkActionType: (value: string) => void;
   executeBulkAction: () => void | Promise<void>;
-  loadingBarRef: LoadingBarRef;
 };
 
 export default function HeaderBulkActions({
@@ -58,9 +54,7 @@ export default function HeaderBulkActions({
   setIsSelecting,
   activeMailId,
   setActiveMailId,
-  isReplying,
   setIsReplying,
-  isForwarding,
   setIsForwarding,
   selectedMailIds,
   setSelectedMailIds,
@@ -68,7 +62,6 @@ export default function HeaderBulkActions({
   bulkActionType,
   setBulkActionType,
   executeBulkAction,
-  loadingBarRef,
 }: HeaderBulkActionsProps) {
   const handleBackClick = () => {
     setIsSelecting(false);
@@ -80,13 +73,9 @@ export default function HeaderBulkActions({
 
   const handleCheckboxClick = () => {
     setIsSelecting(!isSelecting);
+    if (isSelecting) setBulkActionType("");
     if (selectedMailIds.length === 0) setSelectedMailIds(mailIds);
     else setSelectedMailIds([]);
-  };
-
-  const handleRefreshClick = async () => {
-    loadingBarRef.current?.continuousStart();
-    loadingBarRef.current?.complete();
   };
 
   return (
@@ -110,42 +99,33 @@ export default function HeaderBulkActions({
       )}
 
       <div className="tool-box-selection">
-        {isSelecting ? (
-          <>
-            <BulkIcon
-              name="archive"
-              flag="archive-flag"
-              {...{ bulkActionType, setBulkActionType, activeTab }}
-            />
-            <BulkIcon
-              name="star"
-              flag="star-flag"
-              {...{ bulkActionType, setBulkActionType, activeTab }}
-            />
-            <BulkIcon
-              name="report"
-              flag="spam-flag"
-              {...{ bulkActionType, setBulkActionType, activeTab }}
-            />
-            <BulkIcon
-              name="mark_email_read"
-              flag="read-flag"
-              {...{ bulkActionType, setBulkActionType, activeTab }}
-            />
-            <BulkIcon
-              name="delete"
-              flag="trash-flag"
-              {...{ bulkActionType, setBulkActionType, activeTab }}
-            />
-          </>
-        ) : (
-          <span
-            className="material-symbols-outlined"
-            onClick={handleRefreshClick}
-          >
-            refresh
-          </span>
-        )}
+        <>
+          <BulkIcon
+            name="archive"
+            flag="archive-flag"
+            {...{ bulkActionType, setBulkActionType, activeTab }}
+          />
+          <BulkIcon
+            name="star"
+            flag="star-flag"
+            {...{ bulkActionType, setBulkActionType, activeTab }}
+          />
+          <BulkIcon
+            name="report"
+            flag="spam-flag"
+            {...{ bulkActionType, setBulkActionType, activeTab }}
+          />
+          <BulkIcon
+            name="mark_email_read"
+            flag="read-flag"
+            {...{ bulkActionType, setBulkActionType, activeTab }}
+          />
+          <BulkIcon
+            name="delete"
+            flag="trash-flag"
+            {...{ bulkActionType, setBulkActionType, activeTab }}
+          />
+        </>
       </div>
 
       {isSelecting && (

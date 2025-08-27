@@ -6,7 +6,7 @@ import { TAB_INDEXES, TabIndex } from "@/constants/index";
 
 export const useZmailManager = () => {
   const { storage: fhevmDecryptionSignatureStorage } = useInMemoryStorage();
-  const { isInitialized, sendMail } = useFHEZmail({
+  const { isInitialized, loading, sendMail } = useFHEZmail({
     fhevmDecryptionSignatureStorage,
   });
 
@@ -48,7 +48,8 @@ export const useZmailManager = () => {
 
   // ===== EFFECTS =====
   useEffect(() => {
-    if (isInitialized) {};
+    if (isInitialized) {
+    }
   }, [isInitialized]);
 
   useEffect(() => {
@@ -62,6 +63,7 @@ export const useZmailManager = () => {
   // ===== RETURN =====
   return {
     state: {
+      loading,
       isOpenEditor,
       activeTab,
       activeTabCount,

@@ -2,7 +2,6 @@ import "@/styles/mail-header.css";
 
 import { Dispatch, SetStateAction } from "react";
 import { TabIndex } from "@/constants";
-import { LoadingBarRef } from "@/types";
 import MailHeaderSearch from "./MailHeaderSearch";
 import MailHeaderWallet from "./MailHeaderWallet";
 import MailHeaderBulkActions from "./MailHeaderBulkActions";
@@ -18,14 +17,11 @@ export type MailHeaderProps = {
   selectedMailIds: number[];
   setSelectedMailIds: Dispatch<SetStateAction<number[]>>;
   mailIds: number[];
-  isReplying: boolean;
   setIsReplying: Dispatch<SetStateAction<boolean>>;
-  isForwarding: boolean;
   setIsForwarding: Dispatch<SetStateAction<boolean>>;
   bulkActionType: string;
   setBulkActionType: Dispatch<SetStateAction<string>>;
   executeBulkAction: () => void | Promise<void>;
-  loadingBarRef: LoadingBarRef;
 };
 
 export default function MailHeader({
@@ -39,14 +35,11 @@ export default function MailHeader({
   mailIds,
   selectedMailIds,
   setSelectedMailIds,
-  isReplying,
   setIsReplying,
-  isForwarding,
   setIsForwarding,
   bulkActionType,
   setBulkActionType,
   executeBulkAction,
-  loadingBarRef,
 }: MailHeaderProps) {
   return (
     <div>
@@ -65,9 +58,7 @@ export default function MailHeader({
           setIsSelecting={setIsSelecting}
           activeMailId={activeMailId}
           setActiveMailId={setActiveMailId}
-          isReplying={isReplying}
           setIsReplying={setIsReplying}
-          isForwarding={isForwarding}
           setIsForwarding={setIsForwarding}
           selectedMailIds={selectedMailIds}
           setSelectedMailIds={setSelectedMailIds}
@@ -75,7 +66,6 @@ export default function MailHeader({
           bulkActionType={bulkActionType}
           setBulkActionType={setBulkActionType}
           executeBulkAction={executeBulkAction}
-          loadingBarRef={loadingBarRef}
         />
       </div>
     </div>
