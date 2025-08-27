@@ -8,6 +8,7 @@ import MailSidebar from "./mail/MailSidebar";
 import MailHeader from "./mail/MailHeader";
 import MailItemList from "./mail/MailItemList";
 import MailThread from "./mail/MailThread";
+import MailLoading from "./mail/MailLoading";
 
 import { useZmailManager } from "@/hooks/useZmailManager";
 
@@ -42,16 +43,15 @@ export default function MailApp() {
             setActiveMailId={setters.setActiveMailId}
             selectedMailIds={state.selectedMailIds}
             setSelectedMailIds={setters.setSelectedMailIds}
-            isReplying={state.isReplying}
             setIsReplying={setters.setIsReplying}
-            isForwarding={state.isForwarding}
             setIsForwarding={setters.setIsForwarding}
             bulkActionType={state.bulkActionType}
             setBulkActionType={setters.setBulkActionType}
             executeBulkAction={methods.executeBulkAction}
-            loadingBarRef={refs.loadingBarRef}
           />
-          {state.activeMailId === null ? (
+          {state.loading ? (
+            <MailLoading />
+          ) : state.activeMailId === null ? (
             <MailItemList
               mails={state.mails}
               filteredMails={state.filteredMails}
