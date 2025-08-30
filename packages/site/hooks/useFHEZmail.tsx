@@ -1,18 +1,17 @@
-"use client";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import toast from "react-hot-toast";
 
+import { Mail, Box } from "@/types";
 import { useFhevm } from "@/fhevm/useFhevm";
 import { useMetaMaskEthersSigner } from "@/hooks/metamask/useMetaMaskEthersSigner";
 import { GenericStringStorage } from "@/fhevm/GenericStringStorage";
 import { FHEZmailABI } from "@/abi/FHEZmailABI";
 import { FHEZmailAddresses } from "@/abi/FHEZmailAddresses";
 
-/**
- * React hook to interact with the FHEZmail contract.
- * Handles initialization, encryption, decryption, and mailbox actions.
- */
+// =================== HOOK ===================
+
+/** Hook to interact with FHEZmail contract */
 export const useFHEZmail = ({
   fhevmDecryptionSignatureStorage,
 }: {
@@ -20,20 +19,11 @@ export const useFHEZmail = ({
 }) => {
   const [contract, setContract] = useState<ethers.Contract>();
   const [contractAddress, setContractAddress] = useState<string>("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
   const [isInitialized, setIsInitialized] = useState(false);
-
   const toNum = (x: bigint | number) => Number(x);
 
-  // ================= INIT FHE + CONTRACT =================
-  const {
-    provider,
-    chainId,
-    initialMockChains,
-    ethersSigner: signer,
-  } = useMetaMaskEthersSigner();
-
+  const { provider, chainId, ethersSigner, initialMockChains } =
+    useMetaMaskEthersSigner();
   const { status: fheInstanceStatus, instance: fheInstance } = useFhevm({
     provider,
     chainId,
@@ -45,16 +35,15 @@ export const useFHEZmail = ({
     const init = async () => {
       try {
         const address = FHEZmailAddresses[String(chainId)]?.address;
-        const ctr = new ethers.Contract(address, FHEZmailABI.abi, signer);
+        const ctr = new ethers.Contract(address, FHEZmailABI.abi, ethersSigner);
         setContract(ctr);
         setContractAddress(address);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     };
-
     if (chainId) init();
-  }, [provider, signer, chainId]);
+  }, [provider, ethersSigner, chainId]);
 
   useEffect(() => {
     if (fheInstanceStatus === "ready" && contract) {
@@ -63,13 +52,53 @@ export const useFHEZmail = ({
     }
   }, [fheInstanceStatus, contract]);
 
-  const sendMail = () => {};
+  // =================== MAIL FUNCTIONS ===================
+
+  // =================== FETCH HELPERS ===================
+
+  /** Placeholder fetchMails - chưa triển khai */
+  const fetchMails = async (
+    method: string,
+    ...args: any[]
+  ): Promise<Mail[]> => {
+    return [];
+  };
+
+  /** Helpers using fetchMails placeholder */
+  const getInbox = () => fetchMails("inbox");
+  const getTrash = () => fetchMails("trash");
+  const getSent = () => fetchMails("sent");
+  const getRead = () => fetchMails("read");
+  const getSpam = () => fetchMails("spam");
+  const getArchive = () => fetchMails("archive");
+  const getStarred = () => fetchMails("star");
+  const getMails = () => fetchMails("myMails");
+
+  /** Thread / Mail actions placeholders */
+  const getThread = async (threadId: number): Promise<Mail[]> => {
+    return [];
+  };
+  const sendMail = async (to: string, subject: string, body: string) => { };
+  const reply = async (threadId: number, subject: string, body: string) => { };
+  const forward = async (mailId: number, to: string) => { };
+  const moveMails = async (mailIds: number[], newBox: Box | null) => { };
 
   return {
     isInitialized,
     fheInstance,
     contract,
-    loading,
+    getInbox,
+    getTrash,
+    getSent,
+    getRead,
+    getSpam,
+    getArchive,
+    getStarred,
+    getMails,
+    getThread,
     sendMail,
+    reply,
+    forward,
+    moveMails,
   } as const;
 };

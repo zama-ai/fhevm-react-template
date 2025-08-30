@@ -15,7 +15,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: 200px;
+  width: 440px;
   flex-shrink: 1;
   min-width: 0;
 }
@@ -48,7 +48,7 @@
   margin-left: 10px;
   margin-right: 12px;
   position: relative;
-  top: 3px;
+  top: 2px;
 }
 
 .mark span {
@@ -83,7 +83,7 @@
   font-weight: lighter;
   position: relative;
   top: 3px;
-  width: 80px;
+  width: 150px;
   display: flex;
   justify-content: flex-end;
 }

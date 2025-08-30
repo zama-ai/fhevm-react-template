@@ -1,9 +1,9 @@
 import "@/styles/mail-header-search.css";
-import { ChangeEvent, useState, Dispatch, SetStateAction } from "react";
+import { ChangeEvent, useState } from "react";
 
 type MailHeaderSearchProps = {
   searchValue: string;
-  setSearchValue: Dispatch<SetStateAction<string>>;
+  setSearchValue: (value: string) => void;
 };
 
 export default function MailHeaderSearch({

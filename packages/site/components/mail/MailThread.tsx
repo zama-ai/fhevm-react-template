@@ -1,48 +1,60 @@
 import "@/styles/mail-thread.css";
-import { useEffect } from "react";
 import { motion } from "framer-motion";
-import toast from "react-hot-toast";
 import { Mail } from "@/types";
+import { TAB_INDEXES, TabIndex } from "@/constants";
 import { useMetaMaskEthersSigner } from "@/hooks/metamask/useMetaMaskEthersSigner";
 
 interface MailThreadProps {
-  activeMail: Mail | null;
   threadMails: Mail[];
-  setThreadMails: (data: Mail[]) => void;
-  onReply: () => void;
-  onForward: () => void;
+  activeTab: TabIndex;
+  setIsReplying: (value: boolean) => void;
+  setIsForwarding: (value: boolean) => void;
+  setIsOpenEditor: (value: boolean) => void;
 }
 
 function MailThread({
-  activeMail,
   threadMails,
-  setThreadMails,
-  onReply,
-  onForward,
+  activeTab,
+  setIsReplying,
+  setIsForwarding,
+  setIsOpenEditor,
 }: MailThreadProps) {
   const { acount } = useMetaMaskEthersSigner();
-
-  const fetchReplies = async () => {
-    try {
-      const mails: Mail[] = [];
-      setThreadMails(mails);
-    } catch (error) {
-      toast.error("Failed to fetch replies.");
-    }
-  };
 
   function isMe(owner: string, acount: string): boolean {
     return owner.toLowerCase() === acount.toLowerCase();
   }
 
-  function getMailOwnerLabel(owner: string, acount: string): string {
-    if (!owner || !acount) return "Unknown";
-    return isMe(owner, acount) ? "Me" : "Sender";
+  function onReply(): void {
+    setIsReplying(true);
+    setIsOpenEditor(true);
   }
 
-  useEffect(() => {
-    if (activeMail) fetchReplies();
-  }, [activeMail]);
+  function onForward(): void {
+    setIsForwarding(true);
+    setIsOpenEditor(true);
+  }
+
+  function getTabLabelWithEmoji(tabIndex: TabIndex): string {
+    switch (tabIndex) {
+      case TAB_INDEXES.INBOX:
+        return "Inbox";
+      case TAB_INDEXES.STARRED:
+        return "Starred";
+      case TAB_INDEXES.SENT:
+        return "Sent";
+      case TAB_INDEXES.ARCHIVE:
+        return "Archive";
+      case TAB_INDEXES.SPAM:
+        return "Spam";
+      case TAB_INDEXES.READ:
+        return "Read";
+      case TAB_INDEXES.TRASH:
+        return "Trash";
+      default:
+        return "Unknown";
+    }
+  }
 
   return (
     <motion.div
@@ -52,8 +64,10 @@ function MailThread({
       transition={{ delay: 0.2 }}
     >
       <div className="details-header">
-        <p className="head mediumRegular">{activeMail?.subject}</p>
-        <button className="badge mediumRegular">Inbox</button>
+        <p className="head mediumRegular">{threadMails[0]?.subject}</p>
+        <button className="badge mediumRegular">
+          {getTabLabelWithEmoji(activeTab)}
+        </button>
       </div>
 
       <div className="mail-thread-list">

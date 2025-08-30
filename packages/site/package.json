@@ -25,6 +25,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.12",
     "idb": "^8.0.3",
+    "lodash": "^4.17.21",
     "next": "^15.4.2",
     "react": "^19.1.0",
     "react-blockies": "^1.4.1",
