@@ -18,15 +18,23 @@ export default function MailApp() {
   return (
     <div className="mailApp">
       <MailEditor
+        threadMails={state.threadMails}
+        setThreadMails={setters.setThreadMails}
+        isReplying={state.isReplying}
+        setIsReplying={setters.setIsReplying}
+        isForwarding={state.isForwarding}
+        setIsForwarding={setters.setIsForwarding}
         isOpenEditor={state.isOpenEditor}
         setIsOpenEditor={setters.setIsOpenEditor}
         sendMail={methods.sendMail}
+        reply={methods.reply}
+        forward={methods.forward}
       />
 
       <div className="mailBody">
         <MailSidebar
           activeTab={state.activeTab}
-          activeTabCount={state.activeTabCount}
+          activeTabCount={state.mails.length}
           setActiveTab={setters.setActiveTab}
           setIsOpenEditor={setters.setIsOpenEditor}
         />
@@ -38,20 +46,21 @@ export default function MailApp() {
             setSearchValue={setters.setSearchValue}
             isSelecting={state.isSelecting}
             setIsSelecting={setters.setIsSelecting}
-            activeMailId={state.activeMailId}
+            threadMails={state.threadMails}
             mailIds={methods.getMailIds()}
-            setActiveMailId={setters.setActiveMailId}
+            setThreadMails={setters.setThreadMails}
+            setActiveMail={setters.setActiveMail}
             selectedMailIds={state.selectedMailIds}
             setSelectedMailIds={setters.setSelectedMailIds}
             setIsReplying={setters.setIsReplying}
             setIsForwarding={setters.setIsForwarding}
             bulkActionType={state.bulkActionType}
             setBulkActionType={setters.setBulkActionType}
-            executeBulkAction={methods.executeBulkAction}
+            moveMails={methods.moveMails}
           />
           {state.loading ? (
             <MailLoading />
-          ) : state.activeMailId === null ? (
+          ) : state.threadMails.length === 0 ? (
             <MailItemList
               mails={state.mails}
               filteredMails={state.filteredMails}
@@ -59,16 +68,16 @@ export default function MailApp() {
               isSearching={state.isSearching}
               setIsSelecting={setters.setIsSelecting}
               selectedMailIds={state.selectedMailIds}
-              setActiveMailId={setters.setActiveMailId}
+              setActiveMail={setters.setActiveMail}
               setSelectedMailIds={setters.setSelectedMailIds}
             />
           ) : (
             <MailThread
-              activeMail={state.activeMailId !== null ? state.mails[state.activeMailId] : null}
+              activeTab={state.activeTab}
               threadMails={state.threadMails}
-              setThreadMails={setters.setThreadMails}
-              onReply={methods.onReply}
-              onForward={methods.onForward}
+              setIsReplying={setters.setIsReplying}
+              setIsForwarding={setters.setIsForwarding}
+              setIsOpenEditor={setters.setIsOpenEditor}
             />
           )}
         </div>
