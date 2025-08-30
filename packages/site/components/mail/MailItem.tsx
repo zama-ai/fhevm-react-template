@@ -75,7 +75,7 @@ const MailItem: React.FC<MailItemProps> = ({
 
         {/* Subject */}
         <p className="boldSans" style={{ color: isReadMessage(mail.box) ? "gray" : undefined }}>
-          {mail.subject}
+          {'👤 ' + mail.to}
         </p>
       </div>
 
@@ -84,7 +84,7 @@ const MailItem: React.FC<MailItemProps> = ({
         className="mediumRegular mark"
         style={{ color: isReadMessage(mail.box) ? "gray" : undefined }}
       >
-        <span className="body">{mail.body}</span>
+        <span className="body">🔒 Encrypted message – decrypt to view</span>
       </div>
 
       {/* Timestamp */}
@@ -92,7 +92,7 @@ const MailItem: React.FC<MailItemProps> = ({
         className="mediumSans hour"
         style={{ color: isReadMessage(mail.box) ? "gray" : undefined }}
       >
-        {mail.timeStamp}
+        {mail.time}
       </p>
     </motion.div>
   );
