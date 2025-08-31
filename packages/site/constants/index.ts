@@ -24,7 +24,7 @@ export const NATIVE_CURRENCY: NativeCurrency = {
   decimals: 18,
 };
 
-export const RPC_URLS: string[] = ["https://sepolia.infura.io"];
+export const RPC_URLS: string[] = ["https://eth-sepolia.g.alchemy.com/v2/pRrAQUdchAxHQKNS_UM61"];
 
 export const NETWORK_INFO: NetworkInfo = {
   chainId: CHAIN_ID,

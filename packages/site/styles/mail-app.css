@@ -16,3 +16,20 @@
   border-radius: 20px;
   background-color: #fff;
 }
+
+
+.toast {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
+  margin-bottom: 20px;
+  font-family: '';
+}
+
+.toast div:first-child div {
+  height: 18px;
+  width: 18px;
+}
+
+.toast div:last-child {
+  padding-top: 0 !important;
+}

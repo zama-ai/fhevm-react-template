@@ -22,6 +22,7 @@ export const useZmailManager = () => {
     reply,
     forward,
     moveMails,
+    getMails,
   } = useFHEZmail({
     fhevmDecryptionSignatureStorage,
   });
@@ -74,22 +75,47 @@ export const useZmailManager = () => {
   }, [isInitialized]);
 
   useEffect(() => {
-    const run = async (): Promise<void> => {
-      if (isInitialized) {
-        const fetchData = async () => {
-          const newMails = await refreshByTab(activeTab);
-          !isEqual(newMails, mails) && setMails(newMails);
-        };
+    if (isInitialized) {
+      let intervalId: NodeJS.Timeout;
+
+      const fetchData = async () => {
+        const newMails = await refreshByTab(activeTab);
+        setMails((prev) => (isEqual(newMails, prev) ? prev : newMails));
+      };
+
+      const run = async () => {
         setLoading(true);
         await fetchData();
         setLoading(false);
-        const intervalId = setInterval(fetchData, 5000);
+        intervalId = setInterval(fetchData, 5000);
+      };
 
-        clearInterval(intervalId);
-      }
-    };
-    run();
+      run();
+
+      return () => {
+        if (intervalId) clearInterval(intervalId);
+      };
+    }
   }, [activeTab, isInitialized]);
+
+  useEffect(() => {
+    if (isInitialized) {
+      setLoading(true);
+      const handler = setTimeout(async () => {
+        const mails = await refreshByTab(activeTab);
+        const filterMails = mails.filter((mail: Mail) => {
+          return (
+            mail?.to?.toLowerCase().includes(searchValue.toLowerCase()) ||
+            mail?.from?.toLowerCase().includes(searchValue.toLowerCase())
+          );
+        });
+        setMails(filterMails);
+        setLoading(false);
+      }, 300);
+
+      return () => clearTimeout(handler);
+    }
+  }, [searchValue]);
 
   useEffect(() => {
     const run = async () => {
