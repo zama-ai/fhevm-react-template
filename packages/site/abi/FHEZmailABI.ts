@@ -1,7 +1,13 @@
 export const FHEZmailABI = {
   abi: [
     {
-      inputs: [],
+      inputs: [
+        {
+          internalType: "address",
+          name: "user",
+          type: "address",
+        },
+      ],
       name: "archive",
       outputs: [
         {
@@ -79,7 +85,13 @@ export const FHEZmailABI = {
       type: "function",
     },
     {
-      inputs: [],
+      inputs: [
+        {
+          internalType: "address",
+          name: "user",
+          type: "address",
+        },
+      ],
       name: "inbox",
       outputs: [
         {
@@ -206,8 +218,14 @@ export const FHEZmailABI = {
       type: "function",
     },
     {
-      inputs: [],
-      name: "myMails",
+      inputs: [
+        {
+          internalType: "address",
+          name: "user",
+          type: "address",
+        },
+      ],
+      name: "myMailsOf",
       outputs: [
         {
           components: [
@@ -332,7 +350,13 @@ export const FHEZmailABI = {
       type: "function",
     },
     {
-      inputs: [],
+      inputs: [
+        {
+          internalType: "address",
+          name: "user",
+          type: "address",
+        },
+      ],
       name: "read",
       outputs: [
         {
@@ -458,7 +482,13 @@ export const FHEZmailABI = {
       type: "function",
     },
     {
-      inputs: [],
+      inputs: [
+        {
+          internalType: "address",
+          name: "user",
+          type: "address",
+        },
+      ],
       name: "sent",
       outputs: [
         {
@@ -518,7 +548,13 @@ export const FHEZmailABI = {
       type: "function",
     },
     {
-      inputs: [],
+      inputs: [
+        {
+          internalType: "address",
+          name: "user",
+          type: "address",
+        },
+      ],
       name: "spam",
       outputs: [
         {
@@ -578,7 +614,13 @@ export const FHEZmailABI = {
       type: "function",
     },
     {
-      inputs: [],
+      inputs: [
+        {
+          internalType: "address",
+          name: "user",
+          type: "address",
+        },
+      ],
       name: "star",
       outputs: [
         {
@@ -638,7 +680,13 @@ export const FHEZmailABI = {
       type: "function",
     },
     {
-      inputs: [],
+      inputs: [
+        {
+          internalType: "address",
+          name: "user",
+          type: "address",
+        },
+      ],
       name: "trash",
       outputs: [
         {

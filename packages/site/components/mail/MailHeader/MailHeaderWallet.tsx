@@ -1,11 +1,15 @@
 import "@/styles/mail-header-wallet.css";
 
+import { ethers } from "ethers";
 import { useRouter } from "next/navigation";
 import { useMetaMaskEthersSigner } from "@/hooks/metamask/useMetaMaskEthersSigner";
+import { useEffect, useState } from "react";
 
 export default function MailHeaderWallet() {
   const { push } = useRouter();
-  const { acount, disconnect } = useMetaMaskEthersSigner();
+  const { acount, ethersSigner, disconnect } = useMetaMaskEthersSigner();
+
+  const [balance, setBalance] = useState<string>("");
 
   const copyValueToClipboard = async () => {
     await navigator.clipboard.writeText(acount ?? "");
@@ -15,6 +19,14 @@ export default function MailHeaderWallet() {
     disconnect();
     push("/");
   };
+
+  useEffect(() => {
+    const getBalance = async () => {
+      const balance = await ethersSigner?.provider.getBalance(acount ?? "");
+      setBalance(balance ? ethers?.formatEther(balance).slice(0, 6) : "0");
+    };
+    getBalance();
+  }, [ethersSigner]);
 
   return (
     <div className="wallet-info">
@@ -49,7 +61,7 @@ export default function MailHeaderWallet() {
 
         <div className="domain">
           <div>
-            NFT: <span>Coming soon</span>
+            Balanace: <span>{balance + ' ETH'}</span>
           </div>
         </div>
         <div className="domain">

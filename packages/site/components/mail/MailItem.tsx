@@ -75,7 +75,7 @@ const MailItem: React.FC<MailItemProps> = ({
 
         {/* Subject */}
         <p className="boldSans" style={{ color: isReadMessage(mail.box) ? "gray" : undefined }}>
-          {'👤 ' + mail.to}
+          {'👤 ' + mail.owner}
         </p>
       </div>
 
