@@ -10,6 +10,7 @@
     "packages/*"
   ],
   "scripts": {
+    "preinstall": "node ./scripts/preinstall.mjs",
     "postinstall": "cd ./packages/site/ && npm run genabi"
   }
 }

@@ -25,11 +25,11 @@ const execPromise = (cmd) =>
       }
     });
 
-    childProcess.stdout.on('data', (data) => {
+    childProcess.stdout.on("data", (data) => {
       process.stdout.write(data);
     });
 
-    childProcess.stderr.on('data', (data) => {
+    childProcess.stderr.on("data", (data) => {
       process.stderr.write(data);
     });
   });
