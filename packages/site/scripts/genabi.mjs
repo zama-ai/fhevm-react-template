@@ -8,11 +8,7 @@ const CONTRACT_NAME = "FHECounter";
 const rel = "../fhevm-hardhat-template";
 
 // <root>/packages/site/components
-const outdir = path.resolve("./abi");
-
-if (!fs.existsSync(outdir)) {
-  fs.mkdirSync(outdir);
-}
+const abidir = path.resolve("./abi");
 
 const dir = path.resolve(rel);
 const dirname = path.basename(dir);
@@ -20,25 +16,46 @@ const dirname = path.basename(dir);
 const line =
   "\n===================================================================\n";
 
+function printError(dir) {
+  console.error(`
+  
+  * ==============================================================================  *
+  *                                                                                 *
+  *  \u001b[31mPlease Run "fhevm-react-template" Installer First!\u001b[0m                             *
+  *  \u001b[31m==================================================\u001b[0m                             *
+  *                                                                                 *
+  *  It looks like the 'fhevm-react-template' installer hasn't been run.            *
+  *  🚚 Please run the setup script below to complete installation:                 *
+  *                                                                                 *
+  *       \u001b[36mnode ./scripts/install.mjs\u001b[0m                                                *
+  *                                                                                 *
+  *   For manual install, see:                                                      *
+  *   \u001b[33mhttps://github.com/zama-ai/fhevm-react-template/blob/main/README.md#install\u001b[0m   *
+  *                                                                                 *
+  * =============================================================================== *
+  
+    
+  \u001b[31mError\u001b[0m Directory ${dir} does not exist.
+  
+
+  `);
+}
+
 if (!fs.existsSync(dir)) {
-  console.error(
-    `${line}Unable to locate ${rel}. Expecting <root>/packages/${dirname}${line}`
-  );
+  printError(dir);
   process.exit(1);
 }
 
-if (!fs.existsSync(outdir)) {
-  console.error(`${line}Unable to locate ${outdir}.${line}`);
+if (!fs.existsSync(abidir)) {
+  fs.mkdirSync(abidir);
+}
+
+if (!fs.existsSync(abidir)) {
+  console.error(`${line}Unable to locate ${abidir}.${line}`);
   process.exit(1);
 }
 
 const deploymentsDir = path.join(dir, "deployments");
-// if (!fs.existsSync(deploymentsDir)) {
-//   console.error(
-//     `${line}Unable to locate 'deployments' directory.\n\n1. Goto '${dirname}' directory\n2. Run 'npx hardhat deploy --network ${chainName}'.${line}`
-//   );
-//   process.exit(1);
-// }
 
 function deployOnHardhatNode() {
   if (process.platform === "win32") {
@@ -86,12 +103,25 @@ function readDeployment(chainName, chainId, contractName, optional) {
 }
 
 // Auto deployed on Linux/Mac (will fail on windows)
-const deployLocalhost = readDeployment("localhost", 31337, CONTRACT_NAME, false /* optional */);
+const deployLocalhost = readDeployment(
+  "localhost",
+  31337,
+  CONTRACT_NAME,
+  false /* optional */
+);
 
 // Sepolia is optional
-let deploySepolia = readDeployment("sepolia", 11155111, CONTRACT_NAME, true /* optional */);
+let deploySepolia = readDeployment(
+  "sepolia",
+  11155111,
+  CONTRACT_NAME,
+  true /* optional */
+);
 if (!deploySepolia) {
-  deploySepolia= { abi: deployLocalhost.abi, address: "0x0000000000000000000000000000000000000000" };
+  deploySepolia = {
+    abi: deployLocalhost.abi,
+    address: "0x0000000000000000000000000000000000000000",
+  };
 }
 
 if (deployLocalhost && deploySepolia) {
@@ -105,13 +135,14 @@ if (deployLocalhost && deploySepolia) {
   }
 }
 
+const contractAbi = JSON.stringify({ abi: deployLocalhost.abi }, null, 2);
 
 const tsCode = `
 /*
   This file is auto-generated.
   Command: 'npm run genabi'
 */
-export const ${CONTRACT_NAME}ABI = ${JSON.stringify({ abi: deployLocalhost.abi }, null, 2)} as const;
+export const ${CONTRACT_NAME}ABI = ${contractAbi} as const;
 \n`;
 const tsAddresses = `
 /*
@@ -124,13 +155,13 @@ export const ${CONTRACT_NAME}Addresses = {
 };
 `;
 
-console.log(`Generated ${path.join(outdir, `${CONTRACT_NAME}ABI.ts`)}`);
-console.log(`Generated ${path.join(outdir, `${CONTRACT_NAME}Addresses.ts`)}`);
+console.log(`Generated ${path.join(abidir, `${CONTRACT_NAME}ABI.ts`)}`);
+console.log(`Generated ${path.join(abidir, `${CONTRACT_NAME}Addresses.ts`)}`);
 console.log(tsAddresses);
 
-fs.writeFileSync(path.join(outdir, `${CONTRACT_NAME}ABI.ts`), tsCode, "utf-8");
+fs.writeFileSync(path.join(abidir, `${CONTRACT_NAME}ABI.ts`), tsCode, "utf-8");
 fs.writeFileSync(
-  path.join(outdir, `${CONTRACT_NAME}Addresses.ts`),
+  path.join(abidir, `${CONTRACT_NAME}Addresses.ts`),
   tsAddresses,
   "utf-8"
 );
