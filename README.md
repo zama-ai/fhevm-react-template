@@ -31,27 +31,10 @@ Follow the step-by-step guide in the [Hardhat + MetaMask](https://docs.metamask.
 
 ## Install
 
-### Automatic install
-
 1. Clone this repository.
 2. From the repo root, run:
 
 ```sh
-# - git clone "https://github.com/zama-ai/fhevm-hardhat-template.git" into <root>/packages
-# - npm install
-# - auto-depoy on hardhat node
-node ./scripts/install.mjs
-```
-
-### Manual install
-
-1. Clone this repository.
-2. From the repo root, execute the following:
-
-```sh
-cd ./packages
-git clone "https://github.com/zama-ai/fhevm-hardhat-template.git"
-cd ..
 npm install
 ```
 
@@ -64,25 +47,16 @@ Follow the detailed instructions in the [FHEVM documentation](https://docs.zama.
 2. Start a local Hardhat node (new terminal):
 
 ```sh
-cd packages/fhevm-hardhat-template
-npx hardhat node --verbose
 # Default RPC: http://127.0.0.1:8545  | chainId: 31337
+npm run hardhat-node
 ```
 
-3. Deploy `FHECounter` to the local node:
-
-```sh
-# still in packages/fhevm-hardhat-template
-npx hardhat deploy --network localhost
-```
-
-4. Deploy to Sepolia:
+3. Deploy to Sepolia:
 
 Follows instructions in the [FHEVM documentation to setup your Hardhat project for Sepolia](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional)
 
 ```sh
-# still in packages/fhevm-hardhat-template
-npx hardhat deploy --network sepolia
+npm run deploy:sepolia
 ```
 
 ## Run frontend in mock mode
@@ -90,8 +64,7 @@ npx hardhat deploy --network sepolia
 1. Start a local Hardhat node (new terminal):
 
 ```sh
-cd packages/fhevm-hardhat-template
-npx hardhat node --verbose
+npm run hardhat-node
 ```
 
 2. From the `<root>/packages/site` run

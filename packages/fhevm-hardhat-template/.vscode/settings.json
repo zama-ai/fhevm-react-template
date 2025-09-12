@@ -1,0 +1,9 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "prettier.documentSelectors": ["**/*.sol"],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[solidity]": {
+    "editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
+  }
+}

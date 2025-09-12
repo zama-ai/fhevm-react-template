@@ -1,8 +1,8 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import {
   GenericStringInMemoryStorage,
-  GenericStringStorage,
-} from "@/fhevm/GenericStringStorage";
+  type GenericStringStorage,
+} from "@fhevm/react";
 
 interface UseInMemoryStorageState {
   storage: GenericStringStorage;

@@ -1,9 +1,9 @@
 "use client";
 
-import { useFhevm } from "../fhevm/useFhevm";
+import { useFhevm } from "@fhevm/react";
 import { useInMemoryStorage } from "../hooks/useInMemoryStorage";
 import { useMetaMaskEthersSigner } from "../hooks/metamask/useMetaMaskEthersSigner";
-import { useFHECounter } from "@/hooks/useFHECounter";
+import { useFHECounter } from "../hooks/useFHECounter";
 import { errorNotDeployed } from "./ErrorNotDeployed";
 
 /*
