@@ -15,45 +15,50 @@ function getContractsPackageName() {
   return obj.name;
 }
 
-async function getBlockNumber(url) {
+async function getWeb3ClientVersion(url) {
   const r = await fetch(url, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       jsonrpc: "2.0",
       id: 1,
-      method: "eth_blockNumber",
+      method: "web3_clientVersion",
       params: [],
     }),
   });
   if (!r.ok) {
-    throw new Error();
+    throw new Error("Http status:" + r.status + " " + r.statusText);
   }
   const data = await r.json();
   if (data.error) {
-    throw new Error();
+    throw new Error("Unknown error");
   }
-  return Number(data.result);
+  return data.result;
 }
 
-export async function tryGetBlockNumber() {
+export async function tryGetWeb3ClientVersion() {
   try {
-    const blockNumber = await getBlockNumber("http://localhost:8545");
-    return Number(blockNumber);
-  } catch {
-    return undefined;
+    return {
+      version: await getWeb3ClientVersion("http://localhost:8545"),
+      error: undefined,
+    };
+  } catch (e) {
+    return { version: undefined, error: e };
   }
 }
 
 export async function checkIfHardhatNodeIsRunning() {
   const rootDir = path.resolve("..");
 
-  const blockNumber = await tryGetBlockNumber();
+  const web3ClientVersion = await tryGetWeb3ClientVersion();
+  const notHH =
+    typeof web3ClientVersion.version === "string" &&
+    !web3ClientVersion.version.toLowerCase().includes("hardhat");
 
-  if (blockNumber === undefined) {
+  if (web3ClientVersion.version === undefined) {
     console.error("\n");
     console.error(
-      "===============================================================================\n"
+      "===================================================================\n"
     );
     console.error(" 💥❌ Local Hardhat Node is not running!\n");
     console.error("   To start Hardhat Node:");
@@ -62,14 +67,30 @@ export async function checkIfHardhatNodeIsRunning() {
     console.error(`   ✅ 2. cd ${rootDir}`);
     console.error("   ✅ 3. npm run hardhat-node");
     console.error(
-      "\n===============================================================================\n"
+      "\n===================================================================\n"
+    );
+    console.error(`(${web3ClientVersion.error})`);
+    console.error("\n");
+
+    process.exit(1);
+  } else if (notHH) {
+    console.error("\n");
+    console.error(
+      "=========================================================================\n"
+    );
+    console.error(
+      ` 💥❌ Another Web3 Client (${web3ClientVersion}) is currently running 
+      at http://localhost:8545! You must stop it and retry.`
+    );
+    console.error(
+      "\n=========================================================================\n"
     );
     console.error("\n");
 
     process.exit(1);
   } else {
     console.log(
-      `✅ Local Hardhat Node is running. Current block number: ${blockNumber}`
+      `✅ Local Hardhat Node is running. Current web3 client version: ${web3ClientVersion}`
     );
   }
 }
