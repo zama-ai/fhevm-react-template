@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "postinstall": "./scripts/deploy-hardhat-node.sh",
+    "dev:mock": "npx -w ./packages/site npm run dev:mock",
     "generate-abi": "node ./scripts/generate-site-abi.mjs",
     "is-hardhat-node-running": "node ./scripts/is-hardhat-node-running.mjs",
     "hardhat-node": "npx -w ./packages/fhevm-hardhat-template hardhat node --verbose",
