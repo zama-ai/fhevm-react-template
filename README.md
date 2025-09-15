@@ -6,9 +6,6 @@ and provides a simple development frontend for interacting with the `FHECounter.
 
 This template also illustrates how to run your FHEVM-dApp on both Sepolia as well as a local Hardhat Node (much faster).
 
-> [!IMPORTANT]
-> Please follow the detailed installation instructions [below](#install).
-
 ## Features
 
 - **@zama-fhe/relayer-sdk**: Fully Homomorphic Encryption for Ethereum Virtual Machine
@@ -31,31 +28,14 @@ Follow the step-by-step guide in the [Hardhat + MetaMask](https://docs.metamask.
 
 ## Install
 
-### Automatic install
-
 1. Clone this repository.
 2. From the repo root, run:
 
 ```sh
-# - git clone "https://github.com/zama-ai/fhevm-hardhat-template.git" into <root>/packages
-# - npm install
-# - auto-depoy on hardhat node
-node ./scripts/install.mjs
-```
-
-### Manual install
-
-1. Clone this repository.
-2. From the repo root, execute the following:
-
-```sh
-cd ./packages
-git clone "https://github.com/zama-ai/fhevm-hardhat-template.git"
-cd ..
 npm install
 ```
 
-## Setup
+## Quickstart
 
 1. Setup your hardhat environment variables:
 
@@ -64,49 +44,35 @@ Follow the detailed instructions in the [FHEVM documentation](https://docs.zama.
 2. Start a local Hardhat node (new terminal):
 
 ```sh
-cd packages/fhevm-hardhat-template
-npx hardhat node --verbose
 # Default RPC: http://127.0.0.1:8545  | chainId: 31337
+npm run hardhat-node
 ```
 
-3. Deploy `FHECounter` to the local node:
-
-```sh
-# still in packages/fhevm-hardhat-template
-npx hardhat deploy --network localhost
-```
-
-4. Deploy to Sepolia:
-
-Follows instructions in the [FHEVM documentation to setup your Hardhat project for Sepolia](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional)
-
-```sh
-# still in packages/fhevm-hardhat-template
-npx hardhat deploy --network sepolia
-```
-
-## Run frontend in mock mode
-
-1. Start a local Hardhat node (new terminal):
-
-```sh
-cd packages/fhevm-hardhat-template
-npx hardhat node --verbose
-```
-
-2. From the `<root>/packages/site` run
+3. Launch the frontend in mock mode:
 
 ```sh
 npm run dev:mock
 ```
 
-3. In your browser open `http://localhost:3000`
+4. Start your browser with the Metamask extension installed and open http://localhost:3000
 
-4. Open Metamask connect to local Hardhat node
+5. Open the Metamask extension to connect to the local Hardhat node
    i. Select Add network.
    ii. Select Add a network manually.
-   iii. Enter your Hardhat Network RPC URL, http://127.0.0.1:8545/ (or http://localhost:8545).
+   iii. Enter your Hardhat Network RPC URL, http://127.0.0.1:8545 (or http://localhost:8545).
    iv. Enter your Hardhat Network chain ID, 31337 (or 0x539 in hexadecimal format).
+
+## Run on Sepolia
+
+1. Deploy your contract on Sepolia Testnet
+
+```sh
+npm run deploy:sepolia
+```
+
+2. In your browser open `http://localhost:3000`
+
+3. Open the Metamask extension to connect to the Sepolia network
 
 ## How to fix Hardhat Node + Metamask Errors ?
 

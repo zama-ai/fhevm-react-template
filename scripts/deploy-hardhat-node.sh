@@ -3,13 +3,27 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 set -euo pipefail # Exit on error, undefined vars, and pipe errors
 
+# *****************************************************************************
+# Config Parameters
+# *****************************************************************************
+
+CONTRACTS_PACKAGE_DIR="fhevm-hardhat-template" # Dirname of the contracts package
 HARDHAT_NODE_PORT=8545
 HARDHAT_NODE_HOST=127.0.0.1
 HARDHAT_NODE_URL="http://${HARDHAT_NODE_HOST}:${HARDHAT_NODE_PORT}"
 TIMEOUT_SECONDS=60 # Max time to wait for Hardhat Node to start
 CHECK_INTERVAL_SECONDS=1 # How often to poll the node
 
-cd "${SCRIPT_DIR}/../../fhevm-hardhat-template"
+# *****************************************************************************
+
+cd "${SCRIPT_DIR}/../packages/${CONTRACTS_PACKAGE_DIR}"
+
+# Run deploy if Hardhat Node is already running
+if curl -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' "$HARDHAT_NODE_URL" > /dev/null 2>&1; then
+    echo "Hardhat Node is ready!"
+    npx hardhat deploy --network localhost
+    exit 0
+fi
 
 echo "--- Starting Hardhat Node in background ---"
 # Start Hardhat Node in the background, redirecting output to a log file
