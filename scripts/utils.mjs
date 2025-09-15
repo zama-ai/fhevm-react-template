@@ -90,7 +90,7 @@ export async function checkIfHardhatNodeIsRunning() {
     process.exit(1);
   } else {
     console.log(
-      `✅ Local Hardhat Node is running. Current web3 client version: ${web3ClientVersion}`
+      `✅ Local Hardhat Node is running. Current web3 client version: ${web3ClientVersion.version}`
     );
   }
 }
