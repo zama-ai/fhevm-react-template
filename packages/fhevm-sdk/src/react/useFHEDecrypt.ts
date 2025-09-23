@@ -10,7 +10,7 @@ export type FHEDecryptRequest = { handle: string; contractAddress: `0x${string}`
 
 export const useFHEDecrypt = (params: {
   instance: FhevmInstance | undefined;
-  ethersSigner: ethers.Signer | undefined;
+  ethersSigner: ethers.JsonRpcSigner | undefined;
   fhevmDecryptionSignatureStorage: GenericStringStorage;
   chainId: number | undefined;
   requests: readonly FHEDecryptRequest[] | undefined;
