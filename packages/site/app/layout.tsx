@@ -1,34 +1,24 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Providers } from "./providers";
-import Image from "next/image";
+import "@rainbow-me/rainbowkit/styles.css";
+import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
+import { ThemeProvider } from "~~/components/ThemeProvider";
+import "~~/styles/globals.css";
+import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
-export const metadata: Metadata = {
-  title: "Zama FHEVM SDK Quickstart",
-  description: "Zama FHEVM SDK Quickstart app",
-};
+export const metadata = getMetadata({
+  title: "Zama Template",
+  description: "Built with FHEVM",
+});
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="en">
-      <body className={`zama-bg text-foreground antialiased`}>
-        <div className="fixed inset-0 w-full h-full zama-bg z-[-20] min-w-[850px]"></div>
-        <main className="flex flex-col max-w-screen-lg mx-auto pb-20 min-w-[850px]">
-          <nav className="flex w-full px-3 md:px-0 h-fit py-10 justify-between items-center">
-            <Image
-              src="/zama-logo.svg"
-              alt="Zama Logo"
-              width={120}
-              height={120}
-            />
-          </nav>
-          <Providers>{children}</Providers>
-        </main>
+    <html suppressHydrationWarning className={``}>
+      <body>
+        <ThemeProvider enableSystem>
+          <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
+        </ThemeProvider>
       </body>
     </html>
   );
-}
+};
+
+export default ScaffoldEthApp;

@@ -1,0 +1,21 @@
+{
+  "name": "root",
+  "private": true,
+  "version": "0.3.0",
+  "license": "BSD-3-Clause-Clear",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "postinstall": "./scripts/deploy-hardhat-node.sh",
+    "dev:mock": "npx -w ./packages/site npm run dev:mock",
+    "generate-abi": "node ./scripts/generate-site-abi.mjs",
+    "is-hardhat-node-running": "node ./scripts/is-hardhat-node-running.mjs",
+    "hardhat-node": "npx -w ./packages/fhevm-hardhat-template hardhat node --verbose",
+    "deploy:sepolia": "npx -w ./packages/fhevm-hardhat-template hardhat deploy --network sepolia",
+    "deploy:hardhat-node": "npm run is-hardhat-node-running && npx -w ./packages/fhevm-hardhat-template hardhat deploy --network localhost"
+  }
+}

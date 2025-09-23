@@ -1,4 +1,4 @@
-import { FHECounterDemo } from "@/components/FHECounterDemo";
+import { FHECounterDemo } from "./_components/FHECounterDemo";
 
 export default function Home() {
   return (
