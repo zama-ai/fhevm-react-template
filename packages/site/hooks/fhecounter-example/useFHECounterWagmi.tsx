@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useDeployedContractInfo } from "../scaffold-eth";
+import { useDeployedContractInfo } from "../helper";
 import { useWagmiEthers } from "../wagmi/useWagmiEthers";
 import { FhevmInstance } from "@fhevm-sdk";
 import {
@@ -12,8 +12,8 @@ import {
   useInMemoryStorage,
 } from "@fhevm-sdk";
 import { ethers } from "ethers";
-import type { Contract } from "~~/utils/scaffold-eth/contract";
-import type { AllowedChainIds } from "~~/utils/scaffold-eth/networks";
+import type { Contract } from "~~/utils/helper/contract";
+import type { AllowedChainIds } from "~~/utils/helper/networks";
 
 export const useFHECounterWagmi = (parameters: {
   instance: FhevmInstance | undefined;

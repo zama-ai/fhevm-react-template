@@ -64,7 +64,7 @@ export const FHECounterDemo = () => {
   //////////////////////////////////////////////////////////////////////////////
 
   const buttonClass =
-    "inline-flex items-center justify-center px-6 py-3 font-semibold text-white rounded-lg shadow-lg " +
+    "inline-flex items-center justify-center px-6 py-3 font-semibold text-white shadow-lg " +
     "transition-all duration-200 hover:shadow-xl active:scale-95 " +
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 " +
     "disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed";
@@ -79,14 +79,11 @@ export const FHECounterDemo = () => {
     buttonClass + " bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800";
 
   const titleClass = "font-bold text-gray-800 text-xl mb-4 border-b-2 border-gray-200 pb-2";
-  const sectionClass = "bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-6";
+  const sectionClass = "bg-white shadow-lg border border-gray-200 p-6 mb-6";
 
   if (!isConnected) {
     return (
       <div className="max-w-6xl mx-auto p-6 space-y-6">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-boldmb-2">Wallet Not Connected</h2>
-        </div>
       </div>
     );
   }
@@ -153,7 +150,7 @@ export const FHECounterDemo = () => {
       {fheCounter.message && (
         <div className={sectionClass}>
           <h3 className={titleClass}>💬 Messages</h3>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-blue-50 border border-blue-200 p-4">
             <p className="text-blue-800 font-medium">{fheCounter.message}</p>
           </div>
         </div>
@@ -205,7 +202,7 @@ function printProperty(name: string, value: unknown) {
     displayValue = JSON.stringify(value);
   }
   return (
-    <div className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg border border-gray-200">
+    <div className="flex justify-between items-center py-2 px-3 bg-gray-50 border border-gray-200">
       <span className="text-gray-700 font-medium">{name}</span>
       <span className="font-mono text-sm font-semibold text-gray-900 bg-white px-2 py-1 rounded border">
         {displayValue}
@@ -216,7 +213,7 @@ function printProperty(name: string, value: unknown) {
 
 function printBooleanProperty(name: string, value: boolean) {
   return (
-    <div className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg border border-gray-200">
+    <div className="flex justify-between items-center py-2 px-3 bg-gray-50 border border-gray-200">
       <span className="text-gray-700 font-medium">{name}</span>
       <span
         className={`font-mono text-sm font-semibold px-2 py-1 rounded border ${
