@@ -3,7 +3,6 @@
 import { Address, formatEther } from "viem";
 import { useTargetNetwork } from "~~/hooks/helper/useTargetNetwork";
 import { useWatchBalance } from "~~/hooks/helper/useWatchBalance";
-import { useGlobalState } from "~~/services/store/store";
 
 type BalanceProps = {
   address?: Address;

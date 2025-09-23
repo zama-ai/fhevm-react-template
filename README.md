@@ -13,66 +13,45 @@ This template also illustrates how to run your FHEVM-dApp on both Sepolia as wel
 - **Next.js**: Next-generation frontend build tool
 - **Tailwind**: Utility-first CSS framework for rapid UI development
 
-## Requirements
-
-- You need to have Metamask browser extension installed on your browser.
-
-## Local Hardhat Network (to add in MetaMask)
-
-Follow the step-by-step guide in the [Hardhat + MetaMask](https://docs.metamask.io/wallet/how-to/run-devnet/) documentation to set up your local devnet using Hardhat and MetaMask.
-
-- Name: Hardhat
-- RPC URL: http://127.0.0.1:8545
-- Chain ID: 31337
-- Currency symbol: ETH
-
-## Install
+## Get Started
 
 1. Clone this repository.
-2. From the repo root, run:
+2. From the repo root, run and build the `fhevm-sdk`:
 
 ```sh
-npm install
+pnpm install
 ```
 
-## Quickstart
-
-1. Setup your hardhat environment variables:
+3. Setup your hardhat environment variables:
 
 Follow the detailed instructions in the [FHEVM documentation](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional) to setup `MNEMONIC` + `INFURA_API_KEY` Hardhat environment variables
 
-2. Start a local Hardhat node (new terminal):
+4. Start a local Hardhat node (new terminal):
 
 ```sh
 # Default RPC: http://127.0.0.1:8545  | chainId: 31337
-npm run hardhat-node
+pnpm chain
 ```
 
-3. Launch the frontend in mock mode:
+5. Deploy either on localhost or on sepolia
 
 ```sh
-npm run dev:mock
+pnpm deploy:localhost
+```
+or
+```sh
+pnpm deploy:sepolia
 ```
 
-4. Start your browser with the Metamask extension installed and open http://localhost:3000
+6. Start your browser with the Metamask extension installed and open http://localhost:3000
 
-5. Open the Metamask extension to connect to the local Hardhat node
+7. Connect to Sepolia or local Hardhat node
+
+Open the Metamask extension to connect to the local Hardhat node
    i. Select Add network.
    ii. Select Add a network manually.
    iii. Enter your Hardhat Network RPC URL, http://127.0.0.1:8545 (or http://localhost:8545).
    iv. Enter your Hardhat Network chain ID, 31337 (or 0x539 in hexadecimal format).
-
-## Run on Sepolia
-
-1. Deploy your contract on Sepolia Testnet
-
-```sh
-npm run deploy:sepolia
-```
-
-2. In your browser open `http://localhost:3000`
-
-3. Open the Metamask extension to connect to the Sepolia network
 
 ## How to fix Hardhat Node + Metamask Errors ?
 

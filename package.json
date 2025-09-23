@@ -45,6 +45,7 @@
     "next:lint": "pnpm --filter ./packages/site lint",
     "next:serve": "pnpm --filter ./packages/site serve",
     "precommit": "lint-staged",
+    "preinstall": "git submodule update --init --recursive && pnpm sdk:build",
     "start": "pnpm --filter ./packages/site dev",
     "test": "pnpm hardhat:test",
     "vercel": "pnpm --filter ./packages/site vercel",

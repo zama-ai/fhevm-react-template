@@ -1,7 +1,6 @@
 import { useTheme } from "next-themes";
 import { useAccount, useSwitchChain } from "wagmi";
 import { ArrowsRightLeftIcon } from "@heroicons/react/24/solid";
-import { getNetworkColor } from "~~/hooks/helper";
 import { getTargetNetworks } from "~~/utils/helper";
 
 const allowedNetworks = getTargetNetworks();
@@ -32,13 +31,7 @@ export const NetworkOptions = ({ hidden = false }: NetworkOptionsProps) => {
               <ArrowsRightLeftIcon className="h-6 w-4 ml-2 sm:ml-0" />
               <span>
                 Switch to{" "}
-                <span
-                  style={{
-                    color: getNetworkColor(allowedNetwork, isDarkMode),
-                  }}
-                >
-                  {allowedNetwork.name}
-                </span>
+                {allowedNetwork.name}
               </span>
             </button>
           </li>

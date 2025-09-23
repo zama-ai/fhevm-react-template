@@ -40,7 +40,6 @@
     "zustand": "~5.0.0"
   },
   "devDependencies": {
-    "@fhevm/mock-utils": "0.1.0",
     "@tailwindcss/postcss": "4.0.15",
     "@trivago/prettier-plugin-sort-imports": "~4.3.0",
     "@types/node": "~18.19.50",
