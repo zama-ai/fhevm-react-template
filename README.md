@@ -16,7 +16,13 @@ This template also illustrates how to run your FHEVM-dApp on both Sepolia as wel
 ## Get Started
 
 1. Clone this repository.
-2. From the repo root, run and build the `fhevm-sdk`:
+2. Get the `fhevm-hardhat-template` submodule
+
+```sh
+git submodule update --init --recursive 
+```
+
+3. From the repo root, run and build the `fhevm-sdk`:
 
 ```sh
 pnpm install

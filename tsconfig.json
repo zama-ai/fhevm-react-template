@@ -1,4 +1,17 @@
 {
-  // Empty tsconfig.json file to help eslint
-  "include": ["packages/**/*"]
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "commonjs",
+    "moduleResolution": "node16",
+    "lib": ["ES2019"],
+    "types": ["node"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "packages/**/*",
+    "scripts/**/*"
+  ]
 }
