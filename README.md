@@ -43,9 +43,14 @@ or
 pnpm deploy:sepolia
 ```
 
-6. Start your browser with the Metamask extension installed and open http://localhost:3000
+6. Start the browser
+```sh
+pnpm start
+```
 
-7. Connect to Sepolia or local Hardhat node
+7. Start your browser with the Metamask extension installed and open http://localhost:3000
+
+8. Connect to Sepolia or local Hardhat node
 
 Open the Metamask extension to connect to the local Hardhat node
    i. Select Add network.
