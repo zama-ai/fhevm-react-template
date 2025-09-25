@@ -1,31 +1,22 @@
 import { useRef, useState } from "react";
 import { NetworkOptions } from "./NetworkOptions";
-import { getAddress, Address } from "viem";
+import { Address, getAddress } from "viem";
 import { useDisconnect } from "wagmi";
-import {
-  ArrowsRightLeftIcon,
-  ChevronDownIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowLeftIcon } from "@heroicons/react/20/solid";
+import { ArrowsRightLeftIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { BlockieAvatar } from "~~/components/helper";
 import { useOutsideClick } from "~~/hooks/helper";
 import { getTargetNetworks } from "~~/utils/helper";
-import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 
 const allowedNetworks = getTargetNetworks();
 
 type AddressInfoDropdownProps = {
   address: Address;
-  blockExplorerAddressLink: string | undefined;
   displayName: string;
   ensAvatar?: string;
 };
 
-export const AddressInfoDropdown = ({
-  address,
-  ensAvatar,
-  displayName,
-  blockExplorerAddressLink,
-}: AddressInfoDropdownProps) => {
+export const AddressInfoDropdown = ({ address, ensAvatar, displayName }: AddressInfoDropdownProps) => {
   const { disconnect } = useDisconnect();
   const checkSumAddress = getAddress(address);
 
@@ -44,9 +35,7 @@ export const AddressInfoDropdown = ({
       <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
         <summary className="btn btn-secondary btn-sm pl-0 pr-2 shadow-md dropdown-toggle gap-0 h-auto!">
           <BlockieAvatar address={checkSumAddress} size={30} ensImage={ensAvatar} />
-          <span className="ml-2 mr-1">
-            {displayName}
-          </span>
+          <span className="ml-2 mr-1">{displayName}</span>
           <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
         </summary>
         <ul className="dropdown-content menu z-2 p-2 mt-2 shadow-center shadow-accent bg-base-200 rounded-box gap-1">

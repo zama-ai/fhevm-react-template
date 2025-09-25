@@ -3,8 +3,8 @@
 import { useMemo } from "react";
 import { useFhevm } from "@fhevm-sdk";
 import { useAccount } from "wagmi";
-import { useFHECounterWagmi } from "~~/hooks/fhecounter-example/useFHECounterWagmi";
 import { RainbowKitCustomConnectButton } from "~~/components/helper/RainbowKitCustomConnectButton";
+import { useFHECounterWagmi } from "~~/hooks/fhecounter-example/useFHECounterWagmi";
 
 /*
  * Main FHECounter React component with 3 buttons
@@ -86,16 +86,18 @@ export const FHECounterDemo = () => {
     return (
       <div className="max-w-6xl mx-auto p-6">
         <div className="flex items-center justify-center">
-            <div className="bg-white border border-amber-300 shadow-xl p-8 text-center">
-              <div className="mb-4">
-                <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-100 text-amber-600 text-3xl">⚠️</span>
-              </div>
-              <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Wallet not connected</h2>
-              <p className="text-gray-700 mb-6">Connect your wallet to use the FHE Counter demo.</p>
-              <div className="flex items-center justify-center">
-                <RainbowKitCustomConnectButton />
-              </div>
+          <div className="bg-white border border-amber-300 shadow-xl p-8 text-center">
+            <div className="mb-4">
+              <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-100 text-amber-600 text-3xl">
+                ⚠️
+              </span>
             </div>
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Wallet not connected</h2>
+            <p className="text-gray-700 mb-6">Connect your wallet to use the FHE Counter demo.</p>
+            <div className="flex items-center justify-center">
+              <RainbowKitCustomConnectButton />
+            </div>
+          </div>
         </div>
       </div>
     );
