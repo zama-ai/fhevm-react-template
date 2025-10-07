@@ -83,6 +83,13 @@ pnpm start
    - **Chain ID**: `31337`
    - **Currency Symbol**: `ETH`
 
+### ⚠️ Sepolia Production note
+
+- In production, `NEXT_PUBLIC_ALCHEMY_API_KEY` must be set (see `packages/site/scaffold.config.ts`). The app throws if missing.
+- Ensure `packages/site/contracts/deployedContracts.ts` points to your live contract addresses.
+- Optional: set `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` for better WalletConnect reliability.
+- Optional: add per-chain RPCs via `rpcOverrides` in `packages/site/scaffold.config.ts`.
+
 ## 🔧 Troubleshooting
 
 ### Common MetaMask + Hardhat Issues

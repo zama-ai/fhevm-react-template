@@ -38,7 +38,6 @@
     "hardhat:test": "pnpm --filter ./packages/fhevm-hardhat-template test",
     "hardhat:verify": "pnpm --filter ./packages/fhevm-hardhat-template verify",
     "hardhat:verify:sepolia": "pnpm --filter ./packages/fhevm-hardhat-template verify:sepolia",
-    "ipfs": "pnpm --filter ./packages/site ipfs",
     "lint": "pnpm next:lint && pnpm hardhat:lint",
     "next:build": "pnpm --filter ./packages/site build",
     "next:check-types": "pnpm --filter ./packages/site check-types",

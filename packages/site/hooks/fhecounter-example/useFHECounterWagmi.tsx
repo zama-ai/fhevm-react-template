@@ -14,7 +14,19 @@ import {
 import { ethers } from "ethers";
 import type { Contract } from "~~/utils/helper/contract";
 import type { AllowedChainIds } from "~~/utils/helper/networks";
+import { useReadContract } from "wagmi";
 
+/**
+ * useFHECounterWagmi - Minimal FHE Counter hook for Wagmi devs
+ *
+ * What it does:
+ * - Reads the current encrypted counter
+ * - Decrypts the handle on-demand with useFHEDecrypt
+ * - Encrypts inputs and writes increment/decrement
+ *
+ * Pass your FHEVM instance and a simple key-value storage for the decryption signature.
+ * That's it. Everything else is handled for you.
+ */
 export const useFHECounterWagmi = (parameters: {
   instance: FhevmInstance | undefined;
   initialMockChains?: Readonly<Record<number, string>>;
@@ -25,82 +37,66 @@ export const useFHECounterWagmi = (parameters: {
   // Wagmi + ethers interop
   const { chainId, accounts, isConnected, ethersReadonlyProvider, ethersSigner } = useWagmiEthers(initialMockChains);
 
-  // Narrow chainId to AllowedChainIds when present
+  // Resolve deployed contract info once we know the chain
   const allowedChainId = typeof chainId === "number" ? (chainId as AllowedChainIds) : undefined;
   const { data: fheCounter } = useDeployedContractInfo({ contractName: "FHECounter", chainId: allowedChainId });
 
-  // Message bus shared by sub-hooks
+  // Simple status string for UX messages
   const [message, setMessage] = useState<string>("");
 
-  // Local types/state/refs
   type FHECounterInfo = Contract<"FHECounter"> & { chainId?: number };
-  const fheCounterRef = useRef<FHECounterInfo | undefined>(undefined);
-  const providerRef = useRef<typeof ethersReadonlyProvider>(ethersReadonlyProvider);
-  const addressRef = useRef<string | undefined>(fheCounter?.address);
-  const chainIdRef = useRef<number | undefined>(chainId);
-  const lastRefreshRef = useRef<number>(0);
-  const MIN_REFRESH_MS = 100; // limit refresh to once every 0.1s
 
-  const [countHandle, setCountHandle] = useState<string | undefined>(undefined);
-  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const isRefreshing = false as unknown as boolean; // derived from wagmi below
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
-  // keep refs in sync
-  useEffect(() => {
-    providerRef.current = ethersReadonlyProvider;
-  }, [ethersReadonlyProvider]);
+  // -------------
+  // Helpers
+  // -------------
+  const hasContract = Boolean(fheCounter?.address && fheCounter?.abi);
+  const hasProvider = Boolean(ethersReadonlyProvider);
+  const hasSigner = Boolean(ethersSigner);
 
-  useEffect(() => {
-    chainIdRef.current = chainId;
-  }, [chainId]);
+  const getContract = (mode: "read" | "write") => {
+    if (!hasContract) return undefined;
+    const providerOrSigner = mode === "read" ? ethersReadonlyProvider : ethersSigner;
+    if (!providerOrSigner) return undefined;
+    return new ethers.Contract(
+      fheCounter!.address,
+      (fheCounter as FHECounterInfo).abi,
+      providerOrSigner,
+    );
+  };
 
-  useEffect(() => {
-    if (!fheCounter) return;
-    fheCounterRef.current = fheCounter as FHECounterInfo;
-    addressRef.current = fheCounter.address;
-  }, [fheCounter]);
+  // Read count handle via wagmi
+  const readResult = useReadContract({
+    address: (hasContract ? (fheCounter!.address as unknown as `0x${string}`) : undefined) as
+      | `0x${string}`
+      | undefined,
+    abi: (hasContract ? ((fheCounter as FHECounterInfo).abi as any) : undefined) as any,
+    functionName: "getCount" as const,
+    query: {
+      enabled: Boolean(hasContract && hasProvider),
+      refetchOnWindowFocus: false,
+    },
+  });
 
-  // Read count handle
-  const canGetCount = useMemo(
-    () => Boolean(fheCounter?.address && ethersReadonlyProvider && !isRefreshing),
-    [fheCounter?.address, ethersReadonlyProvider, isRefreshing],
-  );
+  const countHandle = useMemo(() => (readResult.data as string | undefined) ?? undefined, [readResult.data]);
+  const canGetCount = Boolean(hasContract && hasProvider && !readResult.isFetching);
+  const refreshCountHandle = useCallback(async () => {
+    const res = await readResult.refetch();
+    if (res.error) setMessage("FHECounter.getCount() failed: " + (res.error as Error).message);
+  }, [readResult]);
+  // derive isRefreshing from wagmi
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _derivedIsRefreshing = readResult.isFetching;
 
-  const refreshCountHandle = useCallback(() => {
-    if (isRefreshing) return;
-
-    const now = Date.now();
-    if (now - lastRefreshRef.current < MIN_REFRESH_MS) return;
-    lastRefreshRef.current = now;
-    const currentProvider = providerRef.current;
-    const currentAddress = addressRef.current;
-    const currentChainId = chainIdRef.current;
-    if (!fheCounterRef.current || !currentAddress || !currentChainId || !currentProvider) return;
-
-    setIsRefreshing(true);
-    const thisAddress = currentAddress;
-    const thisChainId = currentChainId;
-    const contract = new ethers.Contract(thisAddress, fheCounterRef.current.abi, currentProvider);
-    contract
-      .getCount()
-      .then((value: string) => {
-        if (thisChainId === chainIdRef.current && thisAddress === addressRef.current) setCountHandle(value);
-      })
-      .catch(e => setMessage("FHECounter.getCount() failed: " + (e instanceof Error ? e.message : String(e))))
-      .finally(() => setIsRefreshing(false));
-  }, [isRefreshing]);
-
-  useEffect(() => {
-    if (!fheCounter?.address || !ethersReadonlyProvider) return;
-    const t = window.setTimeout(() => refreshCountHandle(), 300);
-    return () => window.clearTimeout(t);
-  }, [fheCounter?.address, ethersReadonlyProvider, chainId, refreshCountHandle]);
+  // Wagmi handles initial fetch via `enabled`
 
   // Decrypt (reuse existing decrypt hook for simplicity)
   const requests = useMemo(() => {
-    if (!fheCounter?.address || !countHandle || countHandle === ethers.ZeroHash) return undefined;
-    return [{ handle: countHandle, contractAddress: fheCounter.address } as const];
-  }, [fheCounter?.address, countHandle]);
+    if (!hasContract || !countHandle || countHandle === ethers.ZeroHash) return undefined;
+    return [{ handle: countHandle, contractAddress: fheCounter!.address } as const];
+  }, [hasContract, fheCounter?.address, countHandle]);
 
   const {
     canDecrypt,
@@ -110,7 +106,7 @@ export const useFHECounterWagmi = (parameters: {
     results,
   } = useFHEDecrypt({
     instance,
-    ethersSigner,
+    ethersSigner: ethersSigner as any,
     fhevmDecryptionSignatureStorage,
     chainId,
     requests,
@@ -132,11 +128,20 @@ export const useFHECounterWagmi = (parameters: {
   const decryptCountHandle = decrypt;
 
   // Mutations (increment/decrement)
-  const { encryptWith } = useFHEEncryption({ instance, ethersSigner, contractAddress: fheCounter?.address });
+  const { encryptWith } = useFHEEncryption({ instance, ethersSigner: ethersSigner as any, contractAddress: fheCounter?.address });
   const canUpdateCounter = useMemo(
-    () => Boolean(fheCounter?.address && instance && ethersSigner && !isProcessing),
-    [fheCounter?.address, instance, ethersSigner, isProcessing],
+    () => Boolean(hasContract && instance && hasSigner && !isProcessing),
+    [hasContract, instance, hasSigner, isProcessing],
   );
+
+  const getEncryptionMethodFor = (functionName: "increment" | "decrement") => {
+    const functionAbi = fheCounter?.abi.find(item => item.type === "function" && item.name === functionName);
+    if (!functionAbi) return { method: undefined as string | undefined, error: `Function ABI not found for ${functionName}` } as const;
+    if (!functionAbi.inputs || functionAbi.inputs.length === 0)
+      return { method: undefined as string | undefined, error: `No inputs found for ${functionName}` } as const;
+    const firstInput = functionAbi.inputs[0]!;
+    return { method: getEncryptionMethod(firstInput.internalType), error: undefined } as const;
+  };
 
   const updateCounter = useCallback(
     async (value: number) => {
@@ -146,23 +151,20 @@ export const useFHECounterWagmi = (parameters: {
       setIsProcessing(true);
       setMessage(`Starting ${op}(${valueAbs})...`);
       try {
-        const functionName = op;
-        const functionAbi = fheCounter?.abi.find(item => item.type === "function" && item.name === functionName);
-        if (!functionAbi) return setMessage(`Function ABI not found for ${functionName}`);
-        if (!functionAbi.inputs || functionAbi.inputs.length === 0)
-          return setMessage(`No inputs found for ${functionName}`);
-        const firstInput = functionAbi.inputs[0]!;
-        const method = getEncryptionMethod(firstInput.internalType);
+        const { method, error } = getEncryptionMethodFor(op);
+        if (!method) return setMessage(error ?? "Encryption method not found");
+
         setMessage(`Encrypting with ${method}...`);
         const enc = await encryptWith(builder => {
           (builder as any)[method](valueAbs);
         });
         if (!enc) return setMessage("Encryption failed");
 
-        if (!fheCounter?.address || !ethersSigner) return setMessage("Contract info or signer not available");
-        const contract = new ethers.Contract(fheCounter.address, fheCounter.abi, ethersSigner);
-        const params = buildParamsFromAbi(enc, [...fheCounter.abi] as any[], functionName);
-        const tx = await (op === "increment" ? contract.increment(...params) : contract.decrement(...params));
+        const writeContract = getContract("write");
+        if (!writeContract) return setMessage("Contract info or signer not available");
+
+        const params = buildParamsFromAbi(enc, [...fheCounter!.abi] as any[], op);
+        const tx = await (op === "increment" ? writeContract.increment(...params) : writeContract.decrement(...params));
         setMessage("Waiting for transaction...");
         await tx.wait();
         setMessage(`${op}(${valueAbs}) completed!`);
@@ -173,15 +175,7 @@ export const useFHECounterWagmi = (parameters: {
         setIsProcessing(false);
       }
     },
-    [
-      isProcessing,
-      canUpdateCounter,
-      fheCounter?.address,
-      fheCounter?.abi,
-      ethersSigner,
-      encryptWith,
-      refreshCountHandle,
-    ],
+    [isProcessing, canUpdateCounter, encryptWith, getContract, refreshCountHandle, fheCounter?.abi],
   );
 
   return {

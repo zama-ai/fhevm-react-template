@@ -11,7 +11,15 @@ export type BaseConfig = {
 
 export type ScaffoldConfig = BaseConfig;
 
-export const DEFAULT_ALCHEMY_API_KEY = "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
+const rawAlchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
+if (!rawAlchemyKey) {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Environment variable NEXT_PUBLIC_ALCHEMY_API_KEY is required in production.");
+  } else {
+    // eslint-disable-next-line no-console
+    console.warn("NEXT_PUBLIC_ALCHEMY_API_KEY is not set. Falling back to public RPCs.");
+  }
+}
 
 const scaffoldConfig = {
   // The networks on which your DApp is live
@@ -22,7 +30,7 @@ const scaffoldConfig = {
   // You can get your own at https://dashboard.alchemyapi.io
   // It's recommended to store it in an env variable:
   // .env.local for local testing, and in the Vercel/system env config for live apps.
-  alchemyApiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || DEFAULT_ALCHEMY_API_KEY,
+  alchemyApiKey: rawAlchemyKey || "",
   // If you want to use a different RPC for a specific network, you can add it here.
   // The key is the chain ID, and the value is the HTTP RPC URL
   rpcOverrides: {
