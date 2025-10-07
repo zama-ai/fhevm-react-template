@@ -25,7 +25,47 @@ importers:
         specifier: ^5.9.2
         version: 5.9.2
 
-  packages/fhevm-hardhat-template:
+  packages/fhevm-sdk:
+    dependencies:
+      '@fhevm/mock-utils':
+        specifier: ^0.1.0
+        version: 0.1.0(@zama-fhe/relayer-sdk@0.2.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(typescript@5.8.3)
+      idb:
+        specifier: ^8.0.3
+        version: 8.0.3
+    devDependencies:
+      '@types/node':
+        specifier: ~18.19.50
+        version: 18.19.127
+      '@types/react':
+        specifier: ~19.0.7
+        version: 19.0.14
+      '@vitest/coverage-v8':
+        specifier: 2.1.9
+        version: 2.1.9(vitest@2.1.9(@edge-runtime/vm@3.2.0)(@types/node@18.19.127)(jsdom@27.0.0(bufferutil@4.0.9)(postcss@8.4.49)(utf-8-validate@5.0.10))(lightningcss@1.29.2))
+      '@zama-fhe/relayer-sdk':
+        specifier: 0.2.0
+        version: 0.2.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      ethers:
+        specifier: ^6.13.7
+        version: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      fake-indexeddb:
+        specifier: ~6.0.0
+        version: 6.0.1
+      jsdom:
+        specifier: ^27.0.0
+        version: 27.0.0(bufferutil@4.0.9)(postcss@8.4.49)(utf-8-validate@5.0.10)
+      react:
+        specifier: ~19.0.0
+        version: 19.0.0
+      typescript:
+        specifier: ~5.8.2
+        version: 5.8.3
+      vitest:
+        specifier: ~2.1.8
+        version: 2.1.9(@edge-runtime/vm@3.2.0)(@types/node@18.19.127)(jsdom@27.0.0(bufferutil@4.0.9)(postcss@8.4.49)(utf-8-validate@5.0.10))(lightningcss@1.29.2)
+
+  packages/hardhat:
     dependencies:
       '@fhevm/solidity':
         specifier: ^0.8.0
@@ -134,47 +174,7 @@ importers:
         specifier: ^5.8.3
         version: 5.9.2
 
-  packages/fhevm-sdk:
-    dependencies:
-      '@fhevm/mock-utils':
-        specifier: ^0.1.0
-        version: 0.1.0(@zama-fhe/relayer-sdk@0.2.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(typescript@5.8.3)
-      idb:
-        specifier: ^8.0.3
-        version: 8.0.3
-    devDependencies:
-      '@types/node':
-        specifier: ~18.19.50
-        version: 18.19.127
-      '@types/react':
-        specifier: ~19.0.7
-        version: 19.0.14
-      '@vitest/coverage-v8':
-        specifier: 2.1.9
-        version: 2.1.9(vitest@2.1.9(@edge-runtime/vm@3.2.0)(@types/node@18.19.127)(jsdom@27.0.0(bufferutil@4.0.9)(postcss@8.4.49)(utf-8-validate@5.0.10))(lightningcss@1.29.2))
-      '@zama-fhe/relayer-sdk':
-        specifier: 0.2.0
-        version: 0.2.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      ethers:
-        specifier: ^6.13.7
-        version: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      fake-indexeddb:
-        specifier: ~6.0.0
-        version: 6.0.1
-      jsdom:
-        specifier: ^27.0.0
-        version: 27.0.0(bufferutil@4.0.9)(postcss@8.4.49)(utf-8-validate@5.0.10)
-      react:
-        specifier: ~19.0.0
-        version: 19.0.0
-      typescript:
-        specifier: ~5.8.2
-        version: 5.8.3
-      vitest:
-        specifier: ~2.1.8
-        version: 2.1.9(@edge-runtime/vm@3.2.0)(@types/node@18.19.127)(jsdom@27.0.0(bufferutil@4.0.9)(postcss@8.4.49)(utf-8-validate@5.0.10))(lightningcss@1.29.2)
-
-  packages/site:
+  packages/nextjs:
     dependencies:
       '@fhevm-sdk':
         specifier: workspace:*
@@ -7400,7 +7400,7 @@ snapshots:
 
   '@babel/generator@7.17.7':
     dependencies:
-      '@babel/types': 7.17.0
+      '@babel/types': 7.28.4
       jsesc: 2.5.2
       source-map: 0.5.7
 
@@ -9320,7 +9320,7 @@ snapshots:
 
   '@scure/bip32@1.7.0':
     dependencies:
-      '@noble/curves': 1.9.6
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/base': 1.2.6
 
@@ -9545,7 +9545,7 @@ snapshots:
 
   '@types/bn.js@5.2.0':
     dependencies:
-      '@types/node': 20.19.17
+      '@types/node': 22.7.5
 
   '@types/chai-as-promised@7.1.8':
     dependencies:
@@ -9562,7 +9562,7 @@ snapshots:
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 6.0.0
-      '@types/node': 20.19.17
+      '@types/node': 22.7.5
 
   '@types/http-cache-semantics@4.0.4': {}
 
@@ -9578,7 +9578,7 @@ snapshots:
 
   '@types/mkdirp@0.5.2':
     dependencies:
-      '@types/node': 20.19.17
+      '@types/node': 22.7.5
 
   '@types/mocha@10.0.10': {}
 
@@ -9586,7 +9586,7 @@ snapshots:
 
   '@types/mute-stream@0.0.4':
     dependencies:
-      '@types/node': 20.19.17
+      '@types/node': 22.7.5
 
   '@types/node@16.18.11': {}
 
@@ -9604,7 +9604,7 @@ snapshots:
 
   '@types/pbkdf2@3.1.2':
     dependencies:
-      '@types/node': 20.19.17
+      '@types/node': 22.7.5
 
   '@types/prettier@2.7.3': {}
 
@@ -9616,11 +9616,11 @@ snapshots:
 
   '@types/resolve@0.0.8':
     dependencies:
-      '@types/node': 20.19.17
+      '@types/node': 22.7.5
 
   '@types/secp256k1@4.0.6':
     dependencies:
-      '@types/node': 20.19.17
+      '@types/node': 22.7.5
 
   '@types/trusted-types@2.0.7': {}
 
@@ -11621,7 +11621,7 @@ snapshots:
 
   debug@4.1.1:
     dependencies:
-      ms: 2.1.1
+      ms: 2.1.3
 
   debug@4.3.7:
     dependencies:
@@ -14338,7 +14338,7 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.11.1
       '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.6
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
@@ -14353,7 +14353,7 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.11.1
       '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.6
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
@@ -14368,7 +14368,7 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.11.1
       '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.6
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
@@ -14621,7 +14621,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.19.17
+      '@types/node': 22.7.5
       long: 5.3.2
 
   protons-runtime@5.6.0:

@@ -17,9 +17,9 @@ const generatedContractComment = `
  */
 `;
 
-const DEPLOYMENTS_DIR = "./packages/fhevm-hardhat-template/deployments";
-const ARTIFACTS_DIR = "./packages/fhevm-hardhat-template/artifacts";
-const TARGET_DIR = "./packages/site/contracts/";
+const DEPLOYMENTS_DIR = "./packages/hardhat/deployments";
+const ARTIFACTS_DIR = "./packages/hardhat/artifacts";
+const TARGET_DIR = "./packages/nextjs/contracts/";
 
 function getDirectories(path: string) {
   return fs

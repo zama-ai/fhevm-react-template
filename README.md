@@ -15,7 +15,7 @@ FHEVM (Fully Homomorphic Encryption Virtual Machine) enables computation on encr
 - **🌐 Multi-Network Support**: Works on both Sepolia testnet and local Hardhat node
 - **📦 Monorepo Structure**: Organized packages for SDK, contracts, and frontend
 
-## 📋 Prerequisites
+## 📋 Prerequinextjss
 
 Before you begin, ensure you have:
 
@@ -85,10 +85,10 @@ pnpm start
 
 ### ⚠️ Sepolia Production note
 
-- In production, `NEXT_PUBLIC_ALCHEMY_API_KEY` must be set (see `packages/site/scaffold.config.ts`). The app throws if missing.
-- Ensure `packages/site/contracts/deployedContracts.ts` points to your live contract addresses.
+- In production, `NEXT_PUBLIC_ALCHEMY_API_KEY` must be set (see `packages/nextjs/scaffold.config.ts`). The app throws if missing.
+- Ensure `packages/nextjs/contracts/deployedContracts.ts` points to your live contract addresses.
 - Optional: set `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` for better WalletConnect reliability.
-- Optional: add per-chain RPCs via `rpcOverrides` in `packages/site/scaffold.config.ts`.
+- Optional: add per-chain RPCs via `rpcOverrides` in `packages/nextjs/scaffold.config.ts`.
 
 ## 🔧 Troubleshooting
 
@@ -128,18 +128,18 @@ fhevm-react-template/
 ├── packages/
 │   ├── fhevm-hardhat-template/    # Smart contracts & deployment
 │   ├── fhevm-sdk/                 # FHEVM SDK package
-│   └── site/                      # React frontend application
+│   └── nextjs/                      # React frontend application
 └── scripts/                       # Build and deployment scripts
 ```
 
 ### Key Components
 
-#### 🔗 FHEVM Integration (`packages/site/hooks/fhecounter-example/`)
+#### 🔗 FHEVM Integration (`packages/nextjs/hooks/fhecounter-example/`)
 - **`useFHECounterWagmi.tsx`**: Example hook demonstrating FHEVM contract interaction
 - Essential hooks for FHEVM-enabled smart contract communication
 - Easily copyable to any FHEVM + React project
 
-#### 🎣 Wallet Management (`packages/site/hooks/helper/`)
+#### 🎣 Wallet Management (`packages/nextjs/hooks/helper/`)
 - MetaMask wallet provider hooks
 - Compatible with EIP-6963 standard
 - Easily adaptable for other wallet providers
