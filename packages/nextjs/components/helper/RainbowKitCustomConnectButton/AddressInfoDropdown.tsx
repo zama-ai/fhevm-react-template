@@ -14,6 +14,7 @@ type AddressInfoDropdownProps = {
   address: Address;
   displayName: string;
   ensAvatar?: string;
+  blockExplorerAddressLink?: string;
 };
 
 export const AddressInfoDropdown = ({ address, ensAvatar, displayName }: AddressInfoDropdownProps) => {
