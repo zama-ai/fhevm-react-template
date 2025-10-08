@@ -171,8 +171,8 @@ export const FHECounterDemo = () => {
       {fheCounter.message && (
         <div className={sectionClass}>
           <h3 className={titleClass}>💬 Messages</h3>
-          <div className="bg-blue-900/20 border border-blue-700 p-4">
-            <p className="text-blue-800 font-medium">{fheCounter.message}</p>
+          <div className="border bg-white border-gray-200 p-4">
+            <p className="text-gray-800">{fheCounter.message}</p>
           </div>
         </div>
       )}
