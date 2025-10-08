@@ -12,6 +12,12 @@ export const metadata = getMetadata({
 const DappWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <html suppressHydrationWarning className={``}>
+      <head>
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=telegraf@400,500,700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body>
         <ThemeProvider enableSystem>
           <DappWrapperWithProviders>{children}</DappWrapperWithProviders>

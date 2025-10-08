@@ -26,9 +26,9 @@
   --color-accent-content: #212638;
   --color-neutral: #212638;
   --color-neutral-content: #ffffff;
-  --color-base-100: #ffffff;
-  --color-base-200: #f4f8ff;
-  --color-base-300: #dae8ff;
+  --color-base-100: #e8e8e8;
+  --color-base-200: #e8e8e8;
+  --color-base-300: #e8e8e8;
   --color-base-content: #212638;
   --color-info: #93bbfb;
   --color-success: #34eeb6;
@@ -51,9 +51,9 @@
   --color-accent-content: #f9fbff;
   --color-neutral: #f9fbff;
   --color-neutral-content: #385183;
-  --color-base-100: #385183;
-  --color-base-200: #2a3655;
-  --color-base-300: #212638;
+  --color-base-100: #b7791f;
+  --color-base-200: #975a16;
+  --color-base-300: #744210;
   --color-base-content: #f9fbff;
   --color-info: #385183;
   --color-success: #34eeb6;
@@ -90,6 +90,9 @@
 
   body {
     min-height: 100vh;
+    font-family: "Telegraf", ui-sans-serif, system-ui, -apple-system, Segoe UI,
+      Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol";
   }
 
   h1,

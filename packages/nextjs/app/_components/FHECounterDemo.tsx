@@ -65,30 +65,36 @@ export const FHECounterDemo = () => {
   //////////////////////////////////////////////////////////////////////////////
 
   const buttonClass =
-    "inline-flex items-center justify-center px-6 py-3 font-semibold text-white shadow-lg " +
-    "transition-all duration-200 hover:shadow-xl active:scale-95 " +
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 " +
+    "inline-flex items-center justify-center px-6 py-3 font-semibold shadow-lg " +
+    "transition-all duration-200 hover:scale-105 " +
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 " +
     "disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed";
 
+  // Primary (accent) button — #FFD208 with dark text and warm hover #A38025
   const primaryButtonClass =
-    buttonClass + " bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800";
-  const secondaryButtonClass =
-    buttonClass + " bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800";
-  const successButtonClass =
-    buttonClass + " bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800";
-  const dangerButtonClass =
-    buttonClass + " bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800";
+    buttonClass +
+    " bg-[#FFD208] text-[#2D2D2D] hover:bg-[#A38025] focus-visible:ring-[#2D2D2D]  cursor-pointer";
 
-  const titleClass = "font-bold text-gray-800 text-xl mb-4 border-b-2 border-gray-200 pb-2";
-  const sectionClass = "bg-white shadow-lg border border-gray-200 p-6 mb-6";
+  // Secondary (neutral dark) button — #2D2D2D with light text and accent focus
+  const secondaryButtonClass =
+    buttonClass +
+    " bg-black text-[#F4F4F4] hover:bg-[#1F1F1F] focus-visible:ring-[#FFD208] cursor-pointer";
+
+  // Success/confirmed state — deeper gold #A38025 with dark text
+  const successButtonClass =
+    buttonClass +
+    " bg-[#A38025] text-[#2D2D2D] hover:bg-[#8F6E1E] focus-visible:ring-[#2D2D2D]";
+
+  const titleClass = "font-bold text-gray-900 text-xl mb-4 border-b-1 border-gray-700 pb-2";
+  const sectionClass = "bg-[#f4f4f4] shadow-lg p-6 mb-6 text-gray-900";
 
   if (!isConnected) {
     return (
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-6 text-gray-900">
         <div className="flex items-center justify-center">
-          <div className="bg-white border border-amber-300 shadow-xl p-8 text-center">
+          <div className="bg-white bordershadow-xl p-8 text-center">
             <div className="mb-4">
-              <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-100 text-amber-600 text-3xl">
+              <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-900/30 text-amber-400 text-3xl">
                 ⚠️
               </span>
             </div>
@@ -104,11 +110,11 @@ export const FHECounterDemo = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="max-w-6xl mx-auto p-6 space-y-6 text-gray-900">
       {/* Header */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 text-black">
         <h1 className="text-3xl font-bold mb-2">FHE Counter Demo</h1>
-        <p className="">Interact with the Fully Homomorphic Encryption Counter contract</p>
+        <p className="text-gray-600">Interact with the Fully Homomorphic Encryption Counter contract</p>
       </div>
 
       {/* Count Handle Display */}
@@ -121,7 +127,7 @@ export const FHECounterDemo = () => {
       </div>
 
       {/* Action Buttons */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-black">
         <button
           className={fheCounter.isDecrypted ? successButtonClass : primaryButtonClass}
           disabled={!fheCounter.canDecrypt}
@@ -149,7 +155,7 @@ export const FHECounterDemo = () => {
         </button>
 
         <button
-          className={dangerButtonClass}
+          className={secondaryButtonClass}
           disabled={!fheCounter.canUpdateCounter}
           onClick={() => fheCounter.updateCounter(-1)}
         >
@@ -165,7 +171,7 @@ export const FHECounterDemo = () => {
       {fheCounter.message && (
         <div className={sectionClass}>
           <h3 className={titleClass}>💬 Messages</h3>
-          <div className="bg-blue-50 border border-blue-200 p-4">
+          <div className="bg-blue-900/20 border border-blue-700 p-4">
             <p className="text-blue-800 font-medium">{fheCounter.message}</p>
           </div>
         </div>
@@ -217,9 +223,9 @@ function printProperty(name: string, value: unknown) {
     displayValue = JSON.stringify(value);
   }
   return (
-    <div className="flex justify-between items-center py-2 px-3 bg-gray-50 border border-gray-200">
-      <span className="text-gray-700 font-medium">{name}</span>
-      <span className="font-mono text-sm font-semibold text-gray-900 bg-white px-2 py-1 rounded border">
+    <div className="flex justify-between items-center py-2 px-3 bg-white border border-gray-200 w-full">
+      <span className="text-gray-800 font-medium">{name}</span>
+      <span className="ml-2 font-mono text-sm font-semibold text-gray-900 bg-gray-100 px-2 py-1 border border-gray-300">
         {displayValue}
       </span>
     </div>
@@ -228,11 +234,13 @@ function printProperty(name: string, value: unknown) {
 
 function printBooleanProperty(name: string, value: boolean) {
   return (
-    <div className="flex justify-between items-center py-2 px-3 bg-gray-50 border border-gray-200">
+    <div className="flex justify-between items-center py-2 px-3  bg-white border border-gray-200 w-full">
       <span className="text-gray-700 font-medium">{name}</span>
       <span
-        className={`font-mono text-sm font-semibold px-2 py-1 rounded border ${
-          value ? "text-green-700 bg-green-100 border-green-200" : "text-red-700 bg-red-100 border-red-200"
+        className={`font-mono text-sm font-semibold px-2 py-1 border ${
+          value
+            ? "text-green-800 bg-green-100 border-green-300"
+            : "text-red-800 bg-red-100 border-red-300"
         }`}
       >
         {value ? "✓ true" : "✗ false"}
