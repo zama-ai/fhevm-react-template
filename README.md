@@ -1,134 +1,170 @@
 # FHEVM React Template
 
-The FHEVM React Template is an ultra-minimal React project for building and running an FHEVM-enabled dApp.
-It works alongside the [fhevm-hardhat-template](https://github.com/zama-ai/fhevm-hardhat-template)
-and provides a simple development frontend for interacting with the `FHECounter.sol` contract.
+A minimal React frontend template for building FHEVM-enabled decentralized applications (dApps). This template provides a simple development interface for interacting with FHEVM smart contracts, specifically the `FHECounter.sol` contract.
 
-This template also illustrates how to run your FHEVM-dApp on both Sepolia as well as a local Hardhat Node (much faster).
+## 🚀 What is FHEVM?
 
-## Features
+FHEVM (Fully Homomorphic Encryption Virtual Machine) enables computation on encrypted data directly on Ethereum. This template demonstrates how to build dApps that can perform computations while keeping data private.
 
-- **@zama-fhe/relayer-sdk**: Fully Homomorphic Encryption for Ethereum Virtual Machine
-- **React**: Modern UI framework for building interactive interfaces
-- **Next.js**: Next-generation frontend build tool
-- **Tailwind**: Utility-first CSS framework for rapid UI development
+## ✨ Features
 
-## Requirements
+- **🔐 FHEVM Integration**: Built-in support for fully homomorphic encryption
+- **⚛️ React + Next.js**: Modern, performant frontend framework
+- **🎨 Tailwind CSS**: Utility-first styling for rapid UI development
+- **🔗 RainbowKit**: Seamless wallet connection and management
+- **🌐 Multi-Network Support**: Works on both Sepolia testnet and local Hardhat node
+- **📦 Monorepo Structure**: Organized packages for SDK, contracts, and frontend
 
-- You need to have Metamask browser extension installed on your browser.
+## 📋 Prerequinextjss
 
-## Local Hardhat Network (to add in MetaMask)
+Before you begin, ensure you have:
 
-Follow the step-by-step guide in the [Hardhat + MetaMask](https://docs.metamask.io/wallet/how-to/run-devnet/) documentation to set up your local devnet using Hardhat and MetaMask.
+- **Node.js** (v18 or higher)
+- **pnpm** package manager
+- **MetaMask** browser extension
+- **Git** for cloning the repository
 
-- Name: Hardhat
-- RPC URL: http://127.0.0.1:8545
-- Chain ID: 31337
-- Currency symbol: ETH
+## 🛠️ Quick Start
 
-## Install
+### 1. Clone and Setup
 
-1. Clone this repository.
-2. From the repo root, run:
+```bash
+# Clone the repository
+git clone <repository-url>
+cd fhevm-react-template
 
-```sh
-npm install
+# Initialize submodules (includes fhevm-hardhat-template)
+git submodule update --init --recursive
+
+# Install dependencies
+pnpm install
 ```
 
-## Quickstart
+### 2. Environment Configuration
 
-1. Setup your hardhat environment variables:
+Set up your Hardhat environment variables by following the [FHEVM documentation](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional):
 
-Follow the detailed instructions in the [FHEVM documentation](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional) to setup `MNEMONIC` + `INFURA_API_KEY` Hardhat environment variables
+- `MNEMONIC`: Your wallet mnemonic phrase
+- `INFURA_API_KEY`: Your Infura API key for Sepolia
 
-2. Start a local Hardhat node (new terminal):
+### 3. Start Development Environment
 
-```sh
-# Default RPC: http://127.0.0.1:8545  | chainId: 31337
-npm run hardhat-node
+**Option A: Local Development (Recommended for testing)**
+
+```bash
+# Terminal 1: Start local Hardhat node
+pnpm chain
+# RPC URL: http://127.0.0.1:8545 | Chain ID: 31337
+
+# Terminal 2: Deploy contracts to localhost
+pnpm deploy:localhost
+
+# Terminal 3: Start the frontend
+pnpm start
 ```
 
-3. Launch the frontend in mock mode:
+**Option B: Sepolia Testnet**
 
-```sh
-npm run dev:mock
+```bash
+# Deploy to Sepolia testnet
+pnpm deploy:sepolia
+
+# Start the frontend
+pnpm start
 ```
 
-4. Start your browser with the Metamask extension installed and open http://localhost:3000
+### 4. Connect MetaMask
 
-5. Open the Metamask extension to connect to the local Hardhat node
-   i. Select Add network.
-   ii. Select Add a network manually.
-   iii. Enter your Hardhat Network RPC URL, http://127.0.0.1:8545 (or http://localhost:8545).
-   iv. Enter your Hardhat Network chain ID, 31337 (or 0x539 in hexadecimal format).
+1. Open [http://localhost:3000](http://localhost:3000) in your browser
+2. Click "Connect Wallet" and select MetaMask
+3. If using localhost, add the Hardhat network to MetaMask:
+   - **Network Name**: Hardhat Local
+   - **RPC URL**: `http://127.0.0.1:8545`
+   - **Chain ID**: `31337`
+   - **Currency Symbol**: `ETH`
 
-## Run on Sepolia
+### ⚠️ Sepolia Production note
 
-1. Deploy your contract on Sepolia Testnet
+- In production, `NEXT_PUBLIC_ALCHEMY_API_KEY` must be set (see `packages/nextjs/scaffold.config.ts`). The app throws if missing.
+- Ensure `packages/nextjs/contracts/deployedContracts.ts` points to your live contract addresses.
+- Optional: set `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` for better WalletConnect reliability.
+- Optional: add per-chain RPCs via `rpcOverrides` in `packages/nextjs/scaffold.config.ts`.
 
-```sh
-npm run deploy:sepolia
+## 🔧 Troubleshooting
+
+### Common MetaMask + Hardhat Issues
+
+When developing with MetaMask and Hardhat, you may encounter these common issues:
+
+#### ❌ Nonce Mismatch Error
+
+**Problem**: MetaMask tracks transaction nonces, but when you restart Hardhat, the node resets while MetaMask doesn't update its tracking.
+
+**Solution**:
+1. Open MetaMask extension
+2. Select the Hardhat network
+3. Go to **Settings** → **Advanced**
+4. Click **"Clear Activity Tab"** (red button)
+5. This resets MetaMask's nonce tracking
+
+#### ❌ Cached View Function Results
+
+**Problem**: MetaMask caches smart contract view function results. After restarting Hardhat, you may see outdated data.
+
+**Solution**:
+1. **Restart your entire browser** (not just refresh the page)
+2. MetaMask's cache is stored in extension memory and requires a full browser restart to clear
+
+> 💡 **Pro Tip**: Always restart your browser after restarting Hardhat to avoid cache issues.
+
+For more details, see the [MetaMask development guide](https://docs.metamask.io/wallet/how-to/run-devnet/).
+
+## 📁 Project Structure
+
+This template uses a monorepo structure with three main packages:
+
+```
+fhevm-react-template/
+├── packages/
+│   ├── fhevm-hardhat-template/    # Smart contracts & deployment
+│   ├── fhevm-sdk/                 # FHEVM SDK package
+│   └── nextjs/                      # React frontend application
+└── scripts/                       # Build and deployment scripts
 ```
 
-2. In your browser open `http://localhost:3000`
+### Key Components
 
-3. Open the Metamask extension to connect to the Sepolia network
+#### 🔗 FHEVM Integration (`packages/nextjs/hooks/fhecounter-example/`)
+- **`useFHECounterWagmi.tsx`**: Example hook demonstrating FHEVM contract interaction
+- Essential hooks for FHEVM-enabled smart contract communication
+- Easily copyable to any FHEVM + React project
 
-## How to fix Hardhat Node + Metamask Errors ?
+#### 🎣 Wallet Management (`packages/nextjs/hooks/helper/`)
+- MetaMask wallet provider hooks
+- Compatible with EIP-6963 standard
+- Easily adaptable for other wallet providers
 
-When using MetaMask as a wallet provider with a development node like Hardhat, you may encounter two common types of errors:
+#### 🔧 Flexibility
+- Replace `ethers.js` with `Wagmi` or other React-friendly libraries
+- Modular architecture for easy customization
+- Support for multiple wallet providers
 
-### 1. ⚠️ Nonce Mismatch ❌💥
+## 📚 Additional Resources
 
-MetaMask tracks wallet nonces (the number of transactions sent from a wallet). However, if you restart your Hardhat node, the nonce is reset on the dev node, but MetaMask does not update its internal nonce tracking. This discrepancy causes a nonce mismatch error.
+### Official Documentation
+- [FHEVM Documentation](https://docs.zama.ai/protocol/solidity-guides/) - Complete FHEVM guide
+- [FHEVM Hardhat Guide](https://docs.zama.ai/protocol/solidity-guides/development-guide/hardhat) - Hardhat integration
+- [Relayer SDK Documentation](https://docs.zama.ai/protocol/relayer-sdk-guides/) - SDK reference
+- [Environment Setup](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional) - MNEMONIC & API keys
 
-### 2. ⚠️ View Function Call Result Mismatch ❌💥
+### Development Tools
+- [MetaMask + Hardhat Setup](https://docs.metamask.io/wallet/how-to/run-devnet/) - Local development
+- [React Documentation](https://reactjs.org/) - React framework guide
 
-MetaMask caches the results of view function calls. If you restart your Hardhat node, MetaMask may return outdated cached data corresponding to a previous instance of the node, leading to incorrect results.
+### Community & Support
+- [FHEVM Discord](https://discord.com/invite/zama) - Community support
+- [GitHub Issues](https://github.com/zama-ai/fhevm-react-template/issues) - Bug reports & feature requests
 
-### ✅ How to Fix Nonce Mismatch:
+## 📄 License
 
-To fix the nonce mismatch error, simply clear the MetaMask cache:
-
-1. Open the MetaMask browser extension.
-2. Select the Hardhat network.
-3. Go to Settings > Advanced.
-4. Click the "Clear Activity Tab" red button to reset the nonce tracking.
-
-The correct way to do this is also explained [here](https://docs.metamask.io/wallet/how-to/run-devnet/).
-
-### ✅ How to Fix View Function Return Value Mismatch:
-
-To fix the view function result mismatch:
-
-1. Restart the entire browser. MetaMask stores its cache in the extension's memory, which cannot be cleared by simply clearing the browser cache or using MetaMask's built-in cache cleaning options.
-
-By following these steps, you can ensure that MetaMask syncs correctly with your Hardhat node and avoid potential issues related to nonces and cached view function results.
-
-## Project Structure Overview
-
-### Key Files/Folders
-
-- **`<root>/packages/site/fhevm`**: This folder contains the essential hooks needed to interact with FHEVM-enabled smart contracts. It is meant to be easily copied and integrated into any FHEVM + React project.
-
-- **`<root>/packages/site/hooks/useFHECounter.tsx`**: A simple React custom hook that demonstrates how to use the `useFhevm` hook in a basic use case, serving as an example of integration.
-
-### Secondary Files/Folders
-
-- **`<root>/packages/site/hooks/metamask`**: This folder includes hooks designed to manage the MetaMask Wallet provider. These hooks can be easily adapted or replaced to support other wallet providers, following the EIP-6963 standard,
-- Additionally, the project is designed to be flexible, allowing developers to easily replace `ethers.js` with a more React-friendly library of their choice, such as `Wagmi`.
-
-## Documentation
-
-- [Hardhat + MetaMask](https://docs.metamask.io/wallet/how-to/run-devnet/): Set up your local devnet step by step using Hardhat and MetaMask.
-- [FHEVM Documentation](https://docs.zama.ai/protocol/solidity-guides/)
-- [FHEVM Hardhat](https://docs.zama.ai/protocol/solidity-guides/development-guide/hardhat)
-- [@zama-fhe/relayer-sdk Documentation](https://docs.zama.ai/protocol/relayer-sdk-guides/)
-- [Setting up MNEMONIC and INFURA_API_KEY](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional)
-- [React Documentation](https://reactjs.org/)
-- [FHEVM Discord Community](https://discord.com/invite/zama)
-- [GitHub Issues](https://github.com/zama-ai/fhevm-react-template/issues)
-
-## License
-
-This project is licensed under the BSD-3-Clause-Clear License - see the LICENSE file for details.
+This project is licensed under the **BSD-3-Clause-Clear License**. See the [LICENSE](LICENSE) file for details.

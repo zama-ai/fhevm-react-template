@@ -1,0 +1,59 @@
+{
+  "name": "@fhevm-sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./src/core/index.ts",
+      "default": "./dist/core/index.js"
+    },
+    "./storage": {
+      "types": "./src/storage/index.ts",
+      "default": "./dist/storage/index.js"
+    },
+    "./types": {
+      "types": "./src/fhevmTypes.ts",
+      "default": "./dist/fhevmTypes.js"
+    },
+    "./react": {
+      "types": "./src/react/index.ts",
+      "default": "./dist/react/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "watch": "tsc -p tsconfig.json --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "idb": "^8.0.3"
+  },
+  "peerDependencies": {
+    "@fhevm/mock-utils": "^0.1.0",
+    "@zama-fhe/relayer-sdk": "^0.2.0",
+    "ethers": "^6.13.4",
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "~18.19.50",
+    "@types/react": "~19.0.7",
+    "@vitest/coverage-v8": "2.1.9",
+    "@zama-fhe/relayer-sdk": "0.2.0",
+    "ethers": "^6.13.7",
+    "fake-indexeddb": "~6.0.0",
+    "jsdom": "^27.0.0",
+    "react": "~19.0.0",
+    "typescript": "~5.8.2",
+    "vitest": "~2.1.8"
+  }
+}

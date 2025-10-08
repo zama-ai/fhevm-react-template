@@ -1,21 +1,79 @@
 {
   "name": "root",
+  "version": "0.4.0",
   "private": true,
-  "version": "0.3.0",
   "license": "BSD-3-Clause-Clear",
   "engines": {
     "node": ">=20.0.0"
   },
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
   "scripts": {
-    "postinstall": "./scripts/deploy-hardhat-node.sh",
-    "dev:mock": "npx -w ./packages/site npm run dev:mock",
-    "generate-abi": "node ./scripts/generate-site-abi.mjs",
-    "is-hardhat-node-running": "node ./scripts/is-hardhat-node-running.mjs",
-    "hardhat-node": "npx -w ./packages/fhevm-hardhat-template hardhat node --verbose",
-    "deploy:sepolia": "npx -w ./packages/fhevm-hardhat-template hardhat deploy --network sepolia",
-    "deploy:hardhat-node": "npm run is-hardhat-node-running && npx -w ./packages/fhevm-hardhat-template hardhat deploy --network localhost"
+    "chain": "pnpm hardhat:chain",
+    "compile": "pnpm hardhat:compile",
+    "deploy:localhost": "pnpm hardhat:deploy && pnpm generate",
+    "deploy:sepolia": "pnpm hardhat:deploy:sepolia && pnpm generate",
+    "fork": "pnpm hardhat:fork",
+    "format": "pnpm next:format && pnpm hardhat:format",
+    "sdk:build": "pnpm --filter ./packages/fhevm-sdk build",
+    "sdk:watch": "pnpm --filter ./packages/fhevm-sdk watch",
+    "sdk:test": "pnpm --filter ./packages/fhevm-sdk test",
+    "sdk:test:watch": "pnpm --filter ./packages/fhevm-sdk test:watch",
+    "sdk:clean": "pnpm --filter ./packages/fhevm-sdk clean",
+    "generate": "ts-node ./scripts/generateTsAbis.ts",
+    "hardhat:chain": "pnpm --filter ./packages/hardhat chain",
+    "hardhat:check-types": "pnpm --filter ./packages/hardhat check-types",
+    "hardhat:clean": "pnpm --filter ./packages/hardhat clean",
+    "hardhat:compile": "pnpm --filter ./packages/hardhat compile",
+    "hardhat:deploy": "pnpm --filter ./packages/hardhat deploy:localhost",
+    "hardhat:deploy:sepolia": "pnpm --filter ./packages/hardhat deploy:sepolia",
+    "hardhat:format": "pnpm --filter ./packages/hardhat prettier:write",
+    "hardhat:generate": "pnpm --filter ./packages/hardhat typechain",
+    "hardhat:hardhat-verify": "pnpm --filter ./packages/hardhat verify",
+    "hardhat:lint": "pnpm --filter ./packages/hardhat lint",
+    "hardhat:lint-staged": "pnpm --filter ./packages/hardhat lint",
+    "hardhat:test": "pnpm --filter ./packages/hardhat test",
+    "hardhat:verify": "pnpm --filter ./packages/hardhat verify",
+    "hardhat:verify:sepolia": "pnpm --filter ./packages/hardhat verify:sepolia",
+    "lint": "pnpm next:lint && pnpm hardhat:lint",
+    "next:build": "pnpm --filter ./packages/nextjs build",
+    "next:check-types": "pnpm --filter ./packages/nextjs check-types",
+    "next:format": "pnpm --filter ./packages/nextjs format",
+    "next:lint": "pnpm --filter ./packages/nextjs lint",
+    "next:serve": "pnpm --filter ./packages/nextjs serve",
+    "precommit": "lint-staged",
+    "preinstall": "pnpm sdk:build",
+    "start": "pnpm --filter ./packages/nextjs dev",
+    "test": "pnpm hardhat:test",
+    "vercel": "pnpm --filter ./packages/nextjs vercel",
+    "vercel:login": "pnpm --filter ./packages/nextjs vercel:login",
+    "vercel:yolo": "pnpm --filter ./packages/nextjs vercel:yolo",
+    "verify": "pnpm hardhat:verify",
+    "verify:sepolia": "pnpm hardhat:verify:sepolia"
+  },
+  "dependencies": {
+    "hardhat-deploy": "^0.11.45"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "bufferutil",
+      "esbuild",
+      "keccak",
+      "protobufjs",
+      "secp256k1",
+      "sharp",
+      "unrs-resolver",
+      "utf-8-validate",
+      "yarn"
+    ]
   }
 }
