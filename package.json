@@ -62,5 +62,18 @@
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "bufferutil",
+      "esbuild",
+      "keccak",
+      "protobufjs",
+      "secp256k1",
+      "sharp",
+      "unrs-resolver",
+      "utf-8-validate",
+      "yarn"
+    ]
   }
 }
