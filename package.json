@@ -6,11 +6,10 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
-  },
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
   "scripts": {
     "chain": "pnpm hardhat:chain",
     "compile": "pnpm hardhat:compile",
