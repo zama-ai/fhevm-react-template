@@ -12,6 +12,7 @@
   },
   "include": [
     "packages/**/*",
-    "scripts/**/*"
+    "scripts/**/*",
+    "examples/**/*"
   ]
 }
