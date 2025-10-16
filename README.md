@@ -1,10 +1,30 @@
 # FHEVM React Template
 
-A minimal React frontend template for building FHEVM-enabled decentralized applications (dApps). This template provides a simple development interface for interacting with FHEVM smart contracts, specifically the `FHECounter.sol` contract.
+A universal FHEVM SDK with multiple framework support for building fully homomorphic encryption-enabled applications. Choose your framework below and start encrypting in < 5 minutes.
+
+## 🎯 Choose Your Framework
+
+The FHEVM SDK works across all JavaScript environments. Pick the one that fits your project:
+
+| Framework | Type | Setup Time | Best For | Start |
+|-----------|------|-----------|----------|-------|
+| **React** | Frontend | 2 min | Modern web apps | [Next.js App](./examples/nextjs-app) |
+| **Vue.js** | Frontend | 2 min | Composition API apps | [Vue Example](./examples/vue-example) |
+| **Node.js** | Backend | 3 min | Batch processing, CI/CD | [Node Example](./examples/node-example) |
+| **Vanilla JS** | Frontend | < 1 min | No build tools, GitHub Pages | [Vanilla Example](./examples/vanilla-js-example) |
+
+**All examples include:**
+- ✅ Real FHEVM encryption (not mock)
+- ✅ 99-bid simulation demo
+- ✅ Full TypeScript support
+- ✅ Error handling & logging
+- ✅ Copy-paste ready code
+
+---
 
 ## 🚀 What is FHEVM?
 
-FHEVM (Fully Homomorphic Encryption Virtual Machine) enables computation on encrypted data directly on Ethereum. This template demonstrates how to build dApps that can perform computations while keeping data private.
+FHEVM (Fully Homomorphic Encryption Virtual Machine) enables computation on encrypted data directly on Ethereum. This SDK demonstrates how to build dApps that can perform computations while keeping data private.
 
 ## ✨ Features
 
