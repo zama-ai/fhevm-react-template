@@ -2,6 +2,19 @@
 
 A universal FHEVM SDK with multiple framework support for building fully homomorphic encryption-enabled applications. Choose your framework below and start encrypting in < 5 minutes.
 
+## 📚 Documentation
+
+Start here based on your needs:
+
+| Goal | Document | Time |
+|------|----------|------|
+| **Get Encrypting Fast** | [GETTING_STARTED.md](./GETTING_STARTED.md) | 5 min |
+| **Understand the Design** | [ARCHITECTURE.md](./packages/fhevm-sdk/ARCHITECTURE.md) | 10 min |
+| **Deep API Dive** | [API_REFERENCE.md](./packages/fhevm-sdk/API_REFERENCE.md) | 15 min |
+| **See the Full Scope** | [SUBMISSION_SUMMARY.md](./SUBMISSION_SUMMARY.md) | 10 min |
+
+---
+
 ## 🎯 Choose Your Framework
 
 The FHEVM SDK works across all JavaScript environments. Pick the one that fits your project:
@@ -15,10 +28,28 @@ The FHEVM SDK works across all JavaScript environments. Pick the one that fits y
 
 **All examples include:**
 - ✅ Real FHEVM encryption (not mock)
-- ✅ 99-bid simulation demo
+- ✅ 99-bid simulation demo  
 - ✅ Full TypeScript support
 - ✅ Error handling & logging
 - ✅ Copy-paste ready code
+
+---
+
+## ⚡ 60-Second Start
+
+```bash
+# Clone
+git clone https://github.com/dharmanan/fhevm-react-template
+cd fhevm-react-template
+
+# Pick your framework and run it
+cd examples/vanilla-js-example && open index.html  # No setup needed!
+
+# Or with build tools
+cd examples/nextjs-app && pnpm install && pnpm dev  # http://localhost:3000
+cd examples/vue-example && pnpm install && pnpm dev  # http://localhost:5173
+cd examples/node-example && pnpm install && pnpm dev # Node.js CLI
+```
 
 ---
 
