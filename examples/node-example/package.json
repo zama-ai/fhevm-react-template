@@ -1,0 +1,23 @@
+{
+  "name": "fhevm-node-example",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "FHEVM SDK Node.js backend example",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "node --loader ts-node/esm src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "encrypt-batch": "node --loader ts-node/esm src/batch-encrypt.ts"
+  },
+  "dependencies": {
+    "ethers": "^5.7.2",
+    "fhevm-sdk": "file:../../packages/fhevm-sdk",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.0"
+  }
+}
