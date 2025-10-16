@@ -1,5 +1,0 @@
-{
-  "name": "QuantumPrice - Secret Price Auction",
-  "description": "A decentralized, trustless, and confidential auction game based on 'The Price Is Right'. Participants submit encrypted bids, and a smart contract using FHE finds the winner without revealing any bids or the target price, ensuring a fair and secure competition.",
-  "requestFramePermissions": []
-}
