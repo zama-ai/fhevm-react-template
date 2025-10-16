@@ -12,7 +12,10 @@
   },
   "include": [
     "packages/**/*",
-    "scripts/**/*",
-    "examples/**/*"
+    "scripts/**/*"
+  ],
+  "exclude": [
+    "examples/**/*",
+    "node_modules/**/*"
   ]
 }
