@@ -54,6 +54,7 @@
     "verify:sepolia": "pnpm hardhat:verify:sepolia"
   },
   "dependencies": {
+    "ethers": "^6.15.0",
     "hardhat-deploy": "^0.11.45"
   },
   "devDependencies": {
