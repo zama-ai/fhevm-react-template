@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FHEVM Vanilla JS Example</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 600px;
+      width: 100%;
+      padding: 40px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #999;
+      font-size: 14px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .status {
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .status.loading {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status.ready {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #555;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    input[type="number"]:disabled {
+      background: #f5f5f5;
+      cursor: not-allowed;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    button:hover:not(:disabled) {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .result {
+      background: #f0f9ff;
+      border: 2px solid #bfdbfe;
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #dbeafe;
+      font-size: 14px;
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+    }
+
+    .result-label {
+      color: #555;
+      font-weight: 500;
+    }
+
+    .result-value {
+      color: #667eea;
+      font-weight: 600;
+      font-family: 'Courier New', monospace;
+    }
+
+    .error {
+      background: #fee;
+      border: 2px solid #fcc;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-top: 16px;
+      color: #c33;
+      font-size: 14px;
+    }
+
+    .logs {
+      background: #1e1e1e;
+      color: #e0e0e0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      padding: 12px;
+      border-radius: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+      line-height: 1.4;
+    }
+
+    .log-entry {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .log-time {
+      color: #888;
+      min-width: 70px;
+    }
+
+    .log-msg {
+      flex: 1;
+    }
+
+    .log-info { color: #87ceeb; }
+    .log-success { color: #90ee90; }
+    .log-error { color: #ff6b6b; }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      color: #999;
+      font-size: 12px;
+    }
+
+    footer a {
+      color: #667eea;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔐 FHEVM Vanilla JS</h1>
+      <p class="subtitle">No frameworks, no build tools - just JavaScript</p>
+    </header>
+
+    <!-- SDK Status -->
+    <div class="section">
+      <div class="section-title">SDK Status</div>
+      <div id="sdkStatus" class="status loading">⏳ Loading FHEVM SDK...</div>
+    </div>
+
+    <!-- Encryption Demo -->
+    <div id="demo" style="display: none;">
+      <div class="section">
+        <div class="section-title">🔐 Encryption Demo</div>
+        
+        <div class="form-group">
+          <label for="bidValue">Enter value to encrypt (1-10000):</label>
+          <input
+            type="number"
+            id="bidValue"
+            min="1"
+            max="10000"
+            placeholder="e.g., 5000"
+          />
+        </div>
+
+        <button id="encryptBtn" onclick="handleEncrypt()">
+          🔒 Encrypt Bid
+        </button>
+
+        <div id="result" style="display: none;"></div>
+        <div id="error" style="display: none;"></div>
+      </div>
+
+      <!-- Console Logs -->
+      <div class="section">
+        <div class="section-title">📋 Console Logs</div>
+        <div class="logs" id="logs"></div>
+      </div>
+    </div>
+
+    <footer>
+      🚀 Pure JavaScript + FHEVM SDK | No dependencies needed<br/>
+      <a href="https://docs.zama.ai/" target="_blank">Learn more about FHEVM</a>
+    </footer>
+  </div>
+
+  <!-- Load FHEVM SDK from CDN -->
+  <script src="https://cdn.zama.ai/relayer-sdk-js/0.2.0/relayer-sdk-js.umd.cjs"></script>
+
+  <script>
+    // Global state
+    let sdkReady = false;
+    const logs = [];
+
+    // Initialize SDK
+    async function initSDK() {
+      try {
+        log('Initializing FHEVM SDK...', 'info');
+        
+        if (!window.relayerSDK) {
+          throw new Error('SDK not loaded. Check CDN link.');
+        }
+
+        // Initialize WASM
+        await window.relayerSDK.initSDK();
+        log('✅ SDK initialized', 'success');
+
+        sdkReady = true;
+        updateSDKStatus();
+        showDemo();
+      } catch (err) {
+        log(`❌ SDK Error: ${err.message}`, 'error');
+        updateSDKStatus(true);
+      }
+    }
+
+    // Update SDK status display
+    function updateSDKStatus(error = false) {
+      const status = document.getElementById('sdkStatus');
+      if (error) {
+        status.className = 'status error';
+        status.textContent = '❌ SDK Error - Check console';
+      } else if (sdkReady) {
+        status.className = 'status ready';
+        status.textContent = '✅ SDK Ready';
+      }
+    }
+
+    // Show demo section
+    function showDemo() {
+      document.getElementById('demo').style.display = 'block';
+    }
+
+    // Handle encryption
+    async function handleEncrypt() {
+      const bidValue = parseInt(document.getElementById('bidValue').value);
+      
+      if (!bidValue) {
+        showError('Please enter a bid value');
+        return;
+      }
+
+      if (bidValue < 1 || bidValue > 10000) {
+        showError('Bid must be between 1 and 10000');
+        return;
+      }
+
+      try {
+        clearError();
+        const btn = document.getElementById('encryptBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Encrypting...';
+
+        log(`Encrypting bid: ${bidValue}`, 'info');
+
+        // Get config
+        const config = window.relayerSDK.SepoliaConfig;
+        log('✅ SepoliaConfig loaded', 'success');
+
+        // Create instance
+        const instance = await window.relayerSDK.createInstance(config);
+        log('✅ Instance created', 'success');
+
+        // Mock user address
+        const userAddress = '0x' + Math.random().toString(16).slice(2, 42);
+
+        // Create encrypted input
+        const contractAddr = config.verifyingContractAddressDecryption;
+        const encInput = instance.createEncryptedInput(contractAddr, userAddress);
+        log('✅ EncryptedInput created', 'success');
+
+        // Encrypt
+        const encrypted = await encInput.add256(BigInt(bidValue)).encrypt();
+        log('✅ Encryption successful', 'success');
+
+        // Display result
+        showResult(bidValue, encrypted);
+
+        btn.disabled = false;
+        btn.textContent = '🔒 Encrypt Bid';
+      } catch (err) {
+        showError(err.message);
+        document.getElementById('encryptBtn').disabled = false;
+        document.getElementById('encryptBtn').textContent = '🔒 Encrypt Bid';
+      }
+    }
+
+    // Show result
+    function showResult(value, encrypted) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `
+        <div class="result">
+          <div class="result-row">
+            <span class="result-label">Original Value:</span>
+            <span class="result-value">${value}</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Handles Count:</span>
+            <span class="result-value">${encrypted.handles.length}</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">InputProof Size:</span>
+            <span class="result-value">${encrypted.inputProof.length} bytes</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Status:</span>
+            <span class="result-value">✅ Encrypted!</span>
+          </div>
+        </div>
+      `;
+      resultDiv.style.display = 'block';
+    }
+
+    // Show error
+    function showError(msg) {
+      const errorDiv = document.getElementById('error');
+      errorDiv.innerHTML = `<div class="error">❌ ${msg}</div>`;
+      errorDiv.style.display = 'block';
+    }
+
+    // Clear error
+    function clearError() {
+      document.getElementById('error').style.display = 'none';
+    }
+
+    // Logging utility
+    function log(msg, level = 'info') {
+      logs.push({
+        time: new Date().toLocaleTimeString(),
+        msg,
+        level
+      });
+
+      // Keep last 20 logs
+      if (logs.length > 20) {
+        logs.shift();
+      }
+
+      // Update display
+      const logsDiv = document.getElementById('logs');
+      logsDiv.innerHTML = logs.map(l => `
+        <div class="log-entry">
+          <span class="log-time">${l.time}</span>
+          <span class="log-msg log-${l.level}">${l.msg}</span>
+        </div>
+      `).join('');
+
+      // Auto-scroll to bottom
+      logsDiv.scrollTop = logsDiv.scrollHeight;
+
+      // Also log to browser console
+      console.log(`[${l.level.toUpperCase()}] ${msg}`);
+    }
+
+    // Start when page loads
+    window.addEventListener('load', initSDK);
+  </script>
+</body>
+</html>
