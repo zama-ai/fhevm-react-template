@@ -91,7 +91,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useEncryptBid } from '../../packages/fhevm-sdk/react/useEncryptBid'
 
 // State
 const sdkReady = ref(false)
