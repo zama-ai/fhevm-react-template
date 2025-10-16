@@ -18,6 +18,9 @@ const AuctionStatus: React.FC<AuctionStatusProps> = ({ timeLeft, participantCoun
 
   return (
     <div className="mt-4 space-y-6">
+      <div className="text-center mb-4">
+        <h3 className="text-xl font-bold text-gray-900 tracking-wide">AUCTION STATUS</h3>
+      </div>
       <div>
         <div className="flex justify-between items-baseline text-gray-600 mb-1">
           <span className="text-lg font-medium">Time Remaining</span>

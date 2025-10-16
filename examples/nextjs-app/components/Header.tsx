@@ -33,19 +33,33 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="w-full py-6 flex items-center justify-between">
-      <h1 className="text-2xl font-bold text-gray-900">QuantumPrice Auction</h1>
-      <div className="flex items-center gap-4">
+    <header className="w-full space-y-4">
+      <div className="flex items-center justify-end">
         <button
           onClick={connectWallet}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center transition-all duration-300 shadow-md hover:shadow-lg"
         >
           {walletConnected ? (
-            <span className="font-mono text-sm">{address?.slice(0,6)}...{address?.slice(-4)}</span>
+            <span className="font-mono text-sm">
+              ✅ {address?.slice(0,6)}...{address?.slice(-4)}
+            </span>
           ) : (
-            'Connect Wallet'
+            '🔗 Connect Wallet'
           )}
         </button>
+      </div>
+      
+      <div className="bg-gradient-to-r from-yellow-300 via-orange-200 to-blue-100 rounded-2xl shadow-lg overflow-hidden">
+        <div className="px-8 py-6">
+          <div className="flex flex-col items-center justify-center text-center">
+            <h1 className="text-6xl font-black text-gray-900 mb-2 tracking-wider">
+              WinnerPrice
+            </h1>
+            <p className="text-gray-700 text-sm font-medium max-w-lg">
+              The closest bid to the secret price wins the prize. Pay an entry fee to place your bid.
+            </p>
+          </div>
+        </div>
       </div>
     </header>
   );

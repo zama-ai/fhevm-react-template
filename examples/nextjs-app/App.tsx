@@ -25,6 +25,8 @@ const App: React.FC = () => {
     setBid,
     setUserState,
     isLoading,
+    statusMessage,
+    randomTargetPrice,
     joinAuction,
     submitBid,
     revealWinner,
@@ -67,11 +69,17 @@ const App: React.FC = () => {
 
                 <div className="p-8 flex flex-col justify-between">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900 tracking-wide">AUCTION STATUS</h2>
                     <AuctionStatus 
                       timeLeft={timeLeft}
                       participantCount={participants.length}
                     />
+                    
+                    {/* Status Message Display */}
+                    {statusMessage && (
+                      <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded text-blue-800 animate-pulse">
+                        <p className="font-medium text-center">{statusMessage}</p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="mt-8">
@@ -92,7 +100,7 @@ const App: React.FC = () => {
                     ) : (
                       <WinnerDisplay 
                         winner={winner || undefined}
-                        targetPrice={selectedProduct.targetPrice}
+                        targetPrice={randomTargetPrice}
                         contractAddress={process.env.NEXT_PUBLIC_AUCTION_CONTRACT || ''}
                         abi={[]}
                         signer={undefined} // TODO: Pass actual signer from UserActions or context
