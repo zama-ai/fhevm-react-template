@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FhevmInstance } from "../fhevmTypes.js";
-import { createFhevmInstance } from "../internal/fhevm.js";
+import { createFhevmInstance } from "../internal/fhevm";
 import { ethers } from "ethers";
 
 function _assert(condition: boolean, message?: string): asserts condition {
@@ -13,7 +13,7 @@ function _assert(condition: boolean, message?: string): asserts condition {
 export type FhevmGoState = "idle" | "loading" | "ready" | "error";
 
 export function useFhevm(parameters: {
-  provider: string | ethers.Eip1193Provider | undefined;
+  provider: string | any | undefined;
   chainId: number | undefined;
   enabled?: boolean;
   initialMockChains?: Readonly<Record<number, string>>;
@@ -31,7 +31,7 @@ export function useFhevm(parameters: {
   const [_isRunning, _setIsRunning] = useState<boolean>(enabled);
   const [_providerChanged, _setProviderChanged] = useState<number>(0);
   const _abortControllerRef = useRef<AbortController | null>(null);
-  const _providerRef = useRef<string | ethers.Eip1193Provider | undefined>(provider);
+  const _providerRef = useRef<string | any | undefined>(provider);
   const _chainIdRef = useRef<number | undefined>(chainId);
   const _mockChainsRef = useRef<Record<number, string> | undefined>(initialMockChains as any);
 
@@ -101,9 +101,9 @@ export function useFhevm(parameters: {
         signal: thisSignal,
         provider: thisProvider as any,
         mockChains: thisRpcUrlsByChainId as any,
-        onStatusChange: s => console.log(`[useFhevm] createFhevmInstance status changed: ${s}`),
+  onStatusChange: (s: any) => console.log(`[useFhevm] createFhevmInstance status changed: ${s}`),
       })
-        .then(i => {
+  .then((i: any) => {
           if (thisSignal.aborted) return;
           _assert(thisProvider === _providerRef.current, "thisProvider === _providerRef.current");
 
@@ -111,7 +111,7 @@ export function useFhevm(parameters: {
           _setError(undefined);
           _setStatus("ready");
         })
-        .catch(e => {
+  .catch((e: any) => {
           if (thisSignal.aborted) return;
 
           _assert(thisProvider === _providerRef.current, "thisProvider === _providerRef.current");

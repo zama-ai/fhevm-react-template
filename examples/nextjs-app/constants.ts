@@ -6,7 +6,7 @@ export const PRODUCTS: Product[] = [
     name: "iPhone 17 Pro Max",
   imageUrl: '/assets/iphone.png',
     targetPrice: 12455,
-    entryFee: 0.01,
+  entryFee: 0.0001,
     prizeEth: 0.3,
   },
   {
@@ -14,7 +14,7 @@ export const PRODUCTS: Product[] = [
     name: "MacBook Pro 16\"",
   imageUrl: '/assets/macbook.png',
     targetPrice: 14899,
-    entryFee: 0.013,
+  entryFee: 0.0001,
     prizeEth: 0.6,
   },
   {
@@ -22,7 +22,7 @@ export const PRODUCTS: Product[] = [
     name: "iMac 27\"",
   imageUrl: '/assets/imac.png',
     targetPrice: 14550,
-    entryFee: 0.012,
+  entryFee: 0.0001,
     prizeEth: 0.55,
   }
 ];

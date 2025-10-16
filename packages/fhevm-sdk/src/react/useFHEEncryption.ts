@@ -71,7 +71,7 @@ export const buildParamsFromAbi = (enc: EncryptResult, abi: any[], functionName:
 
 export const useFHEEncryption = (params: {
   instance: FhevmInstance | undefined;
-  ethersSigner: ethers.JsonRpcSigner | undefined;
+  ethersSigner: ethers.Signer | undefined;
   contractAddress: `0x${string}` | undefined;
 }) => {
   const { instance, ethersSigner, contractAddress } = params;

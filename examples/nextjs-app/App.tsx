@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useFHEVMRelayer } from '../../packages/fhevm-sdk/react/useFHEVMRelayer';
 import { useAuction } from './hooks/useAuction';
 import { AuctionState, UserState, Product } from './types';
 import { PRODUCTS } from './constants';
@@ -10,6 +11,8 @@ import ProductDisplay from './components/ProductDisplay';
 import ProductSelector from './components/ProductSelector';
 
 const App: React.FC = () => {
+  // FHEVM Relayer entegrasyonu
+  const { sdk, loading, error } = useFHEVMRelayer();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   
   const {
@@ -20,6 +23,7 @@ const App: React.FC = () => {
     winner,
     bid,
     setBid,
+    setUserState,
     isLoading,
     joinAuction,
     submitBid,
@@ -35,6 +39,10 @@ const App: React.FC = () => {
   const handleBackToSelection = () => {
     setSelectedProduct(null);
   }
+
+  // Relayer yükleniyor veya hata varsa ekrana bilgi ver
+  if (loading) return <div className="text-center mt-12">FHEVM Relayer yükleniyor...</div>;
+  if (error) return <div className="text-center mt-12 text-red-600">Relayer hatası: {error}</div>;
 
   return (
     <div className="bg-gray-50 text-gray-800 min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 font-sans">
@@ -73,6 +81,7 @@ const App: React.FC = () => {
                         auctionEnded={auctionState === AuctionState.ENDED}
                         bid={bid}
                         setBid={setBid}
+                        setUserState={setUserState}
                         isLoading={isLoading}
                         onJoin={joinAuction}
                         onSubmitBid={submitBid}
@@ -81,7 +90,13 @@ const App: React.FC = () => {
                         product={selectedProduct}
                       />
                     ) : (
-                      winner && <WinnerDisplay winner={winner} targetPrice={selectedProduct.targetPrice} />
+                      <WinnerDisplay 
+                        winner={winner || undefined}
+                        targetPrice={selectedProduct.targetPrice}
+                        contractAddress={process.env.NEXT_PUBLIC_AUCTION_CONTRACT || ''}
+                        abi={[]}
+                        signer={undefined} // TODO: Pass actual signer from UserActions or context
+                      />
                     )}
                   </div>
                 </div>

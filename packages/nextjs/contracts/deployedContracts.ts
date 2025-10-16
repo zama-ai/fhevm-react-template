@@ -75,6 +75,29 @@ const deployedContracts = {
       inheritedFunctions: {},
       deployedOnBlock: 3,
     },
+    MockAuction: {
+      address: "0x1234567890abcdef1234567890abcdef12345678", // örnek adres
+      abi: [
+        {
+          "inputs": [],
+          "name": "join",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            { "internalType": "bytes", "name": "encryptedBid", "type": "bytes" }
+          ],
+          "name": "submitEncryptedBid",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 10,
+    },
   },
   11155111: {
     FHECounter: {
@@ -145,6 +168,29 @@ const deployedContracts = {
       ],
       inheritedFunctions: {},
       deployedOnBlock: 9368216,
+    },
+    MockAuction: {
+      address: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd", // örnek adres
+      abi: [
+        {
+          "inputs": [],
+          "name": "join",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            { "internalType": "bytes", "name": "encryptedBid", "type": "bytes" }
+          ],
+          "name": "submitEncryptedBid",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 123456,
     },
   },
 } as const;

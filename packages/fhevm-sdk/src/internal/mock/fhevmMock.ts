@@ -6,7 +6,7 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-import { JsonRpcProvider } from "ethers";
+import { ethers } from "ethers";
 import { MockFhevmInstance } from "@fhevm/mock-utils";
 import { FhevmInstance } from "../../fhevmTypes";
 
@@ -19,8 +19,8 @@ export const fhevmMockCreateInstance = async (parameters: {
     KMSVerifierAddress: `0x${string}`;
   };
 }): Promise<FhevmInstance> => {
-  const provider = new JsonRpcProvider(parameters.rpcUrl);
-  const instance = await MockFhevmInstance.create(provider, provider, {
+  const provider = new ethers.providers.JsonRpcProvider(parameters.rpcUrl);
+  const instance = await MockFhevmInstance.create(provider as any, provider as any, {
     //aclContractAddress: "0x50157CFfD6bBFA2DECe204a89ec419c23ef5755D",
     aclContractAddress: parameters.metadata.ACLAddress,
     chainId: parameters.chainId,

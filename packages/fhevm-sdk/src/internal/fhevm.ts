@@ -1,4 +1,4 @@
-import { isAddress, Eip1193Provider, JsonRpcProvider } from "ethers";
+import { ethers } from "ethers";
 import type {
   FhevmInitSDKOptions,
   FhevmInitSDKType,
@@ -56,7 +56,7 @@ function checkIsAddress(a: unknown): a is `0x${string}` {
   if (typeof a !== "string") {
     return false;
   }
-  if (!isAddress(a)) {
+  if (!ethers.utils.isAddress(a)) {
     return false;
   }
   return true;
@@ -77,10 +77,10 @@ type FhevmRelayerStatusType =
   | "creating";
 
 async function getChainId(
-  providerOrUrl: Eip1193Provider | string
+  providerOrUrl: any | string
 ): Promise<number> {
   if (typeof providerOrUrl === "string") {
-    const provider = new JsonRpcProvider(providerOrUrl);
+    const provider = new ethers.providers.JsonRpcProvider(providerOrUrl);
     return Number((await provider.getNetwork()).chainId);
   }
   const chainId = await providerOrUrl.request({ method: "eth_chainId" });
@@ -88,7 +88,7 @@ async function getChainId(
 }
 
 async function getWeb3Client(rpcUrl: string) {
-  const rpc = new JsonRpcProvider(rpcUrl);
+  const rpc = new ethers.providers.JsonRpcProvider(rpcUrl);
   try {
     const version = await rpc.send("web3_clientVersion", []);
     return version;
@@ -99,7 +99,7 @@ async function getWeb3Client(rpcUrl: string) {
       e
     );
   } finally {
-    rpc.destroy();
+      // destroy() yok, ethers v5'te gerek yok
   }
 }
 
@@ -159,7 +159,7 @@ async function tryFetchFHEVMHardhatNodeRelayerMetadata(rpcUrl: string): Promise<
 }
 
 async function getFHEVMRelayerMetadata(rpcUrl: string) {
-  const rpc = new JsonRpcProvider(rpcUrl);
+  const rpc = new ethers.providers.JsonRpcProvider(rpcUrl);
   try {
     const version = await rpc.send("fhevm_relayer_metadata", []);
     return version;
@@ -170,7 +170,7 @@ async function getFHEVMRelayerMetadata(rpcUrl: string) {
       e
     );
   } finally {
-    rpc.destroy();
+      // destroy() yok, ethers v5'te gerek yok
   }
 }
 
@@ -179,7 +179,7 @@ type GenericResolveResult = { isMock: false; chainId: number; rpcUrl?: string };
 type ResolveResult = MockResolveResult | GenericResolveResult;
 
 async function resolve(
-  providerOrUrl: Eip1193Provider | string,
+  providerOrUrl: any | string,
   mockChains?: Record<number, string>
 ): Promise<ResolveResult> {
   // Resolve chainId
@@ -205,12 +205,12 @@ async function resolve(
   return { isMock: false, chainId, rpcUrl };
 }
 
-export const createFhevmInstance = async (parameters: {
-  provider: Eip1193Provider | string;
+export async function createFhevmInstance(parameters: {
+  provider: any | string;
   mockChains?: Record<number, string>;
   signal: AbortSignal;
   onStatusChange?: (status: FhevmRelayerStatusType) => void;
-}): Promise<FhevmInstance> => {
+}): Promise<FhevmInstance> {
   const throwIfAborted = () => {
     if (signal.aborted) throw new FhevmAbortError();
   };

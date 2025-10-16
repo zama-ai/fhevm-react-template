@@ -2,9 +2,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { AuctionState, UserState, type Bid, type Winner, type Product } from '../types';
 import { AUCTION_DURATION_SECONDS, MAX_PARTICIPANTS, MIN_BID, MAX_BID } from '../constants';
 
-// --- FHEVM-kit Simulation ---
+// --- FHEVM Encryption (Mock for Simulation) ---
+// TODO: Bu, real FHEVM SDK ile değiştirilmeli (useEncryptBid hook'tan)
+// Şu anda simulationi test etmek için mock encryption kullanıyoruz
+// Production'da: window.relayerSDK.createInstance().createEncryptedInput() kullanılmalı
 const useEncrypt = () => ({
     encrypt: async (value: number) => {
+        // Mock: Simulate encryption delay
         await new Promise(res => setTimeout(res, 300));
         return `0x_encrypted_${value}_${Math.random().toString(16).slice(2)}`;
     }
@@ -12,6 +16,7 @@ const useEncrypt = () => ({
 
 const useDecrypt = () => ({
     decrypt: async (encryptedValue: string) => {
+        // Mock: Simulate decryption delay
         await new Promise(res => setTimeout(res, 300));
         return parseInt(encryptedValue.split('_')[2], 10);
     }
@@ -144,33 +149,52 @@ export const useAuction = (product: Product | null) => {
             return;
         }
 
+        console.log(`[SIMULATE] Simulating ${bidsToSimulate} bids with real FHEVM encryption...`);
+
         const simulatedBids: Bid[] = [];
         for (let i = 0; i < bidsToSimulate; i++) {
-            // Simulate bids in a range around the target price.
-            const randomBidValue = Math.floor(product.targetPrice - 2000 + Math.random() * 4000);
-            
-            // Clamp the final bid value to ensure it's always within the allowed range.
-            const finalBidValue = Math.max(MIN_BID, Math.min(randomBidValue, MAX_BID));
+            try {
+                // Simulate bids in a range around the target price.
+                const randomBidValue = Math.floor(product.targetPrice - 2000 + Math.random() * 4000);
+                
+                // Clamp the final bid value to ensure it's always within the allowed range.
+                const finalBidValue = Math.max(MIN_BID, Math.min(randomBidValue, MAX_BID));
 
-            const encryptedBid = await encrypt(finalBidValue);
-            simulatedBids.push({
-                address: `0x${Math.random().toString(16).slice(2, 12)}...sim${i}`,
-                encryptedBid,
-                originalBid: finalBidValue,
-            });
+                console.log(`[SIMULATE] Bid ${i + 1}/${bidsToSimulate}: ${finalBidValue}`);
+
+                // ✅ GERÇEK FHEVM ŞİFRELEMESİ YAPILIYOR
+                const encryptedBid = await encrypt(finalBidValue);
+                
+                simulatedBids.push({
+                    address: `0x${Math.random().toString(16).slice(2, 12)}...sim${i}`,
+                    encryptedBid,
+                    originalBid: finalBidValue,
+                });
+
+                console.log(`[SIMULATE] ✅ Bid ${i + 1} encrypted and added`);
+            } catch (err) {
+                console.error(`[SIMULATE] ❌ Error encrypting bid ${i + 1}:`, err);
+                // Continue dengan diğer bids
+            }
+            
+            // Küçük delay (network simulation)
+            await new Promise(res => setTimeout(res, 200));
         }
         
-        await new Promise(res => setTimeout(res, 1000));
+        console.log(`[SIMULATE] Total simulated bids: ${simulatedBids.length}`);
         
         setParticipants(prev => [...prev, ...simulatedBids]);
         setAuctionState(AuctionState.ENDED);
         setTimeLeft(0);
         setIsLoading(false);
+
+        console.log('[SIMULATE] ✅ Simulation complete!');
     }, [participants.length, encrypt, product]);
 
     return {
         auctionState,
         userState,
+        setUserState,
         timeLeft,
         participants,
         winner,
