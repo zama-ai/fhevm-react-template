@@ -7,8 +7,8 @@ export * from "./types/index";
 // Configuration constants
 export * from "./internal/constants";
 
-// Error handling utilities
-export * from "./utils/errors";
+// Utility functions (errors, encryption, decryption)
+export * from "./utils/index";
 
 // SDK version and metadata
 export * from "./version";
