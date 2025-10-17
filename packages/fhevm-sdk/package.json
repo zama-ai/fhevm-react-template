@@ -20,8 +20,8 @@
       "default": "./dist/storage/index.js"
     },
     "./types": {
-      "types": "./src/fhevmTypes.ts",
-      "default": "./dist/fhevmTypes.js"
+      "types": "./src/types/index.ts",
+      "default": "./dist/types/index.js"
     },
     "./react": {
       "types": "./src/react/index.ts",
