@@ -16,7 +16,7 @@ export interface FhevmConfig {
   mockChains?: Readonly<Record<number, string>>;
 }
 
-export interface FhevmError {
+export interface FhevmErrorType {
   code: string;
   message: string;
   cause?: Error;

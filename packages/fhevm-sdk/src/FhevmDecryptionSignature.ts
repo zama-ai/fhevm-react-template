@@ -1,6 +1,7 @@
 import { GenericStringStorage } from "./storage/GenericStringStorage";
 import { EIP712Type, FhevmDecryptionSignatureType, FhevmInstance } from "./fhevmTypes";
 import { DEFAULT_SIGNATURE_DURATION_DAYS } from "./internal/constants";
+import { FhevmSignatureError } from "./utils/errors";
 import { ethers } from "ethers";
 
 function _timestampNow(): number {

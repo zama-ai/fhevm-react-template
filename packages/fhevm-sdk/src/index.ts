@@ -7,6 +7,9 @@ export * from "./types/index";
 // Configuration constants
 export * from "./internal/constants";
 
+// Error handling utilities
+export * from "./utils/errors";
+
 export * from "./FhevmDecryptionSignature";
 export * from "./react/index";
 

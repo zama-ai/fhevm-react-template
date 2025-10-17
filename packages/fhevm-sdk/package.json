@@ -23,6 +23,10 @@
       "types": "./src/types/index.ts",
       "default": "./dist/types/index.js"
     },
+    "./utils": {
+      "types": "./src/utils/errors.ts",
+      "default": "./dist/utils/errors.js"
+    },
     "./react": {
       "types": "./src/react/index.ts",
       "default": "./dist/react/index.js"
