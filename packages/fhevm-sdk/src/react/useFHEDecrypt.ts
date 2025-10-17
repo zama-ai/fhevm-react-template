@@ -11,6 +11,7 @@ import {
   createRequestsKey,
   canDecrypt as canDecryptUtil,
 } from "../utils/decryption.js";
+import { useStableObject, useComputedValue } from "./useFhevmCache.js";
 
 // Re-export types for convenience
 export type { FHEDecryptRequest, DecryptedValue };
@@ -56,10 +57,15 @@ export const useFHEDecrypt = (params: {
   const isDecryptingRef = useRef<boolean>(false);
   const lastReqKeyRef = useRef<string>("");
 
-  // Create unique key for current requests
-  const requestsKey = useMemo(() => {
-    return createRequestsKey(requests || []);
-  }, [requests]);
+  // Stabilize requests object reference (avoid re-renders when content is same)
+  const stableRequests = useStableObject(requests as any);
+
+  // Create unique key for current requests with caching
+  const requestsKey = useComputedValue(
+    () => createRequestsKey(stableRequests || []),
+    [stableRequests],
+    { timeout: 60000 } // Cache for 1 minute
+  );
 
   // Check if decryption is available
   const canDecrypt = useMemo(() => {

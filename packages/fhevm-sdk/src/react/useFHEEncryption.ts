@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { FhevmInstance } from "../fhevmTypes.js";
 import { RelayerEncryptedInput } from "@zama-fhe/relayer-sdk/web";
 import { ethers } from "ethers";
@@ -11,6 +11,7 @@ import {
   buildParamsFromAbi,
   encryptInput,
 } from "../utils/encryption.js";
+import { useStableCallback } from "./useFhevmCache.js";
 
 // Re-export commonly used types and utilities for convenience
 export type { EncryptResult };
@@ -46,22 +47,32 @@ export const useFHEEncryption = (params: {
 }) => {
   const { instance, ethersSigner, contractAddress } = params;
 
+  // Cache user address to avoid repeated calls
+  const userAddressRef = useRef<string | undefined>(undefined);
+  
   const canEncrypt = useMemo(
     () => Boolean(instance && ethersSigner && contractAddress),
     [instance, ethersSigner, contractAddress],
   );
 
-  const encryptWith = useCallback(
+  // Use stable callback to prevent unnecessary re-renders
+  const encryptWith = useStableCallback(
     async (buildFn: (builder: RelayerEncryptedInput) => void): Promise<EncryptResult | undefined> => {
       if (!instance || !ethersSigner || !contractAddress) {
         return undefined;
       }
 
       try {
-        const userAddress = await ethersSigner.getAddress();
-        return await encryptInput(instance, contractAddress, userAddress, buildFn);
+        // Cache user address
+        if (!userAddressRef.current) {
+          userAddressRef.current = await ethersSigner.getAddress();
+        }
+        
+        return await encryptInput(instance, contractAddress, userAddressRef.current as `0x${string}`, buildFn);
       } catch (error) {
         console.error("[useFHEEncryption] Encryption failed:", error);
+        // Clear cache on error
+        userAddressRef.current = undefined;
         throw error;
       }
     },
