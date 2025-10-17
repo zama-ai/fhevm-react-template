@@ -1,0 +1,61 @@
+{
+  "name": "@cloak-sdk/core",
+  "version": "0.1.0",
+  "description": "Framework-agnostic core SDK for FHEVM confidential dApps",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "default": "./dist/types.js"
+    },
+    "./encryption": {
+      "types": "./dist/encryption.d.ts",
+      "default": "./dist/encryption.js"
+    },
+    "./decryption": {
+      "types": "./dist/decryption.d.ts",
+      "default": "./dist/decryption.js"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "default": "./dist/utils/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "watch": "tsc -p tsconfig.json --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "ethers": "^6.13.4",
+    "idb": "^8.0.3"
+  },
+  "peerDependencies": {
+    "@fhevm/mock-utils": "^0.1.0",
+    "@zama-fhe/relayer-sdk": "^0.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "~18.19.50",
+    "@vitest/coverage-v8": "2.1.9",
+    "typescript": "~5.8.2",
+    "vitest": "~2.1.8"
+  },
+  "keywords": [
+    "fhevm",
+    "confidential",
+    "blockchain",
+    "sdk",
+    "framework-agnostic"
+  ],
+  "author": "Cloak SDK Team",
+  "license": "MIT"
+}

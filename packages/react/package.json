@@ -1,0 +1,57 @@
+{
+  "name": "@cloak-sdk/react",
+  "version": "0.1.0",
+  "description": "React hooks and components for Cloak SDK",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./hooks": {
+      "types": "./dist/hooks/index.d.ts",
+      "default": "./dist/hooks/index.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "default": "./dist/components/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "watch": "tsc -p tsconfig.json --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@cloak-sdk/core": "workspace:*",
+    "ethers": "^6.13.4"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.0.7",
+    "@types/react-dom": "~19.0.0",
+    "@vitest/coverage-v8": "2.1.9",
+    "react": "~19.0.0",
+    "react-dom": "~19.0.0",
+    "typescript": "~5.8.2",
+    "vitest": "~2.1.8"
+  },
+  "keywords": [
+    "fhevm",
+    "confidential",
+    "blockchain",
+    "react",
+    "hooks",
+    "components"
+  ],
+  "author": "Cloak SDK Team",
+  "license": "MIT"
+}

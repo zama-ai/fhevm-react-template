@@ -1,23 +1,46 @@
 {
-  "name": "root",
-  "version": "0.4.0",
+  "name": "fhevm-react-template",
+  "version": "0.5.0",
+  "description": "Universal FHEVM SDK for confidential dApps - Built on Zama's Official Template",
   "private": true,
   "license": "BSD-3-Clause-Clear",
+  "packageManager": "pnpm@10.18.3",
   "engines": {
     "node": ">=20.0.0"
   },
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/*",
+      "examples/*"
     ]
   },
   "scripts": {
+    "build": "pnpm -r build",
+    "build:watch": "pnpm -r build:watch",
+    "dev": "pnpm -r dev",
+    "clean": "pnpm -r clean",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
     "chain": "pnpm hardhat:chain",
     "compile": "pnpm hardhat:compile",
     "deploy:localhost": "pnpm hardhat:deploy && pnpm generate",
     "deploy:sepolia": "pnpm hardhat:deploy:sepolia && pnpm generate",
     "fork": "pnpm hardhat:fork",
     "format": "pnpm next:format && pnpm hardhat:format",
+    "core:build": "pnpm --filter @cloak-sdk/core build",
+    "react:build": "pnpm --filter @cloak-sdk/react build",
+    "cli:build": "pnpm --filter @cloak-sdk/cli build",
+    "core:test": "pnpm --filter @cloak-sdk/core test",
+    "react:test": "pnpm --filter @cloak-sdk/react test",
+    "cli:test": "pnpm --filter @cloak-sdk/cli test",
+    "contracts:compile": "pnpm --filter fhevm-hardhat-template compile",
+    "contracts:test": "pnpm --filter fhevm-hardhat-template test",
+    "contracts:deploy": "pnpm --filter fhevm-hardhat-template deploy:localhost",
+    "contracts:deploy:sepolia": "pnpm --filter fhevm-hardhat-template deploy:sepolia",
+    "node-demo:start": "pnpm --filter cloak-sdk-node-demo start",
+    "node-demo:dev": "pnpm --filter cloak-sdk-node-demo dev",
+    "node-demo:test": "pnpm --filter cloak-sdk-node-demo test",
+    "node-demo:demo": "pnpm --filter cloak-sdk-node-demo demo",
     "sdk:build": "pnpm --filter ./packages/fhevm-sdk build",
     "sdk:watch": "pnpm --filter ./packages/fhevm-sdk watch",
     "sdk:test": "pnpm --filter ./packages/fhevm-sdk test",
@@ -54,6 +77,28 @@
     "verify": "pnpm hardhat:verify",
     "verify:sepolia": "pnpm hardhat:verify:sepolia"
   },
+  "keywords": [
+    "fhevm",
+    "confidential",
+    "encryption",
+    "blockchain",
+    "ethereum",
+    "sdk",
+    "framework-agnostic",
+    "zama",
+    "hardhat",
+    "universal-sdk",
+    "cloak-sdk"
+  ],
+  "author": "Cloak SDK Team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0xNana/fhevm-react-template.git"
+  },
+  "bugs": {
+    "url": "https://github.com/0xNana/fhevm-react-template/issues"
+  },
+  "homepage": "https://github.com/0xNana/fhevm-react-template#readme",
   "dependencies": {
     "hardhat-deploy": "^0.11.45"
   },
