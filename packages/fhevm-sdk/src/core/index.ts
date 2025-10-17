@@ -7,3 +7,6 @@ export * from "../internal/constants";
 // Configuration utilities
 export * from "./config";
 
+// Core FHEVM client
+export * from "./FhevmClient";
+
