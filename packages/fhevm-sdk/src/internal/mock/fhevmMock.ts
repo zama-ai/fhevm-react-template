@@ -9,6 +9,7 @@
 import { JsonRpcProvider } from "ethers";
 import { MockFhevmInstance } from "@fhevm/mock-utils";
 import { FhevmInstance } from "../../fhevmTypes";
+import { MOCK_GATEWAY_CHAIN_ID } from "../constants";
 
 export const fhevmMockCreateInstance = async (parameters: {
   rpcUrl: string;
@@ -24,7 +25,7 @@ export const fhevmMockCreateInstance = async (parameters: {
     //aclContractAddress: "0x50157CFfD6bBFA2DECe204a89ec419c23ef5755D",
     aclContractAddress: parameters.metadata.ACLAddress,
     chainId: parameters.chainId,
-    gatewayChainId: 55815,
+    gatewayChainId: MOCK_GATEWAY_CHAIN_ID,
     // inputVerifierContractAddress: "0x901F8942346f7AB3a01F6D7613119Bca447Bb030",
     // kmsContractAddress: "0x1364cBBf2cDF5032C47d8226a6f6FBD2AFCDacAC",
     inputVerifierContractAddress: parameters.metadata.InputVerifierAddress,

@@ -1,5 +1,6 @@
 import { GenericStringStorage } from "./storage/GenericStringStorage";
 import { EIP712Type, FhevmDecryptionSignatureType, FhevmInstance } from "./fhevmTypes";
+import { DEFAULT_SIGNATURE_DURATION_DAYS } from "./internal/constants";
 import { ethers } from "ethers";
 
 function _timestampNow(): number {
@@ -236,7 +237,7 @@ export class FhevmDecryptionSignature {
     try {
       const userAddress = (await signer.getAddress()) as `0x${string}`;
       const startTimestamp = _timestampNow();
-      const durationDays = 365;
+      const durationDays = DEFAULT_SIGNATURE_DURATION_DAYS;
       const eip712 = (instance as any).createEIP712(publicKey, contractAddresses, startTimestamp, durationDays);
       const signature = await (signer as any).signTypedData(
         eip712.domain,
