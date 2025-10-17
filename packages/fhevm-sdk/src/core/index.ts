@@ -4,3 +4,6 @@ export * from "../internal/PublicKeyStorage";
 export * from "../internal/fhevmTypes";
 export * from "../internal/constants";
 
+// Configuration utilities
+export * from "./config";
+

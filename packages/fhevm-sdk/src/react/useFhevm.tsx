@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FhevmInstance } from "../fhevmTypes.js";
 import { createFhevmInstance } from "../internal/fhevm.js";
+import { validateFhevmConfig } from "../core/config.js";
 import { ethers } from "ethers";
 
 function _assert(condition: boolean, message?: string): asserts condition {
@@ -89,6 +90,20 @@ export function useFhevm(parameters: {
       }
 
       _assert(!_abortControllerRef.current.signal.aborted, "!controllerRef.current.signal.aborted");
+
+      // Validate configuration before creating instance
+      try {
+        validateFhevmConfig({
+          provider: _providerRef.current,
+          chainId: _chainIdRef.current,
+          mockChains: _mockChainsRef.current,
+          enabled: _isRunning,
+        });
+      } catch (error) {
+        _setError(error as Error);
+        _setStatus("error");
+        return;
+      }
 
       _setStatus("loading");
       _setError(undefined);
