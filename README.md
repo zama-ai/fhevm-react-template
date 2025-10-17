@@ -1,25 +1,27 @@
-# FHEVM React Template
+# Universal FHEVM SDK - Cloak SDK
 
-A minimal React frontend template for building FHEVM-enabled decentralized applications (dApps). This template provides a simple development interface for interacting with FHEVM smart contracts, specifically the `FHECounter.sol` contract.
+A comprehensive, framework-agnostic FHEVM SDK built on Zama's official template. This repository provides a complete toolkit for building confidential dApps across multiple frameworks including React, Vue, Node.js, and Next.js.
 
 ## 🚀 What is FHEVM?
 
-FHEVM (Fully Homomorphic Encryption Virtual Machine) enables computation on encrypted data directly on Ethereum. This template demonstrates how to build dApps that can perform computations while keeping data private.
+FHEVM (Fully Homomorphic Encryption Virtual Machine) enables computation on encrypted data directly on Ethereum. This SDK provides a universal interface for building dApps that can perform computations while keeping data private.
 
 ## ✨ Features
 
-- **🔐 FHEVM Integration**: Built-in support for fully homomorphic encryption
-- **⚛️ React + Next.js**: Modern, performant frontend framework
-- **🎨 Tailwind CSS**: Utility-first styling for rapid UI development
-- **🔗 RainbowKit**: Seamless wallet connection and management
+- **🔐 Universal FHEVM SDK**: Framework-agnostic core SDK that works with any frontend
+- **⚛️ React Integration**: Complete React hooks and components for FHEVM
+- **🛠️ CLI Tools**: Command-line interface for contract management
+- **🌐 Multi-Framework Support**: Works with React, Vue, Node.js, and Next.js
+- **🎨 Multiple Examples**: Complete demos for different frameworks
+- **🔗 RainbowKit Integration**: Seamless wallet connection and management
 - **🌐 Multi-Network Support**: Works on both Sepolia testnet and local Hardhat node
-- **📦 Monorepo Structure**: Organized packages for SDK, contracts, and frontend
+- **📦 Monorepo Structure**: Organized packages for SDK, contracts, and examples
 
-## 📋 Prerequinextjss
+## 📋 Prerequisites
 
 Before you begin, ensure you have:
 
-- **Node.js** (v18 or higher)
+- **Node.js** (v20 or higher)
 - **pnpm** package manager
 - **MetaMask** browser extension
 - **Git** for cloning the repository
@@ -30,11 +32,8 @@ Before you begin, ensure you have:
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/0xNana/fhevm-react-template.git
 cd fhevm-react-template
-
-# Initialize submodules (includes fhevm-hardhat-template)
-git submodule update --init --recursive
 
 # Install dependencies
 pnpm install
@@ -42,12 +41,33 @@ pnpm install
 
 ### 2. Environment Configuration
 
-Set up your Hardhat environment variables by following the [FHEVM documentation](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional):
+Set up your environment variables by copying the example files:
 
+```bash
+# For examples
+cp examples/nextjs-demo/.env.example examples/nextjs-demo/.env.local
+cp examples/node-demo/.env.example examples/node-demo/.env
+cp examples/vue-demo/.env.example examples/vue-demo/.env
+```
+
+Configure your environment variables:
 - `MNEMONIC`: Your wallet mnemonic phrase
 - `INFURA_API_KEY`: Your Infura API key for Sepolia
+- `NEXT_PUBLIC_ALCHEMY_API_KEY`: Your Alchemy API key
 
-### 3. Start Development Environment
+### 3. Build the SDK
+
+```bash
+# Build all packages
+pnpm build
+
+# Or build individual packages
+pnpm core:build
+pnpm react:build
+pnpm cli:build
+```
+
+### 4. Start Development Environment
 
 **Option A: Local Development (Recommended for testing)**
 
@@ -57,9 +77,9 @@ pnpm chain
 # RPC URL: http://127.0.0.1:8545 | Chain ID: 31337
 
 # Terminal 2: Deploy contracts to localhost
-pnpm deploy:localhost
+pnpm contracts:deploy
 
-# Terminal 3: Start the frontend
+# Terminal 3: Start the Next.js example
 pnpm start
 ```
 
@@ -67,34 +87,145 @@ pnpm start
 
 ```bash
 # Deploy to Sepolia testnet
-pnpm deploy:sepolia
+pnpm contracts:deploy:sepolia
 
-# Start the frontend
+# Start the Next.js example
 pnpm start
 ```
 
-### 4. Connect MetaMask
+## 📁 Project Structure
 
-1. Open [http://localhost:3000](http://localhost:3000) in your browser
-2. Click "Connect Wallet" and select MetaMask
-3. If using localhost, add the Hardhat network to MetaMask:
-   - **Network Name**: Hardhat Local
-   - **RPC URL**: `http://127.0.0.1:8545`
-   - **Chain ID**: `31337`
-   - **Currency Symbol**: `ETH`
+This template uses a monorepo structure with multiple packages and examples:
 
-### ⚠️ Sepolia Production note
+```
+fhevm-react-template/
+├── packages/
+│   ├── core/                    # Universal FHEVM SDK core
+│   ├── react/                   # React hooks and components
+│   ├── cli/                     # Command-line tools
+│   ├── fhevm-sdk/              # Original FHEVM SDK (preserved)
+│   ├── hardhat/                # Smart contracts & deployment
+│   └── nextjs/                 # Next.js frontend application
+├── examples/
+│   ├── nextjs-demo/            # Next.js example with Cloak SDK
+│   ├── node-demo/              # Node.js example
+│   └── vue-demo/               # Vue.js example
+└── scripts/                    # Build and deployment scripts
+```
 
-- In production, `NEXT_PUBLIC_ALCHEMY_API_KEY` must be set (see `packages/nextjs/scaffold.config.ts`). The app throws if missing.
-- Ensure `packages/nextjs/contracts/deployedContracts.ts` points to your live contract addresses.
-- Optional: set `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` for better WalletConnect reliability.
-- Optional: add per-chain RPCs via `rpcOverrides` in `packages/nextjs/scaffold.config.ts`.
+## 🎯 SDK Packages
+
+### @cloak-sdk/core
+Framework-agnostic core SDK providing:
+- Encryption and decryption utilities
+- Contract interaction helpers
+- FHEVM instance management
+- Storage utilities
+
+### @cloak-sdk/react
+React-specific package with:
+- `useCloakSDK` - Main SDK hook
+- `useCloakEncryption` - Encryption utilities
+- `useCloakDecryption` - Decryption utilities
+- `useCloakContract` - Contract interaction
+- Pre-built components for common use cases
+
+### @cloak-sdk/cli
+Command-line tools for:
+- Project initialization
+- Contract compilation
+- Deployment management
+- Development workflow automation
+
+## 🚀 Usage Examples
+
+### React/Next.js
+
+```tsx
+import { useCloakSDK } from '@cloak-sdk/react';
+
+function MyComponent() {
+  const { encrypt, decrypt, isReady } = useCloakSDK();
+  
+  const handleEncrypt = async () => {
+    const encrypted = await encrypt(42);
+    console.log('Encrypted:', encrypted);
+  };
+  
+  return (
+    <div>
+      <button onClick={handleEncrypt} disabled={!isReady}>
+        Encrypt Data
+      </button>
+    </div>
+  );
+}
+```
+
+### Node.js
+
+```javascript
+import { CloakSDK } from '@cloak-sdk/core';
+
+const sdk = new CloakSDK({
+  rpcUrl: 'http://127.0.0.1:8545',
+  chainId: 31337
+});
+
+const encrypted = await sdk.encrypt(42);
+console.log('Encrypted:', encrypted);
+```
+
+### Vue.js
+
+```vue
+<template>
+  <div>
+    <button @click="handleEncrypt" :disabled="!isReady">
+      Encrypt Data
+    </button>
+  </div>
+</template>
+
+<script setup>
+import { useCloakSDK } from '@cloak-sdk/react';
+
+const { encrypt, isReady } = useCloakSDK();
+
+const handleEncrypt = async () => {
+  const encrypted = await encrypt(42);
+  console.log('Encrypted:', encrypted);
+};
+</script>
+```
+
+## 🔧 Available Scripts
+
+### Core SDK
+- `pnpm core:build` - Build core SDK
+- `pnpm core:test` - Test core SDK
+
+### React Package
+- `pnpm react:build` - Build React package
+- `pnpm react:test` - Test React package
+
+### CLI Tools
+- `pnpm cli:build` - Build CLI tools
+- `pnpm cli:test` - Test CLI tools
+
+### Examples
+- `pnpm node-demo:start` - Start Node.js demo
+- `pnpm node-demo:dev` - Run Node.js demo in dev mode
+- `pnpm node-demo:demo` - Run Node.js demo
+
+### Contracts
+- `pnpm contracts:compile` - Compile contracts
+- `pnpm contracts:deploy` - Deploy to localhost
+- `pnpm contracts:deploy:sepolia` - Deploy to Sepolia
 
 ## 🔧 Troubleshooting
 
 ### Common MetaMask + Hardhat Issues
-
-When developing with MetaMask and Hardhat, you may encounter these common issues:
 
 #### ❌ Nonce Mismatch Error
 
@@ -117,38 +248,6 @@ When developing with MetaMask and Hardhat, you may encounter these common issues
 
 > 💡 **Pro Tip**: Always restart your browser after restarting Hardhat to avoid cache issues.
 
-For more details, see the [MetaMask development guide](https://docs.metamask.io/wallet/how-to/run-devnet/).
-
-## 📁 Project Structure
-
-This template uses a monorepo structure with three main packages:
-
-```
-fhevm-react-template/
-├── packages/
-│   ├── fhevm-hardhat-template/    # Smart contracts & deployment
-│   ├── fhevm-sdk/                 # FHEVM SDK package
-│   └── nextjs/                      # React frontend application
-└── scripts/                       # Build and deployment scripts
-```
-
-### Key Components
-
-#### 🔗 FHEVM Integration (`packages/nextjs/hooks/fhecounter-example/`)
-- **`useFHECounterWagmi.tsx`**: Example hook demonstrating FHEVM contract interaction
-- Essential hooks for FHEVM-enabled smart contract communication
-- Easily copyable to any FHEVM + React project
-
-#### 🎣 Wallet Management (`packages/nextjs/hooks/helper/`)
-- MetaMask wallet provider hooks
-- Compatible with EIP-6963 standard
-- Easily adaptable for other wallet providers
-
-#### 🔧 Flexibility
-- Replace `ethers.js` with `Wagmi` or other React-friendly libraries
-- Modular architecture for easy customization
-- Support for multiple wallet providers
-
 ## 📚 Additional Resources
 
 ### Official Documentation
@@ -163,8 +262,29 @@ fhevm-react-template/
 
 ### Community & Support
 - [FHEVM Discord](https://discord.com/invite/zama) - Community support
-- [GitHub Issues](https://github.com/zama-ai/fhevm-react-template/issues) - Bug reports & feature requests
+- [GitHub Issues](https://github.com/0xNana/fhevm-react-template/issues) - Bug reports & feature requests
+
+## 🏆 Bounty Submission
+
+This repository is a submission for the Zama Bounty Program October 2025: "Build an Universal FHEVM SDK". 
+
+**Key Features Delivered:**
+- ✅ Framework-agnostic SDK that works with React, Vue, Node.js, and Next.js
+- ✅ Wagmi-like modular API structure with hooks and adapters
+- ✅ Complete encryption and decryption flows with EIP-712 signing
+- ✅ Reusable components for different encryption/decryption scenarios
+- ✅ Multiple working examples across different frameworks
+- ✅ CLI tools for development workflow
+- ✅ Comprehensive documentation and setup guides
 
 ## 📄 License
 
 This project is licensed under the **BSD-3-Clause-Clear License**. See the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+This is a bounty submission repository. For issues and feature requests, please use the GitHub Issues page.
+
+---
+
+**Built with ❤️ for the FHEVM ecosystem**
