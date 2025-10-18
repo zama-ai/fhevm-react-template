@@ -1,129 +1,262 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import { FhevmDecryptionSignature } from "../FhevmDecryptionSignature.js";
+import { DecryptionManager, FHEDecryptRequest, DecryptResult } from "../core/DecryptionManager.js";
 import { GenericStringStorage } from "../storage/GenericStringStorage.js";
 import { FhevmInstance } from "../fhevmTypes.js";
 import { ethers } from "ethers";
 
-export type FHEDecryptRequest = { handle: string; contractAddress: `0x${string}` };
+// Re-export types for backward compatibility
+export type { FHEDecryptRequest, DecryptResult };
 
+/**
+ * React hook for FHE decryption operations.
+ * 
+ * This hook provides a React-friendly interface to decrypt FHE-encrypted data
+ * from smart contracts. It manages the DecryptionManager lifecycle, handles
+ * loading states, and provides user-friendly status messages.
+ * 
+ * @param params - Configuration parameters
+ * @param params.instance - The FHEVM instance (from useFhevm hook)
+ * @param params.ethersSigner - The user's ethers signer
+ * @param params.fhevmDecryptionSignatureStorage - Storage for caching signatures
+ * @param params.chainId - The blockchain chain ID
+ * @param params.requests - Array of handles to decrypt
+ * 
+ * @returns Object containing decryption status, methods, and results
+ * 
+ * @remarks
+ * This hook automatically manages:
+ * - EIP-712 signature creation and caching
+ * - Loading states during decryption
+ * - Error handling and user feedback
+ * - Preventing duplicate decryption requests
+ * 
+ * The hook uses internal state tracking to ensure decryptions are not
+ * triggered multiple times simultaneously.
+ * 
+ * @example
+ * Basic usage:
+ * ```tsx
+ * import { useFHEDecrypt } from '@fhevm-sdk';
+ * 
+ * function MyComponent() {
+ *   const { instance } = useFhevm({ provider, chainId });
+ *   const { ethersSigner } = useEthersSigner();
+ *   const { storage } = useInMemoryStorage();
+ *   
+ *   const requests = useMemo(() => [
+ *     { handle: counterHandle, contractAddress: '0x...' }
+ *   ], [counterHandle]);
+ *   
+ *   const {
+ *     canDecrypt,
+ *     decrypt,
+ *     isDecrypting,
+ *     results,
+ *     message,
+ *     error
+ *   } = useFHEDecrypt({
+ *     instance,
+ *     ethersSigner,
+ *     fhevmDecryptionSignatureStorage: storage,
+ *     chainId: 11155111,
+ *     requests
+ *   });
+ *   
+ *   return (
+ *     <div>
+ *       <button onClick={decrypt} disabled={!canDecrypt || isDecrypting}>
+ *         {isDecrypting ? 'Decrypting...' : 'Decrypt'}
+ *       </button>
+ *       {message && <p>{message}</p>}
+ *       {error && <p style={{color: 'red'}}>{error}</p>}
+ *       {results[counterHandle] && (
+ *         <p>Value: {results[counterHandle].toString()}</p>
+ *       )}
+ *     </div>
+ *   );
+ * }
+ * ```
+ * 
+ * @example
+ * With automatic updates:
+ * ```tsx
+ * const [handle, setHandle] = useState<string | undefined>();
+ * 
+ * const requests = useMemo(() => {
+ *   if (!handle) return undefined;
+ *   return [{ handle, contractAddress }];
+ * }, [handle, contractAddress]);
+ * 
+ * const { decrypt, results, isDecrypting } = useFHEDecrypt({
+ *   instance,
+ *   ethersSigner,
+ *   fhevmDecryptionSignatureStorage: storage,
+ *   chainId,
+ *   requests
+ * });
+ * 
+ * // Decrypt automatically when handle changes
+ * useEffect(() => {
+ *   if (handle && !isDecrypting) {
+ *     decrypt();
+ *   }
+ * }, [handle, decrypt, isDecrypting]);
+ * ```
+ * 
+ * @public
+ */
 export const useFHEDecrypt = (params: {
+  /** The FHEVM instance */
   instance: FhevmInstance | undefined;
+  /** The user's ethers signer */
   ethersSigner: ethers.JsonRpcSigner | undefined;
+  /** Storage for caching decryption signatures */
   fhevmDecryptionSignatureStorage: GenericStringStorage;
+  /** The blockchain chain ID */
   chainId: number | undefined;
+  /** Array of handles to decrypt */
   requests: readonly FHEDecryptRequest[] | undefined;
 }) => {
   const { instance, ethersSigner, fhevmDecryptionSignatureStorage, chainId, requests } = params;
 
+  // React state for UI feedback
   const [isDecrypting, setIsDecrypting] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("");
-  const [results, setResults] = useState<Record<string, string | bigint | boolean>>({});
+  const [message, setMessage] = useState<string>('');
+  const [results, setResults] = useState<DecryptResult>({});
   const [error, setError] = useState<string | null>(null);
 
-  const isDecryptingRef = useRef<boolean>(isDecrypting);
-  const lastReqKeyRef = useRef<string>("");
+  // Internal state tracking
+  const isDecryptingRef = useRef<boolean>(false);
+  const lastReqKeyRef = useRef<string>('');
 
+  // Create a stable key for the requests to detect changes
   const requestsKey = useMemo(() => {
-    if (!requests || requests.length === 0) return "";
+    if (!requests || requests.length === 0) return '';
     const sorted = [...requests].sort((a, b) =>
-      (a.handle + a.contractAddress).localeCompare(b.handle + b.contractAddress),
+      (a.handle + a.contractAddress).localeCompare(b.handle + b.contractAddress)
     );
     return JSON.stringify(sorted);
   }, [requests]);
 
+  // Create and memoize DecryptionManager instance
+  const manager = useMemo(() => {
+    if (!instance || !ethersSigner || !chainId || !fhevmDecryptionSignatureStorage) {
+      return null;
+    }
+
+    try {
+      return new DecryptionManager(
+        instance,
+        ethersSigner,
+        fhevmDecryptionSignatureStorage,
+        chainId
+      );
+    } catch (error) {
+      console.error('useFHEDecrypt: Failed to create DecryptionManager:', error);
+      return null;
+    }
+  }, [instance, ethersSigner, fhevmDecryptionSignatureStorage, chainId]);
+
+  // Check if decryption is possible
   const canDecrypt = useMemo(() => {
-    return Boolean(instance && ethersSigner && requests && requests.length > 0 && !isDecrypting);
-  }, [instance, ethersSigner, requests, isDecrypting]);
+    return Boolean(
+      manager?.canDecrypt(requests as any) && 
+      !isDecrypting &&
+      requests &&
+      requests.length > 0
+    );
+  }, [manager, requests, isDecrypting]);
 
-  const decrypt = useCallback(() => {
-    if (isDecryptingRef.current) return;
-    if (!instance || !ethersSigner || !requests || requests.length === 0) return;
+  // Memoized decryption function
+  const decrypt = useCallback(async () => {
+    // Prevent concurrent decryption attempts
+    if (isDecryptingRef.current) {
+      console.warn('useFHEDecrypt: Decryption already in progress');
+      return;
+    }
 
+    if (!manager || !requests || requests.length === 0) {
+      console.warn('useFHEDecrypt: Cannot decrypt - manager or requests not available');
+      return;
+    }
+
+    // Capture current state for staleness checks
     const thisChainId = chainId;
     const thisSigner = ethersSigner;
-    const thisRequests = requests;
+    const thisRequestsKey = requestsKey;
 
-    // Capture the current requests key to avoid false "stale" detection on first run
+    // Update the last request key to avoid false "stale" detection
     lastReqKeyRef.current = requestsKey;
 
+    // Set decrypting state
     isDecryptingRef.current = true;
     setIsDecrypting(true);
-    setMessage("Start decrypt");
+    setMessage('Starting decryption...');
     setError(null);
 
-    const run = async () => {
+    try {
+      // Helper function to check if state has changed
       const isStale = () =>
-        thisChainId !== chainId || thisSigner !== ethersSigner || requestsKey !== lastReqKeyRef.current;
+        thisChainId !== chainId ||
+        thisSigner !== ethersSigner ||
+        thisRequestsKey !== lastReqKeyRef.current;
 
-      try {
-        const uniqueAddresses = Array.from(new Set(thisRequests.map(r => r.contractAddress)));
-        const sig: FhevmDecryptionSignature | null = await FhevmDecryptionSignature.loadOrSign(
-          instance,
-          uniqueAddresses as `0x${string}`[],
-          ethersSigner,
-          fhevmDecryptionSignatureStorage,
-        );
-
-        if (!sig) {
-          setMessage("Unable to build FHEVM decryption signature");
-          setError("SIGNATURE_ERROR: Failed to create decryption signature");
-          return;
-        }
-
-        if (isStale()) {
-          setMessage("Ignore FHEVM decryption");
-          return;
-        }
-
-        setMessage("Call FHEVM userDecrypt...");
-
-        const mutableReqs = thisRequests.map(r => ({ handle: r.handle, contractAddress: r.contractAddress }));
-        let res: Record<string, string | bigint | boolean> = {};
-        try {
-          res = await instance.userDecrypt(
-            mutableReqs,
-            sig.privateKey,
-            sig.publicKey,
-            sig.signature,
-            sig.contractAddresses,
-            sig.userAddress,
-            sig.startTimestamp,
-            sig.durationDays,
-          );
-        } catch (e) {
-          const err = e as unknown as { name?: string; message?: string };
-          const code = err && typeof err === "object" && "name" in (err as any) ? (err as any).name : "DECRYPT_ERROR";
-          const msg = err && typeof err === "object" && "message" in (err as any) ? (err as any).message : "Decryption failed";
-          setError(`${code}: ${msg}`);
-          setMessage("FHEVM userDecrypt failed");
-          return;
-        }
-
-        setMessage("FHEVM userDecrypt completed!");
-
-        if (isStale()) {
-          setMessage("Ignore FHEVM decryption");
-          return;
-        }
-
-        setResults(res);
-      } catch (e) {
-        const err = e as unknown as { name?: string; message?: string };
-        const code = err && typeof err === "object" && "name" in (err as any) ? (err as any).name : "UNKNOWN_ERROR";
-        const msg = err && typeof err === "object" && "message" in (err as any) ? (err as any).message : "Unknown error";
-        setError(`${code}: ${msg}`);
-        setMessage("FHEVM decryption errored");
-      } finally {
-        isDecryptingRef.current = false;
-        setIsDecrypting(false);
-        lastReqKeyRef.current = requestsKey;
+      // Check staleness before starting
+      if (isStale()) {
+        setMessage('Decryption cancelled: parameters changed');
+        return;
       }
-    };
 
-    run();
-  }, [instance, ethersSigner, fhevmDecryptionSignatureStorage, chainId, requests, requestsKey]);
+      setMessage('Loading decryption signature...');
 
-  return { canDecrypt, decrypt, isDecrypting, message, results, error, setMessage, setError } as const;
+      // Execute decryption
+      const decryptedResults = await manager.decrypt(requests as FHEDecryptRequest[]);
+
+      // Check staleness after decryption
+      if (isStale()) {
+        setMessage('Decryption completed but results discarded: parameters changed');
+        return;
+      }
+
+      // Update results
+      setResults(decryptedResults);
+      setMessage('Decryption completed successfully!');
+      setError(null);
+    } catch (err) {
+      // Handle errors
+      const errorObj = err as Error;
+      const errorMessage = errorObj.message || String(err);
+
+      console.error('useFHEDecrypt: Decryption failed:', errorObj);
+
+      setError(errorMessage);
+      setMessage('Decryption failed');
+      setResults({});
+    } finally {
+      // Reset decrypting state
+      isDecryptingRef.current = false;
+      setIsDecrypting(false);
+    }
+  }, [manager, requests, chainId, ethersSigner, requestsKey]);
+
+  return {
+    /** Whether decryption is currently possible */
+    canDecrypt,
+    /** Function to trigger decryption */
+    decrypt,
+    /** Whether decryption is currently in progress */
+    isDecrypting,
+    /** Status message for user feedback */
+    message,
+    /** Decryption results mapping handles to values */
+    results,
+    /** Error message if decryption failed */
+    error,
+    /** Function to manually set status message */
+    setMessage,
+    /** Function to manually set error message */
+    setError,
+  } as const;
 };
