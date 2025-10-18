@@ -1,17 +1,23 @@
+import type { Metadata, Viewport } from "next";
 import "@rainbow-me/rainbowkit/styles.css";
 import { DappWrapperWithProviders } from "~~/components/DappWrapperWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
 import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/helper/getMetadata";
 
-export const metadata = getMetadata({
+export const metadata: Metadata = getMetadata({
   title: "Zama Template",
   description: "Built with FHEVM",
 });
 
-const DappWrapper = ({ children }: { children: React.ReactNode }) => {
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning className={``}>
+    <html suppressHydrationWarning lang="en">
       <head>
         <link
           href="https://api.fontshare.com/v2/css?f[]=telegraf@400,500,700&display=swap"
@@ -25,6 +31,4 @@ const DappWrapper = ({ children }: { children: React.ReactNode }) => {
       </body>
     </html>
   );
-};
-
-export default DappWrapper;
+}
