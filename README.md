@@ -14,6 +14,7 @@ FHEVM (Fully Homomorphic Encryption Virtual Machine) enables computation on encr
 - **🔗 RainbowKit**: Seamless wallet connection and management
 - **🌐 Multi-Network Support**: Works on both Sepolia testnet and local Hardhat node
 - **📦 Monorepo Structure**: Organized packages for SDK, contracts, and frontend
+- **🧩 Vue Composables**: Composition API utilities available via `@fhevm-sdk/vue`
 
 ## 📋 Prerequinextjss
 
