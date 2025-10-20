@@ -1,42 +1,42 @@
-# FHEVM Bid Şifrelemesi Test Adımları
+# FHEVM Bid Encryption Testing Steps
 
-## 1. Browser Konsolu Açma
-- F12 tuşuna basarak Developer Tools açın
-- Console sekmesine tıklayın
+## 1. Open Browser Console
+- Press F12 to open Developer Tools
+- Click on the Console tab
 
-## 2. SDK Kontrolü
+## 2. Check SDK
 ```javascript
 console.log('[TEST] window.relayerSDK:', typeof window.relayerSDK);
 ```
-Çıktı: `object` olmalı
+Expected output: `object`
 
-## 3. SDK Initialize Et
+## 3. Initialize SDK
 ```javascript
 await window.relayerSDK.initSDK();
 ```
-Çıktı: `undefined` (hata yoksa başarılı)
+Expected output: `undefined` (success if no error)
 
-## 4. Config Al
+## 4. Get Config
 ```javascript
 const config = window.relayerSDK.SepoliaConfig;
 console.log('Config relayerUrl:', config.relayerUrl);
 console.log('Config contract:', config.verifyingContractAddressDecryption);
 ```
 
-## 5. Instance Oluştur
+## 5. Create Instance
 ```javascript
 const instance = await window.relayerSDK.createInstance(config);
 console.log('Instance keys:', Object.keys(instance));
 ```
 
-## 6. User Adresi Al
+## 6. Get User Address
 ```javascript
 const accounts = await window.ethereum.request({ method: 'eth_accounts' });
 const userAddress = accounts[0];
 console.log('User address:', userAddress);
 ```
 
-## 7. Encrypted Input Oluştur
+## 7. Create Encrypted Input
 ```javascript
 const encryptedInput = instance.createEncryptedInput(
   config.verifyingContractAddressDecryption,
@@ -45,7 +45,7 @@ const encryptedInput = instance.createEncryptedInput(
 console.log('Encrypted input created');
 ```
 
-## 8. Bid Değeri Ekle ve Şifrele
+## 8. Add Bid Value and Encrypt
 ```javascript
 const encrypted = await encryptedInput.add256(BigInt(555)).encrypt();
 console.log('Encrypted bid:', encrypted);
@@ -53,18 +53,18 @@ console.log('Handles:', encrypted.handles);
 console.log('InputProof length:', encrypted.inputProof.length);
 ```
 
-## Beklenen Sonuç
-- `handles`: Array içinde bir veya birkaç eleman
-- `inputProof`: 100 byte'lik Uint8Array
-- Hata yoksa şifreleme başarılı!
+## Expected Results
+- `handles`: Array with one or more elements
+- `inputProof`: 100-byte Uint8Array
+- If no errors, encryption is successful!
 
-## 9. UI'dan Test Etme
-1. "Join Auction" butonuna tıkla
-2. Bid miktarını gir (ör: 555)
-3. "Submit My Encrypted Bid" butonuna tıkla
-4. Konsolu izle - debug mesajlarını gör
+## 9. Test from UI
+1. Click "Join Auction" button
+2. Enter a bid amount (e.g., 555)
+3. Click "Submit My Encrypted Bid" button
+4. Monitor the console for debug messages
 
-Hatalı çıktılar:
-- ❌ "submitEncryptedBid is not a function" → Contract ABI sorunu
-- ❌ "publicKey must be a Uint8Array" → SDK initialize edilmedi
-- ❌ "createEncryptedInput is not a function" → Yanlış SDK versiyonu
+Common errors:
+- ❌ "submitEncryptedBid is not a function" → Contract ABI issue
+- ❌ "publicKey must be a Uint8Array" → SDK not initialized
+- ❌ "createEncryptedInput is not a function" → Wrong SDK version

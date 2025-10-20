@@ -1,23 +1,23 @@
-# FHEVM Simulate - Gerçek Şifreleme Implementasyonu
+# FHEVM Simulate - Real Encryption Implementation
 
-## 🎯 Hedef
-99 kişinin random fiyat tahmini yapıp **gerçek FHEVM şifrelemesi** ile bid submit etmesini simüle etmek.
+## 🎯 Goal
+Simulate a multi-bid auction where participants make random price predictions and submit encrypted bids using **real FHEVM encryption**.
 
-## 📋 Mevcut Durum
+## 📋 Current Status
 
-### ✅ Çalışan Şey:
-- `userActions` → bid submit → şifrele → kontrata gönder ✅
-- Bid şifrelemesi: `useEncryptBid` hook ✅
-- Contract submit: `useSubmitEncryptedBid` hook ✅
+### ✅ What's Working:
+- `userActions` → bid submit → encrypt → send to contract ✅
+- Bid encryption: `useEncryptBid` hook ✅
+- Contract submission: `useSubmitEncryptedBid` hook ✅
 
-### ❌ Eksik Şey:
-- `simulateFullAuction` sadece mock encryption kullanıyor
-- 99 kişi gerçek FHEVM ile şifreleme yapmıyor
-- Relayer'a gerçek request gönderilmiyor
+### ❌ What's Missing:
+- `simulateFullAuction` only uses mock encryption
+- Participants don't use real FHEVM encryption
+- No real requests sent to Relayer
 
-## 🔧 Gerçek Implementasyon
+## 🔧 Real Implementation
 
-### Option 1: Separate Simulate Hook Oluştur (Önerilen)
+### Option 1: Create Separate Simulate Hook (Recommended)
 
 ```typescript
 // hooks/useSimulateAuctionBids.ts
@@ -231,15 +231,15 @@ export const useAuction = (
 const encryptedBid = await encrypt(finalBidValue); // Real!
 ```
 
-## 🎬 Test Akışı
+## 🎬 Test Flow
 
-1. Browser konsolunu aç (F12)
-2. "Join Auction" butonuna tıkla
-3. Bid gir (ör: 4444)
-4. "Submit My Encrypted Bid" tıkla
-5. Konsolda şifreleme başarıyı gör
-6. "Simulate Remaining Bids" tıkla
-7. Konsolda 9 simüle bid şifrelemenin loglarını gör:
+1. Open browser console (F12)
+2. Click "Join Auction" button
+3. Enter a bid (e.g., 4444)
+4. Click "Submit My Encrypted Bid"
+5. Monitor console for encryption success
+6. Click "Simulate Remaining Bids"
+7. Monitor console for 9 simulated bid encryption logs:
    ```
    [SIMULATE] Starting 9 real FHEVM simulated bids...
    [SIMULATE] Bid 1: $5500
@@ -250,20 +250,20 @@ const encryptedBid = await encrypt(finalBidValue); // Real!
    [SIMULATE] ✅ Complete! 10 total encrypted bids (1 manual + 9 simulated)
    ```
 
-## ✅ Zama Bounty için Gerekli
+## ✅ Required for Zama Bounty
 
-**CRITICAL:** Simulate fonksiyonu:
-- [ ] Gerçek FHEVM SDK kullanmalı
-- [ ] Real encryption (mock değil)
-- [ ] Optional: On-chain submit
-- [ ] Console logging ile trace edilebilir
+**CRITICAL:** Simulate function must:
+- [ ] Use real FHEVM SDK
+- [ ] Real encryption (not mock)
+- [ ] Optional: On-chain submission
+- [ ] Traceable via console logging
 - [ ] Error handling
 
 ## 📊 Performance Note
 
-10 bids (1 manual + 9 simulated) × 300ms (encryption per bid) = ~3-5 saniye
-→ UI'da "Simulating..." progress göstermek iyi olur
+10 bids (1 manual + 9 simulated) × 300ms (encryption per bid) = ~3-5 seconds
+→ Show "Simulating..." progress in UI
 
 ---
 
-**Son not:** Mevcut kodda simülasyon sadece UI'da kalıyor. Zama'nın istediği şey **gerçek FHEVM workflow** + demo. Yukarıdaki adımları takip edersen tamamen çözülür! 🚀
+**Final note:** Current code keeps simulation UI-only. What Zama wants is **real FHEVM workflow** + demo. Follow the steps above to fully solve it! 🚀

@@ -1,23 +1,23 @@
-# FHEVM Simulate Fonksiyonu - Real FHEVM Şifreleme
+# FHEVM Simulation Function - Real FHEVM Encryption
 
-## 🎯 Amaç
+## 🎯 Objective
 
-99 katılımcının rastgele fiyat tahmini yapmasını ve **gerçek FHEVM şifrelemesi** ile bids gönderimi simüle etmek.
+Simulate a multi-bid auction (1 manual + 9 simulated) with participants making random price predictions and submitting encrypted bids using **real FHEVM encryption**.
 
-## ✅ Implementasyon
+## ✅ Implementation
 
-### Dosya: `examples/nextjs-app/hooks/useAuction.ts`
+### File: `examples/nextjs-app/hooks/useAuction.ts`
 
 #### 1. Real FHEVM SDK Import
 ```typescript
 import { useEncryptBid } from '../../../packages/fhevm-sdk/react/useEncryptBid';
 ```
 
-#### 2. Real Encryption Hook Kullanımı
+#### 2. Real Encryption Hook Usage
 ```typescript
 const { encrypt: realEncrypt } = useEncryptBid();
 
-// Fallback ile mock encryption
+// Fallback with mock encryption
 const encrypt = useCallback(async (value: number) => {
     try {
         return await realEncrypt(value);  // ✅ Real FHEVM
@@ -28,20 +28,20 @@ const encrypt = useCallback(async (value: number) => {
 }, [realEncrypt]);
 ```
 
-#### 3. Simulate Akışı
+#### 3. Simulation Flow
 ```
 simulateFullAuction() 
   ├─ MAX_PARTICIPANTS - participants.length = 10 (1 manual + 9 simulated)
   ├─ Loop through each bid:
-  │  ├─ Random fiyat (target ± 2000)
+  │  ├─ Random price (target ± 2000)
   │  ├─ MIN/MAX bound check
-  │  ├─ ✅ Real FHEVM encryption çağrı
-  │  ├─ Handles + inputProof alımı
-  │  └─ Participant'a ekleme
-  └─ Auction state ENDED'a ayar
+  │  ├─ ✅ Real FHEVM encryption call
+  │  ├─ Get handles + inputProof
+  │  └─ Add to participant
+  └─ Set auction state to ENDED
 ```
 
-## 🔐 Şifreleme Akışı
+## 🔐 Encryption Flow
 
 ### Real FHEVM (Sepolia Testnet)
 ```
@@ -69,12 +69,12 @@ useMockEncrypt().encrypt()
   └─ Return: "0x_mock_4444_abc123"
 ```
 
-## 📊 Test Sonuçları
+## 📊 Test Results
 
-### Başarılı Bid Şifreleme:
+### Successful Bid Encryption:
 ```
-[DEBUG] Bid butonuna basıldı
-[DEBUG] Bid işlemi başlıyor, SDK hazır
+[DEBUG] Bid button clicked
+[DEBUG] Bid process starting, SDK ready
 [DEBUG] Initializing SDK with WASM...
 [DEBUG] ✅ SDK initialized
 [DEBUG] Using SepoliaConfig directly
@@ -83,11 +83,11 @@ useMockEncrypt().encrypt()
 [DEBUG] ✅ value to encrypted input added
 [DEBUG] ✅ Bid encrypted
 [DEBUG] Encrypted output keys: (2) ['handles', 'inputProof']
-[DEBUG] Bid şifrelendi: {handles: Array(1), inputProof: Uint8Array(100)}
-[DEBUG] Bid onchain gönderildi
+[DEBUG] Bid encrypted: {handles: Array(1), inputProof: Uint8Array(100)}
+[DEBUG] Bid submitted on-chain
 ```
 
-### Simulation Akışı:
+### Simulation Flow:
 ```
 [SIMULATE] Simulating 10 bids with real FHEVM encryption (1 manual + 9 simulated)...
 [SIMULATE] Manual Bid: 5000
@@ -103,21 +103,21 @@ useMockEncrypt().encrypt()
 [SIMULATE] ✅ Simulation complete!
 ```
 
-## ⚙️ Teknik Detaylar
+## ⚙️ Technical Details
 
 ### Handles Array
-- **Tip:** `Array<Uint8Array>`
-- **İçerik:** FHE handles (şifrelenmiş veri referansları)
-- **Boyut:** Genellikle 1 handle per value
+- **Type:** `Array<Uint8Array>`
+- **Content:** FHE handles (encrypted data references)
+- **Size:** Usually 1 handle per value
 
 ### InputProof Uint8Array
-- **Tip:** `Uint8Array(100)`
-- **İçerik:** Zero-knowledge proof of correct encryption
-- **Boyut:** 100 byte (fixed)
+- **Type:** `Uint8Array(100)`
+- **Content:** Zero-knowledge proof of correct encryption
+- **Size:** 100 bytes (fixed)
 
 ### Contract Submission
 ```typescript
-// contract.ts'de handled:
+// handled in contract.ts:
 const inputProofHex = Array.from(encryptedBid.inputProof)
   .map((b: number) => b.toString(16).padStart(2, '0'))
   .join('');
@@ -131,32 +131,32 @@ const handlesArray = encryptedBid.handles.map((h: Uint8Array) =>
 const finalBytes = '0x' + handlesArray.join('') + inputProofHex;
 ```
 
-## 🧪 Test Etme
+## 🧪 Testing
 
-### 1. Browser Konsolunda
+### 1. In Browser Console
 ```javascript
-// F12 açarak console tab'ına git
-// "Submit My Encrypted Bid" butonuna tıkla
-// Logs'ları izle
+// Press F12 to open console tab
+// Click "Submit My Encrypted Bid" button
+// Monitor the logs
 ```
 
-### 2. Simulate Butonu
+### 2. Simulate Button
 ```
-1. "Join Auction" tıkla
-2. Bid gir (ör: 4444)
-3. "Submit My Encrypted Bid" tıkla
-4. ✅ "Bid Submitted Successfully!" mesajı
-5. "Simulate Remaining Bids" tıkla
-6. Console'da 9 simüle bid şifrelemesini gör
-7. ~3-5 saniye sonra completion
+1. Click "Join Auction"
+2. Enter a bid (e.g., 4444)
+3. Click "Submit My Encrypted Bid"
+4. ✅ See "Bid Submitted Successfully!" message
+5. Click "Simulate Remaining Bids"
+6. Monitor console for 9 simulated bid encryptions
+7. ~3-5 seconds for completion
 ```
 
 ### 3. Console Logs
 ```
-[SIMULATE] Starting 99 real FHEVM bids...
-[SIMULATE] Bid 1/99: $5234
+[SIMULATE] Starting 10 real FHEVM bids (1 manual + 9 simulated)...
+[SIMULATE] Bid 1/10: $5234
 [SIMULATE] ✅ Bid 1 encrypted and added
-[SIMULATE] Bid 2/99: $3891
+[SIMULATE] Bid 2/10: $3891
 [SIMULATE] ✅ Bid 2 encrypted and added
 ...
 [SIMULATE] ✅ Simulation complete!
@@ -164,35 +164,35 @@ const finalBytes = '0x' + handlesArray.join('') + inputProofHex;
 
 ## 📈 Performance
 
-| Metrik | Değer |
+| Metric | Value |
 |--------|--------|
 | Single Bid Encryption | ~300-500ms |
-| 10 Bids Total (1 manual + 9 simulated) | ~3-5 saniye |
+| 10 Bids Total (1 manual + 9 simulated) | ~3-5 seconds |
 | Relayer Latency | ~100-200ms |
 | WASM Init | ~200ms (first time) |
 
-## 🔗 İlgili Dosyalar
+## 🔗 Related Files
 
 - `packages/fhevm-sdk/react/useEncryptBid.ts` - Real encryption hook
 - `packages/fhevm-sdk/core/contract.ts` - Contract submission
 - `examples/nextjs-app/hooks/useAuction.ts` - Auction + simulate
 - `examples/nextjs-app/components/UserActions.tsx` - UI integration
 
-## ✨ Özellikler
+## ✨ Features
 
 - ✅ Real FHEVM SDK integration
 - ✅ Sepolia testnet support
 - ✅ Multi-bid auction (1 manual + 9 simulated)
-- ✅ Console logging untuk debugging
-- ✅ Error handling ve fallback
+- ✅ Console logging for debugging
+- ✅ Error handling and fallback
 - ✅ Deterministic bid values (reproducible tests)
 
 ## 🚀 Next Steps
 
-1. **On-Chain Verification** - Simulate'de real contract submit yapmak
-2. **Batch Processing** - Birden fazla bid'i paralel şifrele
-3. **Performance Optimization** - Worker threads ile WASM
-4. **Advanced Analytics** - Bid distribution stats
+1. **On-Chain Verification** - Execute real contract submission in simulation
+2. **Batch Processing** - Encrypt multiple bids in parallel
+3. **Performance Optimization** - Worker threads with WASM
+4. **Advanced Analytics** - Bid distribution statistics
 
 ---
 

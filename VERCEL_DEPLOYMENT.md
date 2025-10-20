@@ -1,78 +1,78 @@
 # Vercel Deployment Guide - WinnerPrice
 
-## Ön Koşullar
+## Prerequisites
 
-1. **Vercel Account**: [vercel.com](https://vercel.com) - GitHub bağlantılı
-2. **Smart Contract Deploy**: Sepolia'ya MockAuction.sol deploy et
+1. **Vercel Account**: [vercel.com](https://vercel.com) - connected to GitHub
+2. **Smart Contract Deployed**: Deploy MockAuction.sol to Sepolia
 3. **Environment Variables**
 
-## Adımlar
+## Steps
 
-### 1. Repository'i GitHub'a Push Et
+### 1. Push Repository to GitHub
 ```bash
 git add .
 git commit -m "✨ Add WinnerPrice - Zama FHE Secret Auction Demo"
 git push origin main
 ```
 
-### 2. Vercel'e Connect Et
+### 2. Connect to Vercel
 - [vercel.com](https://vercel.com) → "New Project"
-- GitHub repo seç: `fhevm-react-template`
+- Select GitHub repo: `fhevm-react-template`
 - Framework: "Other" (monorepo)
 - Root Directory: `examples/nextjs-app`
 
-### 3. Environment Variables Ekle
+### 3. Add Environment Variables
 Vercel Dashboard → Settings → Environment Variables:
 
 ```
-NEXT_PUBLIC_AUCTION_CONTRACT=0x... (Sepolia'da deploy edilen contract adresi)
+NEXT_PUBLIC_AUCTION_CONTRACT=0x... (Deployed contract address on Sepolia)
 NEXT_PUBLIC_RPC_URL=https://sepolia.infura.io/v3/YOUR_KEY
 ```
 
-### 4. Deploy Et
+### 4. Deploy
 ```bash
 vercel deploy --prod
 ```
 
-## Kullanıcı Talimatları
+## User Instructions
 
-Uygulama açılınca:
+When the app opens:
 
-1. **MetaMask Kur**: Chrome extension
-2. **Sepolia Testnet'e Switch Et**: 
+1. **Install MetaMask**: Chrome extension
+2. **Switch to Sepolia Testnet**: 
    - MetaMask → Networks → Add Network → Sepolia
-3. **Test ETH Al**: 
+3. **Get Test ETH**: 
    - [Sepolia Faucet](https://www.alchemy.com/faucets/ethereum-sepolia)
-4. **Cüzdanı Bağla**: "Connect Wallet" butonuna tıkla
-5. **Bid Ver**: Ürün seç → Miktar gir → Submit
+4. **Connect Wallet**: Click "Connect Wallet" button
+5. **Place Bid**: Select product → Enter amount → Submit
 
-## Teknik Notlar
+## Technical Notes
 
-### FHE Şifrelemesi
-- **Demo**: Mock encryption (hızlı test için)
-- **Production**: Zama Relayer SDK (gerçek FHE)
+### FHE Encryption
+- **Demo**: Mock encryption (fast testing)
+- **Production**: Zama Relayer SDK (real FHE)
   - Relayer CDN: `https://cdn.zama.ai/relayer-sdk-js/0.2.0/relayer-sdk-js.umd.cjs`
-  - Her bid ~1 saniye sürüyor (real encryption)
+  - Each bid ~1 second (real encryption)
 
-### Blockchain İşlemleri
+### Blockchain Transactions
 - **Network**: Ethereum Sepolia Testnet
 - **ChainID**: 11155111
-- **Entry Fee**: 0.001 ETH (mock, real tx yapılmıyor)
+- **Entry Fee**: 0.001 ETH (mock, no real tx)
 
 ### Limitations (Demo)
-- ✓ Şifrelemeler gerçek FHEVM ile
-- ⚠ Bid submission blockchain'e yazılmıyor (mock)
-- ⚠ Winner reveal blockchain'de doğrulanmıyor (mock)
+- ✓ Encryptions use real FHEVM
+- ⚠ Bid submission not written to blockchain (mock)
+- ⚠ Winner reveal not verified on-chain (mock)
 - ✓ UI/UX production-ready
 
-## Sonraki Adımlar
+## Next Steps
 
-1. **Smart Contract**: Full implement et (Hardhat)
+1. **Smart Contract**: Full implementation (Hardhat)
 2. **Backend**: Relayer integration
 3. **Database**: Bid tracking
-4. **Tests**: E2E testler
+4. **Tests**: E2E testing
 
 ---
 
-**Şu an**: Demo olarak çalışır, UI ve FHE encryption gerçek ✅
-**Eksik**: On-chain state management (gelecek faz)
+**Current**: Works as demo, UI and FHE encryption are real ✅
+**Missing**: On-chain state management (future phase)
