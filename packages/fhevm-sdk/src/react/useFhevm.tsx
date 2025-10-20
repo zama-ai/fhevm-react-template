@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FhevmInstance } from "../fhevmTypes.js";
-import { createFhevmInstance } from "../internal/fhevm.js";
+import { FhevmClient, FhevmClientStatus } from "../core/FhevmClient.js";
 import { ethers } from "ethers";
 
 function _assert(condition: boolean, message?: string): asserts condition {
@@ -11,6 +11,28 @@ function _assert(condition: boolean, message?: string): asserts condition {
 }
 
 export type FhevmGoState = "idle" | "loading" | "ready" | "error";
+
+/**
+ * Map FhevmClientStatus to FhevmGoState for backward compatibility
+ */
+function mapClientStatusToGoState(status: FhevmClientStatus): FhevmGoState {
+  switch (status) {
+    case "idle":
+      return "idle";
+    case "sdk-loading":
+    case "sdk-loaded":
+    case "sdk-initializing":
+    case "sdk-initialized":
+    case "creating":
+      return "loading";
+    case "ready":
+      return "ready";
+    case "error":
+      return "error";
+    default:
+      return "idle";
+  }
+}
 
 export function useFhevm(parameters: {
   provider: string | ethers.Eip1193Provider | undefined;
@@ -30,18 +52,19 @@ export function useFhevm(parameters: {
   const [error, _setError] = useState<Error | undefined>(undefined);
   const [_isRunning, _setIsRunning] = useState<boolean>(enabled);
   const [_providerChanged, _setProviderChanged] = useState<number>(0);
-  const _abortControllerRef = useRef<AbortController | null>(null);
+  const _clientRef = useRef<FhevmClient | null>(null);
   const _providerRef = useRef<string | ethers.Eip1193Provider | undefined>(provider);
   const _chainIdRef = useRef<number | undefined>(chainId);
   const _mockChainsRef = useRef<Record<number, string> | undefined>(initialMockChains as any);
 
   const refresh = useCallback(() => {
-    if (_abortControllerRef.current) {
+    if (_clientRef.current) {
       _providerRef.current = undefined;
       _chainIdRef.current = undefined;
 
-      _abortControllerRef.current.abort();
-      _abortControllerRef.current = null;
+      _clientRef.current.abort();
+      _clientRef.current.dispose();
+      _clientRef.current = null;
     }
 
     _providerRef.current = provider;
@@ -66,9 +89,10 @@ export function useFhevm(parameters: {
 
   useEffect(() => {
     if (_isRunning === false) {
-      if (_abortControllerRef.current) {
-        _abortControllerRef.current.abort();
-        _abortControllerRef.current = null;
+      if (_clientRef.current) {
+        _clientRef.current.abort();
+        _clientRef.current.dispose();
+        _clientRef.current = null;
       }
       _setInstance(undefined);
       _setError(undefined);
@@ -84,36 +108,35 @@ export function useFhevm(parameters: {
         return;
       }
 
-      if (!_abortControllerRef.current) {
-        _abortControllerRef.current = new AbortController();
-      }
-
-      _assert(!_abortControllerRef.current.signal.aborted, "!controllerRef.current.signal.aborted");
-
-      _setStatus("loading");
-      _setError(undefined);
-
-      const thisSignal = _abortControllerRef.current.signal;
       const thisProvider = _providerRef.current;
       const thisRpcUrlsByChainId = _mockChainsRef.current as any;
 
-      createFhevmInstance({
-        signal: thisSignal,
+      // Create new client
+      const client = new FhevmClient({
         provider: thisProvider as any,
         mockChains: thisRpcUrlsByChainId as any,
-        onStatusChange: s => console.log(`[useFhevm] createFhevmInstance status changed: ${s}`),
-      })
-        .then(i => {
-          if (thisSignal.aborted) return;
+        onStatusChange: (clientStatus) => {
+          console.log(`[useFhevm] FhevmClient status changed: ${clientStatus}`);
+          _setStatus(mapClientStatusToGoState(clientStatus));
+        },
+      });
+
+      _clientRef.current = client;
+      _setStatus("loading");
+      _setError(undefined);
+
+      // Initialize client
+      client
+        .initialize()
+        .then(() => {
           _assert(thisProvider === _providerRef.current, "thisProvider === _providerRef.current");
 
-          _setInstance(i);
+          const inst = client.getInstance();
+          _setInstance(inst);
           _setError(undefined);
           _setStatus("ready");
         })
-        .catch(e => {
-          if (thisSignal.aborted) return;
-
+        .catch((e) => {
           _assert(thisProvider === _providerRef.current, "thisProvider === _providerRef.current");
 
           _setInstance(undefined);
