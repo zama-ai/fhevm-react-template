@@ -73,7 +73,7 @@ packages/fhevm-sdk/
 examples/
 
 ├── nextjs-app/              - React/Next.js
-│   ├── hooks/useAuction.ts  - Auction state (with 99-bid simulation)
+│   ├── hooks/useAuction.ts  - Auction state (with multi-bid simulation)
 │   ├── components/          - UI components
 │   └── README.md
 │
@@ -99,7 +99,7 @@ examples/
 ### React (Next.js)
 - **Location:** `examples/nextjs-app/`
 - **Setup:** `cd examples/nextjs-app && pnpm install && pnpm dev`
-- **Features:** Full auction UI, real encryption, 99-bid simulation
+- **Features:** Full auction UI, real encryption, multi-bid simulation
 - **Demo:** http://localhost:3000
 - **Best for:** Modern web apps
 
@@ -212,7 +212,7 @@ pnpm dev
 - [x] Framework-agnostic SDK
 - [x] wagmi-like modular API
 - [x] Real FHEVM encryption
-- [x] 99-bid simulation
+- [x] Multi-bid auction simulation (1 manual + 9 simulated)
 - [x] Contract submission
 - [x] Error handling
 - [x] Loading states
@@ -277,7 +277,7 @@ pnpm dev
 
 ✨ **4 framework examples** - React, Vue, Node, Vanilla JS
 ✨ **1,966 lines of docs** - Complete, comprehensive, clear
-✨ **Real FHEVM encryption** - Not mock, proven with 99-bid test
+✨ **Real FHEVM encryption** - Not mock, proven with multi-bid test
 ✨ **Production-ready** - Error handling, loading states, validation
 ✨ **Copy-paste templates** - Get started in < 5 minutes
 ✨ **Clean git history** - 8 semantic commits

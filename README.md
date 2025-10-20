@@ -35,7 +35,7 @@ The FHEVM SDK is **completely framework-agnostic** - the core encryption logic h
 
 **All examples are identical functionally - they share the same:**
 - ✅ Real FHEVM encryption (Relayer SDK v0.2.0)
-- ✅ 99-bid auction simulation (proves scalability)
+- ✅ Multi-bid auction (1 manual + 9 simulated bids)
 - ✅ TypeScript support (strict mode ready)
 - ✅ Error handling & logging
 - ✅ Copy-paste ready, production code
@@ -67,7 +67,17 @@ cd examples/node-example && pnpm install && node src/index.ts
 
 ---
 
-## � What is FHEVM?
+## 🌐 Live Demo
+
+Want to see it in action? Deploy the React + Next.js example to Vercel with one click:
+
+[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/dharmanan/vercel-winnerprice)
+
+**Other frameworks** (Vue, Vanilla JS, Node.js) can be run locally - see [Getting Started](#-getting-started) section.
+
+---
+
+## 🔐 What is FHEVM?
 
 **Fully Homomorphic Encryption Virtual Machine (FHEVM)** enables computation on encrypted data without decryption. Imagine an auction where bids are encrypted end-to-end - the contract determines a winner without ever seeing the bid amounts. That's FHEVM.
 
@@ -79,7 +89,7 @@ This SDK demonstrates production-grade FHEVM integration across all JavaScript e
 - **🚀 Real FHEVM**: Relayer SDK v0.2.0 from Zama (official)
 - **⚛️ Multi-Framework**: React, Vue, Node.js, Vanilla JS (same code works everywhere)
 - **📦 Monorepo**: Organized `/packages` for SDK and `/examples` for demos
-- **🧪 99-Bid Simulation**: Proves real encryption scales under load
+- **🧪 Multi-Bid Auction**: 1 manual bid + 9 simulated bids (10 total)
 - **🌐 Sepolia Testnet**: Works on Zama's FHEVM testnet
 - **� Full Documentation**: 2,900+ lines of guides and API refs
 
@@ -168,7 +178,7 @@ const { encryptBid, isLoading } = useEncryptBid();
 
 ## 🧪 Testing the Examples
 
-Each example includes a **99-bid simulation** that proves real encryption works:
+Each example includes a **multi-bid auction** (1 manual + 9 simulated) that demonstrates real encryption:
 
 ```bash
 # React - interactive UI with live simulation
@@ -177,7 +187,7 @@ cd examples/nextjs-app && pnpm install && pnpm dev
 # Vue - same auction, different framework  
 cd examples/vue-example && pnpm install && pnpm dev
 
-# Node.js - encrypt 99 bids programmatically
+# Node.js - encrypt multiple bids programmatically
 cd examples/node-example && pnpm install && node src/index.ts
 
 # Vanilla JS - open in browser immediately

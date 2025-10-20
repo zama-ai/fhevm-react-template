@@ -71,7 +71,7 @@ if (encLoading || submitLoading) return <Spinner />
 - Real encryption using Zama's WASM engine
 - Not mock encryption - uses actual Relayer API
 - Tested with multiple bid values
-- 99-bid simulation included
+- Multi-bid simulation included (1 manual + 9 simulated)
 
 **Implementation:**
 ```typescript
@@ -98,7 +98,7 @@ const tx = await contract.submitEncryptedBid(encryptedBytes)
 
 **Test Results:**
 - Bid encryption: ✅ Working
-- 99-bid simulation: ✅ All encrypted successfully
+- Multi-bid simulation: ✅ All encrypted successfully
 - Contract submission: ✅ Format conversion correct
 - Real Relayer: ✅ API calls successful
 
@@ -232,7 +232,7 @@ return (
 Commit 1: Initial FHEVM SDK setup
 Commit 2: Real bid encryption implementation
 Commit 3: Contract submission and format conversion
-Commit 4: 99-bid simulation with real FHEVM
+Commit 4: Multi-bid simulation with real FHEVM
 Commit 5: Vue.js Composition API example
 Commit 6: Node.js backend example
 Commit 7: Vanilla JavaScript zero-dependency example
@@ -253,7 +253,7 @@ All changes pushed and publicly accessible.
    - 757 lines total
    - Full auction UI
    - Real encryption
-   - 99-bid simulation
+   - Multi-bid auction (1 manual + 9 simulated)
    - Production-ready
 
 2. **Vue.js 3** (`examples/vue-example/`)
@@ -355,7 +355,7 @@ cd examples/vanilla-js-example && open index.html
 ### 3. Real FHEVM Integration
 - Not mock encryption
 - Uses actual Zama Relayer API
-- Proven with 99-bid test
+- Proven with multi-bid test
 
 ### 4. Comprehensive Documentation
 - 1,500+ lines of docs
@@ -395,7 +395,7 @@ fhevm-react-template/
 │
 ├── examples/
 │   ├── nextjs-app/               ← React example
-│   │   ├── hooks/useAuction.ts   (99-bid simulation)
+│   │   ├── hooks/useAuction.ts   (multi-bid simulation)
 │   │   └── components/
 │   ├── vue-example/              ← Vue example
 │   │   ├── src/App.vue           (757 lines)
@@ -476,7 +476,7 @@ This submission provides:
 ✨ **4 different example implementations** showing real-world usage
 ✨ **1,500+ lines of comprehensive documentation** covering every aspect
 ✨ **Clean git history** with semantic commits
-✨ **Real FHEVM encryption** with 99-bid simulation proof
+✨ **Real FHEVM encryption** with multi-bid auction proof
 ✨ **Error handling, loading states, and TypeScript** for production use
 
 **Ready for deployment, scale, and community adoption.**

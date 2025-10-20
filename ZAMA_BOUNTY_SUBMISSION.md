@@ -37,7 +37,7 @@ Successfully delivered a **universal, framework-agnostic FHEVM SDK** that works 
 #### Example 1: React + Next.js (Advanced)
 **Path:** `examples/nextjs-app/`
 - **Features:**
-  - Real FHEVM encryption with 99-bid simulation
+  - Real FHEVM encryption with multi-bid auction (1 manual + 9 simulated)
   - Live bid status tracking (pending, encrypted, submitted)
   - Winner announcement display
   - Product image carousel
@@ -273,7 +273,25 @@ await initSDK()
 const instance = await relayerSDK.createInstance(config)
 
 // ✅ Works in Vanilla JS
+// ✅ Works in Vanilla JS
 const instance = window.relayerSDK.createInstance(config)
+```
+
+### Multi-Bid Auction Simulation
+
+All examples include a realistic multi-bid auction (1 manual + 9 simulated):
+
+```typescript
+// Simulate multi-bid auction with real FHEVM encryption
+const bids = Array.from({length: 9}, () => Math.random() * 100000)
+const encryptedBids = await Promise.all(
+  bids.map(bid => 
+    instance.createEncryptedInput(contract, user)
+           .add256(BigInt(bid))
+           .encrypt()
+  )
+)
+```
 ```
 
 ### 99-Bid Simulation
@@ -403,7 +421,7 @@ cd examples/node-example && pnpm dev
 
 2. **Comprehensive Examples**
    - Goes beyond "hello world"
-   - 99-bid realistic simulation
+   - Multi-bid auction simulation (1 manual + 9 simulated)
    - Error handling and logging
    - Production patterns
 

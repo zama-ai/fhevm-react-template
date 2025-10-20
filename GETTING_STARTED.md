@@ -101,12 +101,12 @@ pnpm dev
 # Open http://localhost:3000
 ```
 
-**File:** `examples/nextjs-app/hooks/useAuction.ts` (with 99-bid simulation)
+**File:** `examples/nextjs-app/hooks/useAuction.ts` (with multi-bid simulation)
 
 **Features:**
 - Full auction UI with encrypted bids
 - Real FHEVM encryption
-- 99-bid simulation demo
+- Multi-bid simulation (1 manual + 9 simulated)
 - Production-ready error handling
 
 ---
@@ -143,7 +143,7 @@ pnpm dev
 
 **Files:**
 - `src/index.ts` - Main demo
-- `src/batch-encrypt.ts` - Batch processing (99 bids)
+- `src/batch-encrypt.ts` - Batch processing (multiple bids)
 
 **Use Cases:**
 - Preprocessing bids before frontend submission
@@ -317,7 +317,7 @@ Open DevTools (F12 → Console) to see:
 |-----------|------|-------|
 | SDK Init | ~200ms | Once per session |
 | Encrypt | ~300-500ms | WASM + Relayer |
-| Batch (99 bids) | ~30-40s | Parallel possible |
+| Batch (10 bids) | ~3-5s | Parallel possible |
 
 ### Optimize for Batch
 

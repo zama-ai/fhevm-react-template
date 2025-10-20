@@ -31,7 +31,7 @@ const encrypt = useCallback(async (value: number) => {
 #### 3. Simulate Akışı
 ```
 simulateFullAuction() 
-  ├─ MAX_PARTICIPANTS - participants.length = 99 bid
+  ├─ MAX_PARTICIPANTS - participants.length = 10 (1 manual + 9 simulated)
   ├─ Loop through each bid:
   │  ├─ Random fiyat (target ± 2000)
   │  ├─ MIN/MAX bound check
@@ -89,15 +89,17 @@ useMockEncrypt().encrypt()
 
 ### Simulation Akışı:
 ```
-[SIMULATE] Simulating 99 bids with real FHEVM encryption...
-[SIMULATE] Bid 1/99: 5234
+[SIMULATE] Simulating 10 bids with real FHEVM encryption (1 manual + 9 simulated)...
+[SIMULATE] Manual Bid: 5000
+[SIMULATE] ✅ Manual bid encrypted and added
+[SIMULATE] Simulated Bid 1/9: 5234
 [SIMULATE] ✅ Bid 1 encrypted and added
-[SIMULATE] Bid 2/99: 3891
+[SIMULATE] Simulated Bid 2/9: 3891
 [SIMULATE] ✅ Bid 2 encrypted and added
 ...
-[SIMULATE] Bid 99/99: 4567
-[SIMULATE] ✅ Bid 99 encrypted and added
-[SIMULATE] Total simulated bids: 99
+[SIMULATE] Simulated Bid 9/9: 4567
+[SIMULATE] ✅ Bid 9 encrypted and added
+[SIMULATE] Total bids: 10 (1 manual + 9 simulated)
 [SIMULATE] ✅ Simulation complete!
 ```
 
@@ -145,8 +147,8 @@ const finalBytes = '0x' + handlesArray.join('') + inputProofHex;
 3. "Submit My Encrypted Bid" tıkla
 4. ✅ "Bid Submitted Successfully!" mesajı
 5. "Simulate Remaining Bids" tıkla
-6. Console'da 99 bid şifrelemesini gör
-7. ~30 saniye sonra completion
+6. Console'da 9 simüle bid şifrelemesini gör
+7. ~3-5 saniye sonra completion
 ```
 
 ### 3. Console Logs
@@ -165,7 +167,7 @@ const finalBytes = '0x' + handlesArray.join('') + inputProofHex;
 | Metrik | Değer |
 |--------|--------|
 | Single Bid Encryption | ~300-500ms |
-| 99 Bids Total | ~30-50 saniye |
+| 10 Bids Total (1 manual + 9 simulated) | ~3-5 saniye |
 | Relayer Latency | ~100-200ms |
 | WASM Init | ~200ms (first time) |
 
@@ -180,7 +182,7 @@ const finalBytes = '0x' + handlesArray.join('') + inputProofHex;
 
 - ✅ Real FHEVM SDK integration
 - ✅ Sepolia testnet support
-- ✅ 99 bid simulation
+- ✅ Multi-bid auction (1 manual + 9 simulated)
 - ✅ Console logging untuk debugging
 - ✅ Error handling ve fallback
 - ✅ Deterministic bid values (reproducible tests)

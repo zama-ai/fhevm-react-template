@@ -239,15 +239,15 @@ const encryptedBid = await encrypt(finalBidValue); // Real!
 4. "Submit My Encrypted Bid" tıkla
 5. Konsolda şifreleme başarıyı gör
 6. "Simulate Remaining Bids" tıkla
-7. Konsolda 99 bid şifrelemenin loglarını gör:
+7. Konsolda 9 simüle bid şifrelemenin loglarını gör:
    ```
-   [SIMULATE] Starting 99 real FHEVM bids...
+   [SIMULATE] Starting 9 real FHEVM simulated bids...
    [SIMULATE] Bid 1: $5500
    [SIMULATE] ✅ Bid encrypted
    [SIMULATE] Bid 2: $4200
    [SIMULATE] ✅ Bid encrypted
    ...
-   [SIMULATE] ✅ Complete! 99 encrypted bids
+   [SIMULATE] ✅ Complete! 10 total encrypted bids (1 manual + 9 simulated)
    ```
 
 ## ✅ Zama Bounty için Gerekli
@@ -261,7 +261,7 @@ const encryptedBid = await encrypt(finalBidValue); // Real!
 
 ## 📊 Performance Note
 
-99 bid × 300ms (encryption per bid) = ~30 saniye
+10 bids (1 manual + 9 simulated) × 300ms (encryption per bid) = ~3-5 saniye
 → UI'da "Simulating..." progress göstermek iyi olur
 
 ---
