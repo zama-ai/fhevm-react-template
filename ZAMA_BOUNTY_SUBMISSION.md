@@ -243,6 +243,11 @@ Package Documentation:
 └── packages/fhevm-sdk/vitest.config.ts (tests)
 ```
 
+### Video Walkthrough
+- **YouTube:** [FHEVM SDK Implementation Walkthrough](https://www.youtube.com/watch?v=jVdb4_ishNA)
+- **Duration:** Full implementation review and technical deep-dive
+- **Content:** SDK architecture, framework-agnostic design, real FHEVM integration, deployment
+
 ---
 
 ## 🎓 Key Implementation Details

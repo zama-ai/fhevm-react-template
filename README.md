@@ -223,6 +223,10 @@ pnpm tsc --noEmit  # Verify no errors
 | [SIMULATE_REAL_FHEVM.md](./SIMULATE_REAL_FHEVM.md) | Real encryption examples | 8 min |
 | [TEST_STEPS.md](./TEST_STEPS.md) | Debugging & troubleshooting | 5 min |
 
+## 🎥 Video Walkthrough
+
+**[FHEVM SDK Implementation Walkthrough](https://www.youtube.com/watch?v=jVdb4_ishNA)** - Complete technical deep-dive covering SDK architecture, framework-agnostic design, real FHEVM integration, and deployment strategy.
+
 ## 🤝 Contributing
 
 Have a framework you'd like to support? Found a bug? Want to optimize the encryption?
