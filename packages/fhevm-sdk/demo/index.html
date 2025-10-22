@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHEVM SDK Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #555;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .status {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .status-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+        .status-item.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-item.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 FHEVM SDK Demo</h1>
+        
+        <div class="section">
+            <h3>📊 Status</h3>
+            <div class="status">
+                <div id="wallet-status" class="status-item">Wallet: Not Connected</div>
+                <div id="fhevm-status" class="status-item">FHEVM: Not Ready</div>
+                <div id="chain-status" class="status-item">Chain: Unknown</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>🔗 Wallet Connection</h3>
+            <button id="connect-btn">Connect MetaMask</button>
+            <button id="disconnect-btn" disabled>Disconnect</button>
+            <div id="wallet-info"></div>
+        </div>
+
+        <div class="section">
+            <h3>🔐 FHEVM Operations</h3>
+            <button id="init-btn" disabled>Initialize FHEVM</button>
+            <button id="encrypt-btn" disabled>Encrypt Values [42, 100]</button>
+            <button id="decrypt-btn" disabled>Decrypt Result</button>
+            <div id="operation-info"></div>
+        </div>
+
+        <div class="section">
+            <h3>📋 Results</h3>
+            <div id="results"></div>
+        </div>
+
+        <div class="section">
+            <h3>📚 Code Examples</h3>
+            <h4>React Usage:</h4>
+            <pre><code>import { useFHEVM, createSepoliaConfig } from 'fhevm-sdk';
+
+function App() {
+  const fhevm = useFHEVM();
+  
+  const handleConnect = async () => {
+    await fhevm.connect();
+    await fhevm.initialize(createSepoliaConfig());
+  };
+  
+  const handleEncrypt = async () => {
+    const result = await fhevm.encrypt('0x1234...', [42, 100]);
+    console.log('Encrypted:', result);
+  };
+  
+  return (
+    &lt;div&gt;
+      &lt;button onClick={handleConnect}&gt;Connect&lt;/button&gt;
+      &lt;button onClick={handleEncrypt}&gt;Encrypt&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+            <h4>Vue Usage:</h4>
+            <pre><code>&lt;script setup&gt;
+import { useFHEVM, createSepoliaConfig } from 'fhevm-sdk';
+
+const fhevm = useFHEVM();
+
+const handleConnect = async () => {
+  await fhevm.connect();
+  await fhevm.initialize(createSepoliaConfig());
+};
+&lt;/script&gt;</code></pre>
+
+            <h4>Node.js Usage:</h4>
+            <pre><code>import { createFHEVMNode, createProviderAndSigner } from 'fhevm-sdk';
+
+const fhevmNode = createFHEVMNode();
+const { provider, signer } = createProviderAndSigner(rpcUrl, privateKey);
+
+await fhevmNode.initialize(config, provider, signer);
+const result = await fhevmNode.encrypt(contractAddress, [42, 100]);</code></pre>
+        </div>
+    </div>
+
+    <script type="module">
+        // This would be the actual demo implementation
+        // For now, it's just a static demo page
+        console.log('FHEVM SDK Demo loaded');
+    </script>
+</body>
+</html>

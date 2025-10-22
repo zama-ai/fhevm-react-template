@@ -1,0 +1,75 @@
+{
+  "name": "fhevm-sdk",
+  "version": "1.0.0",
+  "description": "Universal FHEVM SDK - Framework-agnostic SDK for building privacy-preserving dApps",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "jest",
+    "lint": "eslint src --ext .ts,.tsx",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "fhevm",
+    "privacy",
+    "encryption",
+    "blockchain",
+    "ethereum",
+    "sdk",
+    "framework-agnostic"
+  ],
+  "author": "mk83",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zama-ai/fhevm-react-template.git",
+    "directory": "packages/fhevm-sdk"
+  },
+  "dependencies": {
+    "@zama-fhe/relayer-sdk": "^0.1.2",
+    "ethers": "^6.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/jest": "^29.0.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "rollup": "^3.0.0",
+    "rollup-plugin-dts": "^5.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "vue": ">=3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  },
+  "directories": {
+    "example": "examples"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/zama-ai/fhevm-react-template/issues"
+  },
+  "homepage": "https://github.com/zama-ai/fhevm-react-template#readme"
+}

@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.3.0",
   "license": "BSD-3-Clause-Clear",
+  "author": "mk83 (Enhanced with Universal FHEVM SDK)",
   "engines": {
     "node": ">=20.0.0"
   },

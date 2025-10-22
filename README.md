@@ -1,4 +1,34 @@
-# FHEVM React Template
+# FHEVM React Template + Universal SDK
+
+This repository contains the original FHEVM React Template enhanced with a **Universal FHEVM SDK** created by **mk83** for the Zama Developer Program Bounty Track - October 2025.
+
+## 🚀 What's New: Universal FHEVM SDK
+
+The `packages/fhevm-sdk/` directory contains a complete framework-agnostic SDK that extends the original template with:
+
+- **Framework Support**: React, Vue, Node.js
+- **Wagmi-like API**: Familiar developer experience
+- **Easy Setup**: Simple configuration and usage
+- **Reusable Components**: EncryptButton, DecryptButton
+- **Comprehensive Documentation**: Examples, demo, guides
+
+## 📁 Repository Structure
+
+- **`packages/site/`** - Original FHEVM React Template
+- **`packages/fhevm-sdk/`** - Universal FHEVM SDK (Bounty Submission)
+- **`scripts/`** - Setup and deployment scripts
+
+## 🎯 Bounty Submission
+
+This repository serves as my submission for the **Zama Developer Program Bounty Track - October 2025**: "Build an Universal FHEVM SDK"
+
+**Developer**: mk83  
+**Bounty Track**: October 2025  
+**Submission**: Universal FHEVM SDK in `packages/fhevm-sdk/`
+
+---
+
+## Original FHEVM React Template
 
 The FHEVM React Template is an ultra-minimal React project for building and running an FHEVM-enabled dApp.
 It works alongside the [fhevm-hardhat-template](https://github.com/zama-ai/fhevm-hardhat-template)
