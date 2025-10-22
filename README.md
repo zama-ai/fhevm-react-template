@@ -268,6 +268,7 @@ All contributions welcome! 🙌
 
 - GitHub: [@dharmanan](https://github.com/dharmanan)
 - Repository: [fhevm-react-template](https://github.com/dharmanan/fhevm-react-template)
+- Bonus Demo: [winnerprice.vercel.app](https://winnerprice.vercel.app) ([source](https://github.com/dharmanan/winnerprice))
 
 ## 📄 License
 
