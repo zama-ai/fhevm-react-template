@@ -1,3 +1,4 @@
+ bounty-submission-october-2025
 // Core exports
 export { getFHEVMClient, createFHEVMClient } from './core/fhevm-client';
 export { createEncryptedInput, encryptSingleValue, EncryptionUtils } from './core/encryption';
@@ -76,3 +77,10 @@ export function createHardhatConfig(rpcUrl = 'http://127.0.0.1:8545') {
     mockChains: [31337],
   };
 }
+export * from "./core/index";
+export * from "./storage/index";
+export * from "./fhevmTypes";
+export * from "./FhevmDecryptionSignature";
+export * from "./react/index";
+
+main

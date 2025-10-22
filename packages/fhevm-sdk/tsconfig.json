@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+ bounty-submission-october-2025
     "target": "ES2020",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "allowJs": true,
@@ -29,3 +30,20 @@
     "**/*.test.tsx"
   ]
 }
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "declaration": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "resolveJsonModule": true,
+    "jsx": "react-jsx",
+    "types": ["node"]
+  },
+  "include": ["src/**/*"]
+}
+ main
