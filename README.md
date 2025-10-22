@@ -69,7 +69,18 @@ cd examples/node-example && pnpm install && node src/index.ts
 
 ## 🌐 Live Demo
 
-Want to see it in action? Deploy the React + Next.js example to Vercel with one click:
+Want to see it in action? Two options:
+
+### 1️⃣ Fully Functional Live Application
+**[🏆 WinnerPrice - Live Auction Demo](https://winnerprice.vercel.app)** - Complete working auction app deployed on Vercel
+
+- Real FHEVM encryption with Zama Relayer SDK
+- Multi-bid auction simulation (1 manual + 9 simulated)
+- Sepolia testnet integration
+- Full source: [dharmanan/winnerprice](https://github.com/dharmanan/winnerprice)
+
+### 2️⃣ Deploy Your Own Template
+Deploy the React + Next.js example to Vercel with one click:
 
 [![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/dharmanan/vercel-winnerprice)
 
