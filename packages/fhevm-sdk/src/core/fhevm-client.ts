@@ -22,7 +22,10 @@ export class FHEVMClientImpl implements FHEVMClient {
       this.config = config;
       
       // Dynamic import to avoid bundling issues
-      const { createInstance } = await import('@zama-fhe/relayer-sdk');
+      const { initSDK, createInstance } = await import('@zama-fhe/relayer-sdk');
+      
+      // Initialize SDK first (load WASM)
+      await initSDK();
       
       const instance = await createInstance({
         chainId: config.chainId,
