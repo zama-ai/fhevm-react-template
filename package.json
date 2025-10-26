@@ -11,6 +11,6 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "echo 'Skipping genabi for production deployment'"
+    "postinstall": "echo 'Production deployment - ABI files already exist'"
   }
 }
