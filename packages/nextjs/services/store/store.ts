@@ -32,8 +32,8 @@ export const useGlobalState = create<GlobalState>(set => ({
   setIsNativeCurrencyFetching: (newValue: boolean): void =>
     set(state => ({ nativeCurrency: { ...state.nativeCurrency, isFetching: newValue } })),
   targetNetwork: {
-    ...scaffoldConfig.targetNetworks[0],
-    ...NETWORKS_EXTRA_DATA[scaffoldConfig.targetNetworks[0].id],
+    ...scaffoldConfig.targetNetworks[1], // Use Sepolia (index 1) instead of Hardhat (index 0)
+    ...NETWORKS_EXTRA_DATA[scaffoldConfig.targetNetworks[1].id],
   },
   setTargetNetwork: (newTargetNetwork: ChainWithAttributes) => set(() => ({ targetNetwork: newTargetNetwork })),
 }));
