@@ -60,17 +60,15 @@ function getFHECounterByChainId(
     return { abi: FHECounterABI.abi };
   }
 
-  const entry =
-    FHECounterAddresses[chainId.toString() as keyof typeof FHECounterAddresses];
+  const address = FHECounterAddresses[chainId.toString() as keyof typeof FHECounterAddresses];
 
-  if (!("address" in entry) || entry.address === ethers.ZeroAddress) {
+  if (!address || address === ethers.ZeroAddress) {
     return { abi: FHECounterABI.abi, chainId };
   }
 
   return {
-    address: entry?.address as `0x${string}` | undefined,
-    chainId: entry?.chainId ?? chainId,
-    chainName: entry?.chainName,
+    address: address as `0x${string}`,
+    chainId: chainId,
     abi: FHECounterABI.abi,
   };
 }

@@ -17,7 +17,6 @@ export const FHECounterDemo = () => {
   const {
     provider,
     chainId,
-    accounts,
     isConnected,
     connect,
     ethersSigner,
@@ -33,8 +32,6 @@ export const FHECounterDemo = () => {
 
   const {
     instance: fhevmInstance,
-    status: fhevmStatus,
-    error: fhevmError,
   } = useFhevm({
     provider,
     chainId,
@@ -70,13 +67,6 @@ export const FHECounterDemo = () => {
   // - 1x "Decrement" button (to decrement the FHECounter)
   //////////////////////////////////////////////////////////////////////////////
 
-  const buttonClass =
-    "inline-flex items-center justify-center rounded-xl bg-black px-4 py-4 font-semibold text-white shadow-sm " +
-    "transition-colors duration-200 hover:bg-blue-700 active:bg-blue-800 " +
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 " +
-    "disabled:opacity-50 disabled:pointer-events-none";
-
-  const titleClass = "font-semibold text-black text-lg mt-4";
 
   if (!isConnected) {
     return (
@@ -223,46 +213,3 @@ export const FHECounterDemo = () => {
   );
 };
 
-function printProperty(name: string, value: unknown) {
-  let displayValue: string;
-
-  if (typeof value === "boolean") {
-    return printBooleanProperty(name, value);
-  } else if (typeof value === "string" || typeof value === "number") {
-    displayValue = String(value);
-  } else if (typeof value === "bigint") {
-    displayValue = String(value);
-  } else if (value === null) {
-    displayValue = "null";
-  } else if (value === undefined) {
-    displayValue = "undefined";
-  } else if (value instanceof Error) {
-    displayValue = value.message;
-  } else {
-    displayValue = JSON.stringify(value);
-  }
-  return (
-    <p className="text-black">
-      {name}:{" "}
-      <span className="font-mono font-semibold text-black">{displayValue}</span>
-    </p>
-  );
-}
-
-function printBooleanProperty(name: string, value: boolean) {
-  if (value) {
-    return (
-      <p className="text-black">
-        {name}:{" "}
-        <span className="font-mono font-semibold text-green-500">true</span>
-      </p>
-    );
-  }
-
-  return (
-    <p className="text-black">
-      {name}:{" "}
-      <span className="font-mono font-semibold text-red-500">false</span>
-    </p>
-  );
-}

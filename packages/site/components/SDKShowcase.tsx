@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import Link from 'next/link';
 
 /**
  * SDK Showcase component - demonstrates the Universal FHEVM SDK concept
@@ -378,15 +379,15 @@ async function main() {
                 View on GitHub
               </a>
               
-              <a 
-                href="/" 
-                className="group inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl hover:bg-white/30 transition-all duration-300 border border-white/30"
-              >
+                      <Link 
+                        href="/" 
+                        className="group inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl hover:bg-white/30 transition-all duration-300 border border-white/30"
+                      >
                 <svg className="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Back to Home
-              </a>
+                        Back to Home
+                      </Link>
             </div>
           </div>
         </div>
