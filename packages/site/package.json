@@ -15,7 +15,8 @@
     "dev-webpack": "npm run clean && npm run genabi && next dev",
     "genabi": "node ./scripts/genabi.mjs",
     "ishhrunning": "node ./scripts/is-hardhat-node-running.mjs",
-    "build": "next build",
+    "build": "npm run clean && next build",
+    "vercel-build": "npm run clean && next build",
     "start": "next start",
     "lint": "next lint"
   },
