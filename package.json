@@ -11,6 +11,6 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "cd ./packages/site/ && npm run genabi"
+    "postinstall": "echo 'Skipping genabi for production deployment'"
   }
 }
