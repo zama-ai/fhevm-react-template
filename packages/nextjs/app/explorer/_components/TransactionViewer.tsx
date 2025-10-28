@@ -107,26 +107,26 @@ export const TransactionViewer = ({
     <div className="space-y-4">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">💸 Transactions</h2>
-        <div className="text-sm text-base-content/70">
+        <h2 className="text-xl font-semibold">Transactions</h2>
+        <div className="text-sm text-base-content/60">
           {filteredTransactions.length} of {allTransactions.length} transactions
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1">
           <input
             type="text"
-            placeholder="Search by hash, function, or address..."
-            className="input input-bordered w-full"
+            placeholder="Search transactions..."
+            className="input input-sm input-bordered w-full"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="flex gap-2">
           <select
-            className="select select-bordered"
+            className="select select-sm select-bordered"
             value={filterByStatus}
             onChange={(e) => setFilterByStatus(e.target.value as "all" | "success" | "failed")}
           >

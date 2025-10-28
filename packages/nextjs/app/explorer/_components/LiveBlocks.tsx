@@ -51,9 +51,9 @@ export const LiveBlocks = ({
     <div className="space-y-4">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">📦 Live Blocks</h2>
+        <h2 className="text-xl font-semibold">Recent Blocks</h2>
         <button 
-          className="btn btn-primary btn-sm"
+          className="btn btn-sm btn-outline"
           onClick={onRefresh}
           disabled={isLoading}
         >
@@ -71,103 +71,92 @@ export const LiveBlocks = ({
       </div>
 
       {/* Blocks List */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {blocks.map((block) => (
-          <div key={block.number.toString()} className="card bg-base-200 shadow-sm">
-            <div className="card-body p-4">
-              {/* Block Header */}
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h3 className="text-lg font-semibold">
-                    Block #{block.number.toString()}
-                  </h3>
-                  <p className="text-sm text-base-content/70">
-                    {formatTimestamp(block.timestamp)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="badge badge-primary">
-                    {block.transactions.length} txns
-                  </div>
-                  <div className="text-sm text-base-content/70 mt-1">
-                    Gas Used: {formatGasUsed(block.gasUsed)}
-                  </div>
-                </div>
-              </div>
-
-              {/* Block Details */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div>
-                  <div className="text-sm font-medium text-base-content/70">Hash</div>
-                  <div className="font-mono text-sm break-all">
-                    {block.hash}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-base-content/70">Parent Hash</div>
-                  <div className="font-mono text-sm break-all">
-                    {block.parentHash}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-base-content/70">Miner</div>
-                  <div className="font-mono text-sm">
-                    {block.miner}
-                  </div>
-                </div>
-              </div>
-
-              {/* Transactions */}
+          <div key={block.number.toString()} className="border border-base-300 rounded-lg p-4 hover:bg-base-50 transition-colors">
+            {/* Block Header */}
+            <div className="flex justify-between items-start mb-3">
               <div>
-                <h4 className="text-md font-medium mb-2">Transactions</h4>
-                <div className="space-y-2">
-                  {block.transactions.slice(0, 5).map((tx, index) => {
-                    const txWithFunction = decodeTransactionData(tx as TransactionWithFunction);
-                    return (
-                      <div 
-                        key={tx.hash || index}
-                        className="flex justify-between items-center p-2 bg-base-100 rounded cursor-pointer hover:bg-base-300 transition-colors"
-                        onClick={() => onTransactionSelect(tx)}
-                      >
-                        <div className="flex-1 min-w-0">
-                          <div className="font-mono text-sm break-all">
-                            {tx.hash}
-                          </div>
-                          {txWithFunction.functionName && (
-                            <div className="text-sm text-base-content/70">
-                              {getFunctionDetails(txWithFunction)}
-                            </div>
-                          )}
+                <h3 className="text-lg font-semibold">
+                  Block #{block.number.toString()}
+                </h3>
+                <p className="text-sm text-base-content/60">
+                  {formatTimestamp(block.timestamp)}
+                </p>
+              </div>
+              <div className="text-right">
+                <div className="badge badge-outline">
+                  {block.transactions.length} txns
+                </div>
+                <div className="text-sm text-base-content/60 mt-1">
+                  Gas: {formatGasUsed(block.gasUsed)}
+                </div>
+              </div>
+            </div>
+
+            {/* Block Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 text-sm">
+              <div>
+                <span className="text-base-content/60">Hash:</span>
+                <div className="font-mono text-xs break-all mt-1">
+                  {block.hash}
+                </div>
+              </div>
+              <div>
+                <span className="text-base-content/60">Miner:</span>
+                <div className="font-mono text-xs mt-1">
+                  {block.miner}
+                </div>
+              </div>
+            </div>
+
+            {/* Transactions */}
+            <div>
+              <h4 className="text-sm font-medium mb-2 text-base-content/80">Transactions</h4>
+              <div className="space-y-1">
+                {block.transactions.slice(0, 3).map((tx, index) => {
+                  const txWithFunction = decodeTransactionData(tx as TransactionWithFunction);
+                  return (
+                    <div 
+                      key={tx.hash || index}
+                      className="flex justify-between items-center p-2 bg-base-100 rounded cursor-pointer hover:bg-base-200 transition-colors"
+                      onClick={() => onTransactionSelect(tx)}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="font-mono text-xs break-all">
+                          {tx.hash}
                         </div>
-                        <div className="text-right ml-4">
-                          <div className="text-sm">
-                            {getTransactionStatus(tx)}
+                        {txWithFunction.functionName && (
+                          <div className="text-xs text-base-content/60">
+                            {getFunctionDetails(txWithFunction)}
                           </div>
-                          <div className="text-xs text-base-content/70">
-                            Gas: {tx.gas?.toString() || "—"}
-                          </div>
+                        )}
+                      </div>
+                      <div className="text-right ml-4">
+                        <div className="text-xs">
+                          {getTransactionStatus(tx)}
                         </div>
                       </div>
-                    );
-                  })}
-                  
-                  {block.transactions.length > 5 && (
-                    <div className="text-center text-sm text-base-content/70">
-                      ... and {block.transactions.length - 5} more transactions
                     </div>
-                  )}
-                </div>
+                  );
+                })}
+                
+                {block.transactions.length > 3 && (
+                  <div className="text-center text-xs text-base-content/60 py-1">
+                    ... and {block.transactions.length - 3} more transactions
+                  </div>
+                )}
               </div>
+            </div>
 
-              {/* Actions */}
-              <div className="flex justify-end mt-4">
-                <button 
-                  className="btn btn-outline btn-sm"
-                  onClick={() => onBlockSelect(block)}
-                >
-                  View Details
-                </button>
-              </div>
+            {/* Actions */}
+            <div className="flex justify-end mt-3">
+              <button 
+                className="btn btn-sm btn-outline"
+                onClick={() => onBlockSelect(block)}
+              >
+                View Details
+              </button>
             </div>
           </div>
         ))}

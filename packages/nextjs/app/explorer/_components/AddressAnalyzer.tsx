@@ -76,42 +76,40 @@ export const AddressAnalyzer = ({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <h2 className="text-2xl font-bold">👤 Address Analyzer</h2>
+      <h2 className="text-xl font-semibold">Address Analyzer</h2>
 
       {/* Address Input */}
-      <div className="card bg-base-200 shadow-sm">
-        <div className="card-body">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="label">
-                <span className="label-text">Ethereum Address</span>
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="0x..."
-                  className="input input-bordered flex-1 font-mono"
-                  value={addressInput}
-                  onChange={(e) => setAddressInput(e.target.value)}
-                />
-                <button 
-                  type="submit" 
-                  className="btn btn-primary"
-                  disabled={isLoading || !addressInput}
-                >
-                  {isLoading ? (
-                    <>
-                      <span className="loading loading-spinner loading-xs"></span>
-                      Analyzing...
-                    </>
-                  ) : (
-                    "Analyze"
-                  )}
-                </button>
-              </div>
+      <div className="border border-base-300 rounded-lg p-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div>
+            <label className="label">
+              <span className="label-text text-sm">Ethereum Address</span>
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="0x..."
+                className="input input-sm input-bordered flex-1 font-mono"
+                value={addressInput}
+                onChange={(e) => setAddressInput(e.target.value)}
+              />
+              <button 
+                type="submit" 
+                className="btn btn-sm btn-primary"
+                disabled={isLoading || !addressInput}
+              >
+                {isLoading ? (
+                  <>
+                    <span className="loading loading-spinner loading-xs"></span>
+                    Analyzing...
+                  </>
+                ) : (
+                  "Analyze"
+                )}
+              </button>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
 
       {/* Error Display */}

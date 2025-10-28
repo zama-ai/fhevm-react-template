@@ -8,6 +8,7 @@ import { ContractInspector } from "./ContractInspector";
 import { LiveBlocks } from "./LiveBlocks";
 import { BlockDetails } from "./BlockDetails";
 import { TransactionDetails } from "./TransactionDetails";
+import { Faucet } from "./Faucet";
 
 type TabType = "blocks" | "transactions" | "addresses" | "contracts";
 
@@ -55,10 +56,10 @@ export const BlockExplorer = ({ currentBlockNumber, publicClient }: BlockExplore
   }, [currentBlockNumber, publicClient]);
 
   const tabs = [
-    { id: "blocks" as TabType, label: "📦 Live Blocks", icon: "📦" },
-    { id: "transactions" as TabType, label: "💸 Transactions", icon: "💸" },
-    { id: "addresses" as TabType, label: "👤 Addresses", icon: "👤" },
-    { id: "contracts" as TabType, label: "📋 Contracts", icon: "📋" },
+    { id: "blocks" as TabType, label: "Blocks", icon: "📦" },
+    { id: "transactions" as TabType, label: "Transactions", icon: "💸" },
+    { id: "addresses" as TabType, label: "Addresses", icon: "👤" },
+    { id: "contracts" as TabType, label: "Contracts", icon: "📋" },
   ];
 
   const renderTabContent = () => {
@@ -102,48 +103,49 @@ export const BlockExplorer = ({ currentBlockNumber, publicClient }: BlockExplore
   };
 
   return (
-    <div className="space-y-6">
-      {/* Tab Navigation */}
-      <div className="tabs tabs-boxed bg-base-200 p-1">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            className={`tab tab-lg ${activeTab === tab.id ? "tab-active" : ""}`}
-            onClick={() => setActiveTab(tab.id)}
-          >
-            <span className="mr-2">{tab.icon}</span>
-            {tab.label}
-          </button>
-        ))}
+    <div className="max-w-7xl mx-auto">
+      {/* Header Section */}
+      <div className="mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          {/* Network Info */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-sm font-medium">{publicClient?.chain?.name || "Unknown"}</span>
+              <span className="text-xs text-base-content/60">#{publicClient?.chain?.id || "—"}</span>
+            </div>
+            <div className="text-sm text-base-content/60">
+              Block {currentBlockNumber ? currentBlockNumber.toString() : "—"}
+            </div>
+          </div>
+
+          {/* Faucet */}
+          <Faucet publicClient={publicClient} />
+        </div>
       </div>
 
-      {/* Network Status */}
-      <div className="stats shadow bg-base-200">
-        <div className="stat">
-          <div className="stat-title">Current Block</div>
-          <div className="stat-value text-primary">
-            {currentBlockNumber ? currentBlockNumber.toString() : "—"}
-          </div>
-          <div className="stat-desc">Latest block number</div>
-        </div>
-        <div className="stat">
-          <div className="stat-title">Network</div>
-          <div className="stat-value text-secondary">
-            {publicClient?.chain?.name || "Unknown"}
-          </div>
-          <div className="stat-desc">Chain ID: {publicClient?.chain?.id || "—"}</div>
-        </div>
-        <div className="stat">
-          <div className="stat-title">Blocks Loaded</div>
-          <div className="stat-value text-accent">
-            {blocks.length}
-          </div>
-          <div className="stat-desc">Recent blocks</div>
-        </div>
+      {/* Tab Navigation */}
+      <div className="border-b border-base-300 mb-6">
+        <nav className="flex space-x-8">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === tab.id
+                  ? "border-primary text-primary"
+                  : "border-transparent text-base-content/60 hover:text-base-content hover:border-base-300"
+              }`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <span className="mr-2">{tab.icon}</span>
+              {tab.label}
+            </button>
+          ))}
+        </nav>
       </div>
 
       {/* Tab Content */}
-      <div className="min-h-[600px]">
+      <div className="min-h-[500px]">
         {renderTabContent()}
       </div>
 

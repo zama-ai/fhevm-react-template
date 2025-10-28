@@ -76,7 +76,7 @@ export const ContractInspector = ({ publicClient }: ContractInspectorProps) => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <h2 className="text-2xl font-bold">📋 Contract Inspector</h2>
+      <h2 className="text-xl font-semibold">Contract Inspector</h2>
 
       {/* Contracts List */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
