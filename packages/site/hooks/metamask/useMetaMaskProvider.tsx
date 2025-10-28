@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   ReactNode,
   useCallback,
@@ -303,9 +303,9 @@ interface MetaMaskProviderProps {
 
 const MetaMaskContext = createContext<UseMetaMaskState | undefined>(undefined);
 
-export const MetaMaskProvider: React.FC<MetaMaskProviderProps> = ({
+export function MetaMaskProvider({
   children,
-}) => {
+}: MetaMaskProviderProps) {
   const { provider, chainId, accounts, isConnected, error, connect } =
     useMetaMaskInternal();
   return (
@@ -322,7 +322,7 @@ export const MetaMaskProvider: React.FC<MetaMaskProviderProps> = ({
       {children}
     </MetaMaskContext.Provider>
   );
-};
+}
 
 export function useMetaMask() {
   const context = useContext(MetaMaskContext);

@@ -1,7 +1,7 @@
 {
   "name": "fhevm-react-template",
   "version": "0.3.0",
-  "private": true,
+  "private": false,
   "license": "BSD-3-Clause-Clear",
   "homepage": "https://github.com/zama-ai/fhevm-react-template/blob/main/packages/site/README.md",
   "repository": {

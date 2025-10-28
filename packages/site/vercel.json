@@ -2,5 +2,9 @@
   "buildCommand": "npm run vercel-build",
   "outputDirectory": ".next",
   "installCommand": "npm install",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "public": true,
+  "github": {
+    "silent": false
+  }
 }

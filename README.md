@@ -1,6 +1,6 @@
 # FHEVM React Template + Universal SDK
 
-This repository contains the original FHEVM React Template enhanced with a **Universal FHEVM SDK** created by **mk83** for the Zama Developer Program Bounty Track - October 2025.
+This repository contains the original FHEVM React Template enhanced with a **Universal FHEVM SDK** created by **mk83** for building privacy-preserving dApps with FHEVM.
 
 ## 🚀 What's New: Universal FHEVM SDK
 
@@ -15,16 +15,15 @@ The `packages/fhevm-sdk/` directory contains a complete framework-agnostic SDK t
 ## 📁 Repository Structure
 
 - **`packages/site/`** - Original FHEVM React Template
-- **`packages/fhevm-sdk/`** - Universal FHEVM SDK (Bounty Submission)
+- **`packages/fhevm-sdk/`** - Universal FHEVM SDK
 - **`scripts/`** - Setup and deployment scripts
 
-## 🎯 Bounty Submission
+## 🎯 Universal FHEVM SDK
 
-This repository serves as my submission for the **Zama Developer Program Bounty Track - October 2025**: "Build an Universal FHEVM SDK"
+This repository showcases a **Universal FHEVM SDK** that enables developers to build privacy-preserving dApps across multiple frameworks.
 
 **Developer**: mk83  
-**Bounty Track**: October 2025  
-**Submission**: Universal FHEVM SDK in `packages/fhevm-sdk/`
+**Project**: Universal FHEVM SDK in `packages/fhevm-sdk/`
 
 ---
 

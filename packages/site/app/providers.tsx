@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 import { MetaMaskProvider } from "@/hooks/metamask/useMetaMaskProvider";
 import { InMemoryStorageProvider } from "@/hooks/useInMemoryStorage";

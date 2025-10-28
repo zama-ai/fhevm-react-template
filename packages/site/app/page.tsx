@@ -17,10 +17,10 @@ export default function Home() {
             </div>
             
             <div className="relative z-10">
-              <div className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium mb-8">
-                <span className="w-2 h-2 bg-green-400 rounded-full mr-3 animate-pulse"></span>
-                Zama Developer Program Bounty Track - October 2025
-              </div>
+            <div className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium mb-8">
+              <span className="w-2 h-2 bg-green-400 rounded-full mr-3 animate-pulse"></span>
+              Universal FHEVM SDK - Production Ready
+            </div>
               
               <h1 className="text-5xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
                 🚀 Universal FHEVM SDK
@@ -56,9 +56,9 @@ export default function Home() {
                 </a>
               </div>
               
-              <div className="text-lg opacity-75">
-                Created by <span className="font-semibold text-yellow-300">mk83</span> • Privacy-First Developer
-              </div>
+            <div className="text-lg opacity-75">
+              Built by <span className="font-semibold text-yellow-300">mk83</span> • Privacy-First Developer
+            </div>
             </div>
           </div>
         </div>
@@ -157,7 +157,7 @@ export default function Home() {
             
             <div className="border-t border-gray-200 mt-8 pt-8">
               <p className="text-gray-500 text-sm">
-                Built with ❤️ for the Zama Developer Program • 
+                Built with ❤️ for the FHEVM Community • 
                 <span className="font-semibold text-blue-600"> Universal FHEVM SDK</span> by 
                 <span className="font-semibold text-purple-600"> mk83</span>
               </p>

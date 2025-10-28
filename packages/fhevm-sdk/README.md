@@ -2,7 +2,7 @@
 
 Universal FHEVM SDK - Framework-agnostic SDK for building privacy-preserving dApps with FHEVM.
 
-> **Created by mk83** for Zama Developer Program Bounty Track - October 2025
+> **Created by mk83** - Privacy-First Developer
 
 ## Features
 
@@ -216,9 +216,9 @@ npm run lint
 
 **mk83** - Blockchain Developer & Privacy Enthusiast
 
-- 🏆 **Zama Developer Program** - October 2025 Bounty Track Winner
 - 🔒 **Specialization** - Privacy-preserving blockchain applications
 - 🚀 **Mission** - Making FHEVM accessible to all developers
+- 💡 **Focus** - Building developer-friendly tools for Web3
 
 ## License
 

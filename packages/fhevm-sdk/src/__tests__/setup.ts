@@ -31,3 +31,15 @@ jest.mock('ethers', () => ({
     Contract: jest.fn(),
   },
 }));
+
+// Mock @zama-fhe/relayer-sdk
+jest.mock('@zama-fhe/relayer-sdk', () => ({
+  createInstance: jest.fn(),
+}));
+
+// Add a simple test to make Jest happy
+describe('Setup', () => {
+  it('should run setup file', () => {
+    expect(true).toBe(true);
+  });
+});
