@@ -63,6 +63,7 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },
+  "packageManager": "pnpm@9.12.3",
   "pnpm": {
     "onlyBuiltDependencies": [
       "bufferutil",
