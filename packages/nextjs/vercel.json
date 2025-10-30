@@ -1,3 +1,4 @@
 {
-  "installCommand": "yarn install"
+  "installCommand": "pnpm -w install",
+  "buildCommand": "pnpm -w sdk:build && NEXT_PUBLIC_IGNORE_BUILD_ERROR=true pnpm build"
 }
