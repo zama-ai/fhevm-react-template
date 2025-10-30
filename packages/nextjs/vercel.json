@@ -1,4 +1,4 @@
 {
-  "installCommand": "pnpm -w install",
+  "installCommand": "pnpm -w install --no-frozen-lockfile",
   "buildCommand": "pnpm -w sdk:build && NEXT_PUBLIC_IGNORE_BUILD_ERROR=true pnpm build"
 }
