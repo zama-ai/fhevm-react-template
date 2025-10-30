@@ -37,7 +37,7 @@ async function _getDB(): Promise<IDBPDatabase<PublicParamsDB> | undefined> {
     return undefined;
   }
   __dbPromise = openDB<PublicParamsDB>("fhevm", 1, {
-    upgrade(db: IDBPDatabase<PublicParamsDB>) {
+    upgrade(db) {
       if (!db.objectStoreNames.contains("paramsStore")) {
         db.createObjectStore("paramsStore", { keyPath: "acl" });
       }

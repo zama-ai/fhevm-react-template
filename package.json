@@ -45,7 +45,7 @@
     "next:lint": "pnpm --filter ./packages/nextjs lint",
     "next:serve": "pnpm --filter ./packages/nextjs serve",
     "precommit": "lint-staged",
-    
+    "preinstall": "pnpm sdk:build",
     "start": "pnpm --filter ./packages/nextjs dev",
     "test": "pnpm hardhat:test",
     "vercel": "pnpm --filter ./packages/nextjs vercel",
@@ -63,7 +63,6 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },
-  "packageManager": "pnpm@9.12.3",
   "pnpm": {
     "onlyBuiltDependencies": [
       "bufferutil",
