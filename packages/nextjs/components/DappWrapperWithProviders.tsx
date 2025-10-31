@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { InMemoryStorageProvider } from "@fhevm-sdk";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
@@ -39,9 +38,7 @@ export const DappWrapperWithProviders = ({ children }: { children: React.ReactNo
           <ProgressBar height="3px" color="#2299dd" />
           <div className={`flex flex-col min-h-screen`}>
             <Header />
-            <main className="relative flex flex-col flex-1">
-              <InMemoryStorageProvider>{children}</InMemoryStorageProvider>
-            </main>
+            <main className="relative flex flex-col flex-1">{children}</main>
           </div>
           <Toaster />
         </RainbowKitProvider>
