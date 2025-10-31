@@ -18,6 +18,7 @@
     "deploy:sepolia": "pnpm hardhat:deploy:sepolia && pnpm generate",
     "fork": "pnpm hardhat:fork",
     "format": "pnpm next:format && pnpm hardhat:format",
+    "sdk": "pnpm --filter fhevm-sdk",
     "sdk:build": "pnpm --filter ./packages/fhevm-sdk build",
     "sdk:watch": "pnpm --filter ./packages/fhevm-sdk watch",
     "sdk:test": "pnpm --filter ./packages/fhevm-sdk test",
