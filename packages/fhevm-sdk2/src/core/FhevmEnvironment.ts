@@ -6,9 +6,12 @@ export type FhevmEnvironmentInitOptions = {
   sdkUrl?: string;
 };
 
+export type FhevmEnvironmentStatus = 'sdk-loading' | 'sdk-loaded' | 'sdk-initializing' | 'sdk-initialized';
+
 export class FhevmEnvironment {
   private static _isFhevmInitialized = false;
   private static _fhevmInstance: FhevmInstance;
+  private static _onStatusChange: (status: FhevmEnvironmentStatus) => void;
   static async init(options?: FhevmEnvironmentInitOptions) {
     if (this._isFhevmInitialized) {
       return true;
@@ -16,8 +19,12 @@ export class FhevmEnvironment {
     const sdkUrl = options?.sdkUrl || SDK_CDN_URL;
     try {
       if (!loadjs.isDefined('relayer-sdk-js')) {
+        this._notify('sdk-loading');
         await loadjs(sdkUrl, 'relayer-sdk-js', { async: true, returnPromise: true });
+        this._notify('sdk-loaded');
+        this._notify('sdk-initializing');
         await (window as any).relayerSDK.initSDK();
+        this._notify('sdk-initialized');
       }
       this._isFhevmInitialized = true;
       return true;
@@ -30,6 +37,14 @@ export class FhevmEnvironment {
 
   static isFhevmInitialized(): boolean {
     return this._isFhevmInitialized;
+  }
+
+  static onStatusChange(handler: (e: FhevmEnvironmentStatus) => void) {
+    this._onStatusChange = handler;
+  }
+
+  private static _notify(status: FhevmEnvironmentStatus) {
+    this._onStatusChange?.(status);
   }
 
   static async getFhevmInstance(options: { walletClient?: any }) {
