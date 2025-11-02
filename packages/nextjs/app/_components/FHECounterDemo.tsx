@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { FhevmEnvironment } from "fhevm-sdk";
+import { FhevmEnvironment, useFHEDecryption, useFHEEncryption } from "fhevm-sdk";
 import { Hex, bytesToHex } from "viem";
-import { useAccount, useWalletClient } from "wagmi";
+import { useAccount } from "wagmi";
 import { RainbowKitCustomConnectButton } from "~~/components/helper/RainbowKitCustomConnectButton";
 import { useFHECounterClient } from "~~/hooks/fhecounter-example/useFHECounterClient";
 
@@ -15,9 +14,10 @@ import { useFHECounterClient } from "~~/hooks/fhecounter-example/useFHECounterCl
  */
 export const FHECounterDemo = () => {
   const { isConnected } = useAccount();
-  const [initialized, setInitialized] = useState(false);
 
   const { fhevmClient, contractClient } = useFHECounterClient();
+  const { canEncrypt, encryptWith } = useFHEEncryption({ client: fhevmClient });
+  const { canDecrypt, decrypt } = useFHEDecryption({ client: fhevmClient });
 
   const buttonClass =
     "inline-flex items-center justify-center px-6 py-3 font-semibold shadow-lg " +
@@ -71,17 +71,18 @@ export const FHECounterDemo = () => {
         <button
           className={secondaryButtonClass}
           onClick={async () => {
-            const res = await fhevmClient.encrypt(i => i.add32(1));
-            await contractClient.increment(bytesToHex(res.handles[0]), bytesToHex(res.inputProof));
+            // const res = await fhevmClient.userEncrypt(i => i.add32(1));
+            const res = await encryptWith(a => a.add32(1));
+            await contractClient.increment(bytesToHex(res!.handles[0]), bytesToHex(res!.inputProof));
           }}
         >
-          Increment +1
+          Increment +1 ({String(canEncrypt)})
         </button>
 
         <button
           className={secondaryButtonClass}
           onClick={async () => {
-            const res = await fhevmClient.encrypt(i => i.add32(1));
+            const res = await fhevmClient.userEncrypt(i => i.add32(1));
             await contractClient.decrement(bytesToHex(res.handles[0]), bytesToHex(res.inputProof));
           }}
         >
@@ -92,11 +93,12 @@ export const FHECounterDemo = () => {
           className={secondaryButtonClass}
           onClick={async () => {
             const cHandle = await contractClient.getCount();
-            const c = await fhevmClient.userDecrypt(cHandle);
+            const c = await decrypt(cHandle);
+            // const c = await fhevmClient.userDecrypt(cHandle);
             alert(`Current count: ${c}`); // Display current count
           }}
         >
-          Get count
+          Get count ({String(canDecrypt)})
         </button>
         <button
           className={secondaryButtonClass}
