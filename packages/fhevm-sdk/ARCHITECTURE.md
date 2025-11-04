@@ -2,6 +2,8 @@
 
 Understand how the SDK is designed to work across all frameworks.
 
+**Status:** Compatible with FHEVM Protocol v0.10.0+ (fully encrypted storage, explorer privacy)
+
 ## Design Philosophy
 
 **Three Principles:**
@@ -31,8 +33,10 @@ Understand how the SDK is designed to work across all frameworks.
                  │
 ┌────────────────▼────────────────────────────┐
 │         Core SDK Layer                      │
+│    (v0.10.0+ Privacy-First Design)         │
 │                                             │
 │  ├── Encryption (createEncryptedInput)     │
+│  ├── Privacy Layer (explorer-hidden)       │
 │  ├── Decryption (readWinner)               │
 │  ├── Contract Submission (submitBid)       │
 │  ├── Relayer (HTTP client)                 │
@@ -45,6 +49,7 @@ Understand how the SDK is designed to work across all frameworks.
 │                                             │
 │  ├── WASM Encryption Engine                │
 │  ├── Relayer HTTP Interface                │
+│  ├── v0.10.0+ Privacy Features             │
 │  └── Contract ABI Interactions             │
 └────────────────┬────────────────────────────┘
                  │

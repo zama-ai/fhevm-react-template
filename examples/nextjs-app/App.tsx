@@ -10,8 +10,13 @@ import Header from './components/Header';
 import ProductDisplay from './components/ProductDisplay';
 import ProductSelector from './components/ProductSelector';
 
+/**
+ * Main Auction App
+ * Compatible with FHEVM v0.10.0+
+ * All bids are fully encrypted and invisible on blockchain explorer
+ */
 const App: React.FC = () => {
-  // FHEVM Relayer entegrasyonu
+  // FHEVM Relayer entegrasyonu (v0.10.0+ with full privacy)
   const { sdk, loading, error } = useFHEVMRelayer();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   

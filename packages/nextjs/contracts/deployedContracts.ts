@@ -192,6 +192,95 @@ const deployedContracts = {
       inheritedFunctions: {},
       deployedOnBlock: 123456,
     },
+    MockAuction: {
+      address: "0x0000000000000000000000000000000000000000", // Will be replaced after deploy
+      abi: [
+        {
+          "inputs": [],
+          "name": "join",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            { "internalType": "bytes", "name": "encryptedBid", "type": "bytes" }
+          ],
+          "name": "submitEncryptedBid",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            { "internalType": "address", "name": "", "type": "address" }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 0,
+    },
+  },
+  11155111: {
+    // Sepolia Testnet
+    MockAuction: {
+      address: "0x0000000000000000000000000000000000000000", // Will be replaced after deploy
+      abi: [
+        {
+          "inputs": [],
+          "name": "join",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            { "internalType": "bytes", "name": "encryptedBid", "type": "bytes" }
+          ],
+          "name": "submitEncryptedBid",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            { "internalType": "address", "name": "", "type": "address" }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            { "internalType": "address", "name": "", "type": "address" }
+          ],
+          "name": "joined",
+          "outputs": [
+            { "internalType": "bool", "name": "", "type": "bool" }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            { "internalType": "address", "name": "", "type": "address" }
+          ],
+          "name": "encryptedBids",
+          "outputs": [
+            { "internalType": "bytes", "name": "", "type": "bytes" }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 0,
+    },
   },
 } as const;
 

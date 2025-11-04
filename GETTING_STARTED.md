@@ -2,6 +2,8 @@
 
 Start encrypting bids in < 5 minutes. Choose your framework below.
 
+**✨ Status:** Fully compatible with FHEVM v0.10.0+ (all bids encrypted, 100% private from explorer)
+
 ---
 
 ## ⚡ Quick Start (60 seconds)

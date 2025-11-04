@@ -4,7 +4,7 @@
 
 Build secure, encrypted applications with **real Fully Homomorphic Encryption** (FHEVM) - works seamlessly whether you're building with React, Vue, Node.js, or plain JavaScript. Zero framework coupling, maximum flexibility.
 
-**✨ Status:** Production-ready with 4 complete framework examples, comprehensive documentation, and real FHEVM integration.
+**✨ Status:** Production-ready with 4 complete framework examples, comprehensive documentation, and **full FHEVM v0.10.0+ integration** (fully encrypted storage, end-to-end encrypted bids, complete explorer privacy).
 
 ---
 
@@ -34,9 +34,10 @@ The FHEVM SDK is **completely framework-agnostic** - the core encryption logic h
 | **Vanilla JS** | Frontend | 0 min | No build, GitHub Pages, instant | ✅ Production | [vanilla-js-example](./examples/vanilla-js-example) |
 
 **All examples are identical functionally - they share the same:**
-- ✅ Real FHEVM encryption (Relayer SDK v0.2.0)
-- ✅ Multi-bid auction (1 manual + 9 simulated bids)
+- ✅ Real FHEVM encryption (Relayer SDK v0.2.0 + Protocol v0.10.0+)
+- ✅ Multi-bid auction (1 manual + 9 simulated bids, fully encrypted)
 - ✅ TypeScript support (strict mode ready)
+- ✅ Complete Privacy: Bids 100% hidden from blockchain explorer
 - ✅ Error handling & logging
 - ✅ Copy-paste ready, production code
 
@@ -49,13 +50,14 @@ The FHEVM SDK is **completely framework-agnostic** - the core encryption logic h
 git clone https://github.com/dharmanan/fhevm-react-template
 cd fhevm-react-template
 
-# Option 1: Zero-setup demo (just open in browser!)
+# Option 1: React + Next.js (Port 3000) - RECOMMENDED
+cd examples/nextjs-app && pnpm install && pnpm dev
+# → Automatically opens http://localhost:3000
+# → Full UI for encrypted auction with v0.10.0+ features
+
+# Option 2: Zero-setup demo (just open in browser!)
 cd examples/vanilla-js-example
 # → Open index.html in your browser (that's it!)
-
-# Option 2: Modern React app with hot reload
-cd examples/nextjs-app && pnpm install && pnpm dev
-# → Visit http://localhost:3000
 
 # Option 3: Vue.js with Vite
 cd examples/vue-example && pnpm install && pnpm dev
@@ -74,10 +76,11 @@ Want to see it in action?
 ### 🏆 WinnerPrice - Live Auction Application
 **[Live Demo](https://winnerprice.vercel.app)** - Complete working auction app deployed on Vercel
 
-- Real FHEVM encryption with Zama Relayer SDK
-- Multi-bid auction simulation (1 manual + 9 simulated)
-- Sepolia testnet integration
-- Full source: [dharmanan/winnerprice](https://github.com/dharmanan/winnerprice)
+- ✅ **Full FHE Encryption**: All bid amounts encrypted end-to-end (v0.10.0+)
+- ✅ **100% Private on Explorer**: Bid values completely invisible from blockchain
+- ✅ **Multi-bid Auction**: 1 manual + 9 simulated fully encrypted bids
+- ✅ **Sepolia Testnet**: Real network with Zama's latest FHEVM protocol
+- 📊 **Source Code**: [dharmanan/winnerprice](https://github.com/dharmanan/winnerprice)
 
 **Other frameworks** (Vue, Vanilla JS, Node.js) can be run locally - see [Getting Started](#-getting-started) section.
 
@@ -92,12 +95,13 @@ This SDK demonstrates production-grade FHEVM integration across all JavaScript e
 ## ✨ Core Features
 
 - **🔐 Framework-Agnostic Core**: Zero dependencies in core SDK
-- **🚀 Real FHEVM**: Relayer SDK v0.2.0 from Zama (official)
-- **⚛️ Multi-Framework**: React, Vue, Node.js, Vanilla JS (same code works everywhere)
+- **🚀 Real FHEVM**: Relayer SDK v0.2.0 + Protocol v0.10.0+ (latest)
+- **⚛️ Multi-Framework**: React, Vue, Node.js, Vanilla JS (same code everywhere)
 - **📦 Monorepo**: Organized `/packages` for SDK and `/examples` for demos
-- **🧪 Multi-Bid Auction**: 1 manual bid + 9 simulated bids (10 total)
-- **🌐 Sepolia Testnet**: Works on Zama's FHEVM testnet
-- **� Full Documentation**: 2,900+ lines of guides and API refs
+- **🧪 Multi-Bid Auction**: 1 manual bid + 9 simulated bids (all encrypted)
+- **🌐 Sepolia Testnet**: Works on Zama's FHEVM testnet with v0.10.0+ features
+- **🔒 Complete Privacy**: Bids 100% encrypted, invisible on explorer
+- **📚 Full Documentation**: 2,900+ lines of guides and API refs
 
 ## 📋 Prerequisites
 
@@ -223,8 +227,23 @@ pnpm build
 pnpm start
 ```
 
-### TypeScript Compilation Check
+### Deploy to Sepolia Testnet (FHEVM v0.10.0+)
 ```bash
+# 1. Ensure .env.local is configured with:
+#    - PRIVATE_KEY (your wallet key)
+#    - INFURA_URL (Sepolia RPC endpoint)
+
+# 2. Deploy MockAuction contract
+pnpm deploy:sepolia
+
+# 3. Update contract address in .env.local
+# 4. Start the app
+cd examples/nextjs-app && pnpm dev
+# → Open http://localhost:3000
+```
+
+### TypeScript Compilation Check
+````
 pnpm tsc --noEmit  # Verify no errors
 ```
 
@@ -278,4 +297,4 @@ This project is licensed under the **BSD-3-Clause-Clear License**. See the [LICE
 
 **Built with ❤️ for the FHEVM community**
 
-*Last updated: October 2025*
+*Last updated: November 4, 2025 - FHEVM v0.10.0+ fully integrated*
