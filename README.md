@@ -62,14 +62,16 @@ vercel login
 vercel --prod
 ```
 
-### 2. Environment Variables (Vercel Dashboard)
+#### **2. Environment Variables (Vercel Dashboard)**
 Vercel dashboard'ında şu environment variables'ları ayarlayın:
 
 ```bash
-VITE_INFURA_URL=https://sepolia.infura.io/v3/YOUR_INFURA_API_KEY
-VITE_CONTRACT_ADDRESS=0xBb012ADFf6A45cb2b6E2b5BF3E96164dC26ca65C
-VITE_RELAYER_URL=https://relayer.testnet.zama.cloud
+VITE_INFURA_URL = https://sepolia.infura.io/v3/YOUR_INFURA_API_KEY
+VITE_CONTRACT_ADDRESS = 0xBb012ADFf6A45cb2b6E2b5BF3E96164dC26ca65C
+VITE_RELAYER_URL = https://relayer.testnet.zama.cloud
 ```
+
+**Not:** `VITE_CONTRACT_ADDRESS` ve `VITE_RELAYER_URL` vercel.json'da tanımlı, sadece `VITE_INFURA_URL`'i manuel olarak ekleyin.
 
 ### 3. Build Settings
 - **Framework:** `Vite`
