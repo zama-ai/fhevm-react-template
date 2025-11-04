@@ -76,6 +76,7 @@ VITE_RELAYER_URL = https://relayer.testnet.zama.cloud
 #### **3. Build Settings**
 - **Framework:** Vite
 - **Root Directory:** `examples/nextjs-app`
+- **Package Manager:** npm (pnpm değil!)
 - **Build Command:** `npm install --legacy-peer-deps && npm run build`
 - **Install Command:** `npm install --legacy-peer-deps`
 - **Output Directory:** `dist`
