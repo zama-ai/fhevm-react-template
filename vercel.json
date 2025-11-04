@@ -1,13 +1,11 @@
 {
-  "buildCommand": "cd examples/nextjs-app && pnpm install && pnpm build",
-  "outputDirectory": "examples/nextjs-app/.next",
-  "framework": "nextjs",
+  "buildCommand": "cd examples/nextjs-app && npm install && npm run build",
+  "outputDirectory": "examples/nextjs-app/dist",
+  "framework": null,
+  "installCommand": "npm install",
   "env": {
-    "NEXT_PUBLIC_CONTRACT_ADDRESS": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    "NEXT_PUBLIC_RELAYER_URL": "https://api.zama.ai/fhevm/relayer"
-  },
-  "buildSettings": {
-    "buildCommand": "cd examples/nextjs-app && pnpm build",
-    "outputDirectory": "examples/nextjs-app/.next"
+    "VITE_CONTRACT_ADDRESS": "0xBb012ADFf6A45cb2b6E2b5BF3E96164dC26ca65C",
+    "VITE_RELAYER_URL": "https://relayer.testnet.zama.cloud",
+    "VITE_INFURA_URL": "@infura-url"
   }
 }

@@ -46,29 +46,41 @@ The FHEVM SDK is **completely framework-agnostic** - the core encryption logic h
 
 ---
 
-## ⚡ 2-Minute Quick Start
+## 🚀 Vercel Deployment
+
+Bu repo'yu Vercel'de deploy etmek için:
+
+### 1. Vercel'e Bağlan
+```bash
+# Vercel CLI kur (kurulu değilse)
+npm i -g vercel
+
+# Login
+vercel login
+
+# Deploy
+vercel --prod
+```
+
+### 2. Environment Variables (Vercel Dashboard)
+Vercel dashboard'ında şu environment variables'ları ayarlayın:
 
 ```bash
-# Clone repository
-git clone https://github.com/dharmanan/fhevm-react-template
-cd fhevm-react-template
-
-# Option 1: React + Next.js (Port 3000) - RECOMMENDED
-cd examples/nextjs-app && pnpm install && pnpm dev
-# → Automatically opens http://localhost:3000
-# → Full UI for encrypted auction with v0.10.0+ features
-
-# Option 2: Zero-setup demo (just open in browser!)
-cd examples/vanilla-js-example
-# → Open index.html in your browser (that's it!)
-
-# Option 3: Vue.js with Vite
-cd examples/vue-example && pnpm install && pnpm dev
-# → Visit http://localhost:5173
-
-# Option 4: Node.js backend / CLI
-cd examples/node-example && pnpm install && node src/index.ts
+VITE_INFURA_URL=https://sepolia.infura.io/v3/YOUR_INFURA_API_KEY
+VITE_CONTRACT_ADDRESS=0xBb012ADFf6A45cb2b6E2b5BF3E96164dC26ca65C
+VITE_RELAYER_URL=https://relayer.testnet.zama.cloud
 ```
+
+### 3. Build Settings
+- **Framework:** `Vite`
+- **Root Directory:** `examples/nextjs-app`
+- **Build Command:** `npm run build`
+- **Output Directory:** `dist`
+
+### 4. Deploy Edilen URL
+Deploy edildikten sonra URL'yi README'ye ekleyin.
+
+---
 
 ---
 
