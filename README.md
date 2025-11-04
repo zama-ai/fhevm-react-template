@@ -73,11 +73,14 @@ VITE_RELAYER_URL = https://relayer.testnet.zama.cloud
 
 **Not:** `VITE_CONTRACT_ADDRESS` ve `VITE_RELAYER_URL` vercel.json'da tanımlı, sadece `VITE_INFURA_URL`'i manuel olarak ekleyin.
 
-### 3. Build Settings
-- **Framework:** `Vite`
+#### **3. Build Settings**
+- **Framework:** Vite
 - **Root Directory:** `examples/nextjs-app`
-- **Build Command:** `npm run build`
+- **Build Command:** `npm install --legacy-peer-deps && npm run build`
+- **Install Command:** `npm install --legacy-peer-deps`
 - **Output Directory:** `dist`
+
+**Not:** `--legacy-peer-deps` flag'i ethers version conflict'ini çözmek için gerekli.
 
 ### 4. Deploy Edilen URL
 Deploy edildikten sonra URL'yi README'ye ekleyin.
