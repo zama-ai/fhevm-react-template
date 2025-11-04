@@ -6,6 +6,9 @@ Build secure, encrypted applications with **real Fully Homomorphic Encryption** 
 
 **✨ Status:** Production-ready with 4 complete framework examples, comprehensive documentation, and **full FHEVM v0.10.0+ integration** (fully encrypted storage, end-to-end encrypted bids, complete explorer privacy).
 
+**📍 Contract Address:** `0xBb012ADFf6A45cb2b6E2b5BF3E96164dC26ca65C` (Sepolia Testnet)
+**🔗 Live Demo:** [https://fhevm-react-template.vercel.app/](https://fhevm-react-template.vercel.app/)
+
 ---
 
 ## 📚 Documentation Quick Links
