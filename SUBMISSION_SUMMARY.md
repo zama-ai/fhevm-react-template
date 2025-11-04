@@ -3,7 +3,7 @@
 Complete submission package for the Zama FHEVM SDK bounty challenge.
 
 **📍 Contract Address:** `0xBb012ADFf6A45cb2b6E2b5BF3E96164dC26ca65C` (Sepolia Testnet)
-**🔗 Live Demo:** [https://fhevm-react-template.vercel.app/](https://fhevm-react-template.vercel.app/)
+**🔗 Live Demo:** [https://winnerprice.vercel.app/](https://winnerprice.vercel.app/)
 
 ---
 
