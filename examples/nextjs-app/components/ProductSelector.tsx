@@ -6,7 +6,7 @@ interface ProductSelectorProps {
   onSelect: (product: Product) => void;
 }
 
-const ProductSelector: React.FC<ProductSelectorProps> = ({ products, onSelect }) => {
+const ProductSelector = ({ products, onSelect }: ProductSelectorProps) => {
   return (
     <div className="mt-12">
       <h2 className="text-center text-3xl font-bold text-gray-900 mb-2">Choose an Auction</h2>

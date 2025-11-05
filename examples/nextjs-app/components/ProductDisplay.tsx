@@ -7,7 +7,7 @@ interface ProductDisplayProps {
   prizeEth: number;
 }
 
-const ProductDisplay: React.FC<ProductDisplayProps> = ({ productName, imageUrl, entryFee, prizeEth }) => {
+const ProductDisplay = ({ productName, imageUrl, entryFee, prizeEth }: ProductDisplayProps) => {
   return (
     <div className="p-8 sm:p-12 bg-gray-50 flex flex-col justify-center items-center">
         <img 

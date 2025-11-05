@@ -12,7 +12,7 @@ const formatTime = (seconds: number): string => {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 };
 
-const AuctionStatus: React.FC<AuctionStatusProps> = ({ timeLeft, participantCount }) => {
+const AuctionStatus = ({ timeLeft, participantCount }: AuctionStatusProps) => {
   const progressPercentage = (participantCount / MAX_PARTICIPANTS) * 100;
   const timeProgress = (timeLeft / AUCTION_DURATION_SECONDS) * 100;
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ReactNode } from 'react';
 import { useEncryptBid } from '../../../packages/fhevm-sdk/react/useEncryptBid';
 import { useSubmitEncryptedBid } from '../../../packages/fhevm-sdk/react/useSubmitEncryptedBid';
 import { ethers } from 'ethers';
@@ -20,7 +20,7 @@ interface UserActionsProps {
   product: Product;
 }
 
-const Button: React.FC<{ onClick: () => void; children: React.ReactNode; disabled?: boolean; className?: string }> = ({ onClick, children, disabled = false, className = '' }) => (
+const Button = ({ onClick, children, disabled = false, className = '' }: { onClick: () => void; children: ReactNode; disabled?: boolean; className?: string }) => (
   <button
     onClick={onClick}
     disabled={disabled}
@@ -30,7 +30,7 @@ const Button: React.FC<{ onClick: () => void; children: React.ReactNode; disable
   </button>
 );
 
-const UserActions: React.FC<UserActionsProps> = ({ userState, auctionEnded, bid, setBid, setUserState, onJoin, onSubmitBid, onReveal, onSimulate, isLoading, product }) => {
+const UserActions = ({ userState, auctionEnded, bid, setBid, setUserState, onJoin, onSubmitBid, onReveal, onSimulate, isLoading, product }: UserActionsProps) => {
   console.log("UserActions props:", { userState, auctionEnded, bid, isLoading, product });
   const { encrypt, loading: encryptLoading, error: encryptError } = useEncryptBid();
   const chainId = 31337; // veya aktif ağ

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 
-const Header: React.FC = () => {
+const Header = () => {
   const [walletConnected, setWalletConnected] = useState(false);
   const [address, setAddress] = useState<string | undefined>(undefined);
 

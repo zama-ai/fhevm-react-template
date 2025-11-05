@@ -15,7 +15,7 @@ interface WinnerDisplayProps {
 }
 
 
-const WinnerDisplay: React.FC<WinnerDisplayProps> = ({ winner, targetPrice, contractAddress, abi, signer }) => {
+const WinnerDisplay = ({ winner, targetPrice, contractAddress, abi, signer }: WinnerDisplayProps) => {
   // State for encrypted and decrypted winner
   const [encryptedWinner, setEncryptedWinner] = useState<string | null>(null);
   const [decryptedWinner, setDecryptedWinner] = useState<Winner | null>(winner || null);

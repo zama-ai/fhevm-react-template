@@ -1,10 +1,7 @@
 {
-  "buildCommand": "cd examples/nextjs-app && npm install --legacy-peer-deps && npm run build",
-  "outputDirectory": "examples/nextjs-app/dist",
-  "framework": null,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
   "installCommand": "npm install --legacy-peer-deps",
-  "env": {
-    "VITE_CONTRACT_ADDRESS": "0xBb012ADFf6A45cb2b6E2b5BF3E96164dC26ca65C",
-    "VITE_RELAYER_URL": "https://relayer.testnet.zama.cloud"
-  }
+  "rootDirectory": "examples/nextjs-app"
 }

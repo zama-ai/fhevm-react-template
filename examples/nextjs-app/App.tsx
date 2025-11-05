@@ -15,7 +15,7 @@ import ProductSelector from './components/ProductSelector';
  * Compatible with FHEVM v0.10.0+
  * All bids are fully encrypted and invisible on blockchain explorer
  */
-const App: React.FC = () => {
+const App = () => {
   // FHEVM Relayer entegrasyonu (v0.10.0+ with full privacy)
   const { sdk, loading, error } = useFHEVMRelayer();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
