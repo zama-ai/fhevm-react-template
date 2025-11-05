@@ -3,7 +3,6 @@
   "outputDirectory": "examples/nextjs-app/dist",
   "framework": null,
   "installCommand": "npm install --legacy-peer-deps",
-  "packageManager": "npm",
   "env": {
     "VITE_CONTRACT_ADDRESS": "0xBb012ADFf6A45cb2b6E2b5BF3E96164dC26ca65C",
     "VITE_RELAYER_URL": "https://relayer.testnet.zama.cloud"
