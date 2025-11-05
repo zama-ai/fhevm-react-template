@@ -1,7 +1,10 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "buildCommand": "npm install --legacy-peer-deps --workspaces && npm --workspace=examples/nextjs-app run build",
+  "outputDirectory": "examples/nextjs-app/dist",
   "framework": "vite",
-  "installCommand": "npm install --legacy-peer-deps",
-  "rootDirectory": "examples/nextjs-app"
+  "installCommand": "npm ci --legacy-peer-deps --workspaces || npm install --legacy-peer-deps --workspaces",
+  "env": {
+    "NEXT_PUBLIC_RELAYER_ENDPOINT": "@next_public_relayer_endpoint",
+    "NEXT_PUBLIC_RELAYER_API_KEY": "@next_public_relayer_api_key"
+  }
 }
