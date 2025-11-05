@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "ethers": "5.7.2",
+    "fhevm-sdk": "file:../../packages/fhevm-sdk",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

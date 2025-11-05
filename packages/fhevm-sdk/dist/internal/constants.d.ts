@@ -1,0 +1,1 @@
+export declare const SDK_CDN_URL = "/relayer-sdk-js.umd.cjs";
