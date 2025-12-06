@@ -160,6 +160,7 @@ fhevm-react-template/
 ### Development Tools
 - [MetaMask + Hardhat Setup](https://docs.metamask.io/wallet/how-to/run-devnet/) - Local development
 - [React Documentation](https://reactjs.org/) - React framework guide
+- [React Hooks Reference](https://react.dev/reference/react) - Official React documentation for hooks used throughout this template (state, effects, and context)
 
 ### Community & Support
 - [FHEVM Discord](https://discord.com/invite/zama) - Community support
