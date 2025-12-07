@@ -51,6 +51,8 @@ Set up your Hardhat environment variables by following the [FHEVM documentation]
 
 **Option A: Local Development (Recommended for testing)**
 
+Run the following commands from the repository root and use separate terminals for the node, deployment and frontend.
+
 ```bash
 # Terminal 1: Start local Hardhat node
 pnpm chain
