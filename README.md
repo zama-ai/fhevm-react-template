@@ -15,14 +15,14 @@ FHEVM (Fully Homomorphic Encryption Virtual Machine) enables computation on encr
 - **🌐 Multi-Network Support**: Works on both Sepolia testnet and local Hardhat node
 - **📦 Monorepo Structure**: Organized packages for SDK, contracts, and frontend
 
-## 📋 Prerequinextjss
+## 📋 Prerequisites
 
-Before you begin, ensure you have:
+Before you begin, make sure you have:
 
-- **Node.js** (v18 or higher)
+- **Node.js** (version 18 or higher)
 - **pnpm** package manager
 - **MetaMask** browser extension
-- **Git** for cloning the repository
+- **Git** installed for cloning the repository
 
 ## 🛠️ Quick Start
 
