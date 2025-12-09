@@ -62,6 +62,7 @@ pnpm deploy:localhost
 # Terminal 3: Start the frontend
 pnpm start
 ```
+This `pnpm start` command always expects contracts to be deployed to the currently selected network (localhost in this case), so make sure you re-run the corresponding deploy script whenever you switch networks.
 
 **Option B: Sepolia Testnet**
 
