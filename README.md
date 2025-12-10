@@ -49,6 +49,26 @@ Set up your Hardhat environment variables by following the [FHEVM documentation]
 
 ### 3. Start Development Environment
 
+#### Network setup overview
+
+This template can connect either to a local Hardhat node or to a public testnet.
+Make sure the frontend and the contracts use the same RPC URL and chain ID.
+
+- Local Hardhat node  
+  - RPC: http://127.0.0.1:8545  
+  - Chain ID: 31337  
+  - Recommended for iterating on the Counter example and for fast UI testing.
+
+- Sepolia testnet  
+  - RPC: an HTTPS endpoint from your provider (Infura, Alchemy, or a self-hosted node)  
+  - Requires test ETH on Sepolia to pay for transactions.
+
+When switching from localhost to Sepolia, always:
+- redeploy the contracts to the new network
+- restart the frontend so it picks up the new chain configuration
+- reconnect your wallet if it was previously connected to another chain.
+
+
 **Option A: Local Development (Recommended for testing)**
 
 ```bash
