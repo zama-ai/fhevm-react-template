@@ -12,7 +12,7 @@ FHEVM (Fully Homomorphic Encryption Virtual Machine) enables computation on encr
 - **⚛️ React + Next.js**: Modern, performant frontend framework
 - **🎨 Tailwind CSS**: Utility-first styling for rapid UI development
 - **🔗 RainbowKit**: Seamless wallet connection and management
-- **🌐 Multi-Network Support**: Works on both Sepolia testnet and local Hardhat node
+- **🌐 Multi-Network Support**: Works on both Sepolia Testnet and local Hardhat node
 - **📦 Monorepo Structure**: Organized packages for SDK, contracts, and frontend
 
 ## 📋 Prerequinextjss
@@ -66,7 +66,7 @@ pnpm start
 **Option B: Sepolia Testnet**
 
 ```bash
-# Deploy to Sepolia testnet
+# Deploy to Sepolia Testnet
 pnpm deploy:sepolia
 
 # Start the frontend
