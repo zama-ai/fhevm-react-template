@@ -5,6 +5,7 @@ A minimal React frontend template for building FHEVM-enabled decentralized appli
 ## 🚀 What is FHEVM?
 
 FHEVM (Fully Homomorphic Encryption Virtual Machine) enables computation on encrypted data directly on Ethereum. This template demonstrates how to build dApps that can perform computations while keeping data private.
+For a high-level introduction to the concepts behind FHEVM, see the [FHEVM overview](https://docs.zama.ai/fhevm/0.5-4).
 
 ## ✨ Features
 
