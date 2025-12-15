@@ -50,6 +50,8 @@ git submodule update --init --recursive
 pnpm install
 ```
 
+If you prefer a walkthrough, you can also watch the "Hello FHEVM: build your first confidential dApp" video tutorial on YouTube.
+
 ### 2. Environment Configuration
 
 Set up your Hardhat environment variables by following the [FHEVM documentation](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional):
