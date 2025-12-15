@@ -83,6 +83,16 @@ pnpm start
    - **Chain ID**: `31337`
    - **Currency Symbol**: `ETH`
 
+### ⚠️ Common pitfalls
+
+- If contracts are not found, make sure submodules are initialized with  
+  `git submodule update --init --recursive` and that you have run `pnpm install`.
+- If the frontend shows network or RPC errors, double-check that `MNEMONIC`
+  and `INFURA_API_KEY` are correctly set in your Hardhat environment.
+- If the app builds but cannot read contract state, verify that
+  `NEXT_PUBLIC_ALCHEMY_API_KEY` and `packages/nextjs/contracts/deployedContracts.ts`
+  point to the right network and deployed addresses.
+
 ### ⚠️ Sepolia Production note
 
 - In production, `NEXT_PUBLIC_ALCHEMY_API_KEY` must be set (see `packages/nextjs/scaffold.config.ts`). The app throws if missing.
