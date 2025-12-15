@@ -15,6 +15,16 @@ FHEVM (Fully Homomorphic Encryption Virtual Machine) enables computation on encr
 - **🌐 Multi-Network Support**: Works on both Sepolia testnet and local Hardhat node
 - **📦 Monorepo Structure**: Organized packages for SDK, contracts, and frontend
 
+## 🧰 Scripts overview
+
+| Script                   | What it does                                                   |
+| ------------------------ | -------------------------------------------------------------- |
+| `pnpm dev`              | Starts the frontend dev server for the React template.        |
+| `pnpm test`             | Runs the frontend tests in watch mode.                        |
+| `pnpm lint`             | Lints the project using the configured ESLint rules.          |
+| `pnpm build`            | Builds the production bundle for deployment.                  |
+| `pnpm preview`          | Serves the built app locally to verify the production build.  |
+
 ## 📋 Prerequinextjss
 
 Before you begin, ensure you have:
