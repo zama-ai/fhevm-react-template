@@ -1,6 +1,6 @@
 {
   "name": "@fhevm-sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "main": "dist/index.js",
@@ -15,18 +15,63 @@
       "types": "./src/core/index.ts",
       "default": "./dist/core/index.js"
     },
+    "./core/config": {
+      "types": "./src/core/config.ts",
+      "default": "./dist/core/config.js"
+    },
+    "./core/client": {
+      "types": "./src/core/FhevmClient.ts",
+      "default": "./dist/core/FhevmClient.js"
+    },
     "./storage": {
       "types": "./src/storage/index.ts",
       "default": "./dist/storage/index.js"
     },
     "./types": {
-      "types": "./src/fhevmTypes.ts",
-      "default": "./dist/fhevmTypes.js"
+      "types": "./src/types/index.ts",
+      "default": "./dist/types/index.js"
+    },
+    "./utils": {
+      "types": "./src/utils/index.ts",
+      "default": "./dist/utils/index.js"
+    },
+    "./utils/errors": {
+      "types": "./src/utils/errors.ts",
+      "default": "./dist/utils/errors.js"
+    },
+    "./utils/encryption": {
+      "types": "./src/utils/encryption.ts",
+      "default": "./dist/utils/encryption.js"
+    },
+    "./utils/decryption": {
+      "types": "./src/utils/decryption.ts",
+      "default": "./dist/utils/decryption.js"
     },
     "./react": {
       "types": "./src/react/index.ts",
       "default": "./dist/react/index.js"
-    }
+    },
+    "./react/useFhevm": {
+      "types": "./src/react/useFhevm.tsx",
+      "default": "./dist/react/useFhevm.js"
+    },
+    "./react/useFHEEncryption": {
+      "types": "./src/react/useFHEEncryption.ts",
+      "default": "./dist/react/useFHEEncryption.js"
+    },
+    "./react/useFHEDecrypt": {
+      "types": "./src/react/useFHEDecrypt.ts",
+      "default": "./dist/react/useFHEDecrypt.js"
+    },
+    "./version": {
+      "types": "./src/version.ts",
+      "default": "./dist/version.js"
+    },
+    "./constants": {
+      "types": "./src/internal/constants.ts",
+      "default": "./dist/internal/constants.js"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

@@ -8,6 +8,7 @@ import type {
 import { isFhevmWindowType, RelayerSDKLoader } from "./RelayerSDKLoader";
 import { publicKeyStorageGet, publicKeyStorageSet } from "./PublicKeyStorage";
 import { FhevmInstance, FhevmInstanceConfig } from "../fhevmTypes";
+import { DEFAULT_LOCAL_CHAIN_ID, DEFAULT_LOCAL_RPC_URL } from "./constants";
 
 export class FhevmReactError extends Error {
   code: string;
@@ -189,7 +190,7 @@ async function resolve(
   let rpcUrl = typeof providerOrUrl === "string" ? providerOrUrl : undefined;
 
   const _mockChains: Record<number, string> = {
-    31337: "http://localhost:8545",
+    [DEFAULT_LOCAL_CHAIN_ID]: DEFAULT_LOCAL_RPC_URL,
     ...(mockChains ?? {}),
   };
 
