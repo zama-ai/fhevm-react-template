@@ -1,14 +1,46 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // WARNING!!
-// ALWAY USE DYNAMICALLY IMPORT THIS FILE TO AVOID INCLUDING THE ENTIRE 
+// ALWAY USE DYNAMICALLY IMPORT THIS FILE TO AVOID INCLUDING THE ENTIRE
 // FHEVM MOCK LIB IN THE FINAL PRODUCTION BUNDLE!!
 //
 //////////////////////////////////////////////////////////////////////////
 
-import { JsonRpcProvider } from "ethers";
+import { JsonRpcProvider, Contract } from "ethers";
 import { MockFhevmInstance } from "@fhevm/mock-utils";
 import { FhevmInstance } from "../../fhevmTypes";
+
+// ERC-5267 eip712Domain() ABI - returns the EIP712 domain info
+const EIP712_DOMAIN_ABI = [
+  "function eip712Domain() view returns (bytes1 fields, string name, string version, uint256 chainId, address verifyingContract, bytes32 salt, uint256[] extensions)"
+];
+
+/**
+ * Query a contract's EIP712 domain using ERC-5267 standard
+ * The return value is a tuple accessed by index:
+ * [0]: fields (bytes1)
+ * [1]: name (string)
+ * [2]: version (string)
+ * [3]: chainId (uint256)
+ * [4]: verifyingContract (address)
+ * [5]: salt (bytes32)
+ * [6]: extensions (uint256[])
+ */
+async function getEip712Domain(provider: JsonRpcProvider, contractAddress: string): Promise<{
+  chainId: number;
+  verifyingContract: string;
+}> {
+  const contract = new Contract(contractAddress, EIP712_DOMAIN_ABI, provider);
+  const domain = await contract.eip712Domain();
+  // Access by index as the return is a tuple
+  const chainId = Number(domain[3]);
+  const verifyingContract = domain[4] as string;
+  console.log(`[fhevmMock] EIP712 domain for ${contractAddress}: chainId=${chainId}, verifyingContract=${verifyingContract}`);
+  return {
+    chainId,
+    verifyingContract,
+  };
+}
 
 export const fhevmMockCreateInstance = async (parameters: {
   rpcUrl: string;
@@ -20,19 +52,36 @@ export const fhevmMockCreateInstance = async (parameters: {
   };
 }): Promise<FhevmInstance> => {
   const provider = new JsonRpcProvider(parameters.rpcUrl);
-  const instance = await MockFhevmInstance.create(provider, provider, {
-    //aclContractAddress: "0x50157CFfD6bBFA2DECe204a89ec419c23ef5755D",
+
+  // Query the KMSVerifier and InputVerifier contracts for their EIP712 domains
+  // This is necessary because these values differ between networks (Sepolia vs localhost)
+  const [kmsVerifierDomain, inputVerifierDomain] = await Promise.all([
+    getEip712Domain(provider, parameters.metadata.KMSVerifierAddress),
+    getEip712Domain(provider, parameters.metadata.InputVerifierAddress),
+  ]);
+
+  console.log(`[fhevmMock] Creating MockFhevmInstance with config:`, {
     aclContractAddress: parameters.metadata.ACLAddress,
     chainId: parameters.chainId,
-    gatewayChainId: 55815,
-    // inputVerifierContractAddress: "0x901F8942346f7AB3a01F6D7613119Bca447Bb030",
-    // kmsContractAddress: "0x1364cBBf2cDF5032C47d8226a6f6FBD2AFCDacAC",
+    gatewayChainId: kmsVerifierDomain.chainId,
     inputVerifierContractAddress: parameters.metadata.InputVerifierAddress,
     kmsContractAddress: parameters.metadata.KMSVerifierAddress,
-    verifyingContractAddressDecryption:
-      "0x5ffdaAB0373E62E2ea2944776209aEf29E631A64",
-    verifyingContractAddressInputVerification:
-      "0x812b06e1CDCE800494b79fFE4f925A504a9A9810",
+    verifyingContractAddressDecryption: kmsVerifierDomain.verifyingContract,
+    verifyingContractAddressInputVerification: inputVerifierDomain.verifyingContract,
   });
-  return instance;
+
+  const instance = await MockFhevmInstance.create(provider, provider, {
+    aclContractAddress: parameters.metadata.ACLAddress,
+    chainId: parameters.chainId,
+    gatewayChainId: kmsVerifierDomain.chainId,
+    inputVerifierContractAddress: parameters.metadata.InputVerifierAddress,
+    kmsContractAddress: parameters.metadata.KMSVerifierAddress,
+    verifyingContractAddressDecryption: kmsVerifierDomain.verifyingContract as `0x${string}`,
+    verifyingContractAddressInputVerification: inputVerifierDomain.verifyingContract as `0x${string}`,
+  }, {
+    // Pass empty properties - the MockFhevmInstance will query the contracts directly
+    kmsVerifierProperties: {},
+    inputVerifierProperties: {},
+  });
+  return instance as unknown as FhevmInstance;
 };

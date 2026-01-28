@@ -58,13 +58,17 @@ export const useFHEDecrypt = (params: {
         thisChainId !== chainId || thisSigner !== ethersSigner || requestsKey !== lastReqKeyRef.current;
 
       try {
+        console.log("[useFHEDecrypt] Starting decrypt...");
         const uniqueAddresses = Array.from(new Set(thisRequests.map(r => r.contractAddress)));
+        console.log("[useFHEDecrypt] Unique addresses:", uniqueAddresses);
+
         const sig: FhevmDecryptionSignature | null = await FhevmDecryptionSignature.loadOrSign(
           instance,
           uniqueAddresses as `0x${string}`[],
           ethersSigner,
           fhevmDecryptionSignatureStorage,
         );
+        console.log("[useFHEDecrypt] Signature loaded:", !!sig);
 
         if (!sig) {
           setMessage("Unable to build FHEVM decryption signature");
@@ -80,6 +84,7 @@ export const useFHEDecrypt = (params: {
         setMessage("Call FHEVM userDecrypt...");
 
         const mutableReqs = thisRequests.map(r => ({ handle: r.handle, contractAddress: r.contractAddress }));
+        console.log("[useFHEDecrypt] Calling userDecrypt with:", mutableReqs);
         let res: Record<string, string | bigint | boolean> = {};
         try {
           res = await instance.userDecrypt(
@@ -93,6 +98,7 @@ export const useFHEDecrypt = (params: {
             sig.durationDays,
           );
         } catch (e) {
+          console.error("[useFHEDecrypt] userDecrypt FAILED:", e);
           const err = e as unknown as { name?: string; message?: string };
           const code = err && typeof err === "object" && "name" in (err as any) ? (err as any).name : "DECRYPT_ERROR";
           const msg = err && typeof err === "object" && "message" in (err as any) ? (err as any).message : "Decryption failed";
@@ -101,6 +107,9 @@ export const useFHEDecrypt = (params: {
           return;
         }
 
+        console.log("[useFHEDecrypt] userDecrypt result:", res);
+        console.log("[useFHEDecrypt] result keys:", Object.keys(res));
+        console.log("[useFHEDecrypt] requested handles:", mutableReqs.map(r => r.handle));
         setMessage("FHEVM userDecrypt completed!");
 
         if (isStale()) {
