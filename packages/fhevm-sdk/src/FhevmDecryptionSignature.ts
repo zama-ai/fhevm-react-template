@@ -2,6 +2,10 @@ import { GenericStringStorage } from "./storage/GenericStringStorage";
 import { EIP712Type, FhevmDecryptionSignatureType, FhevmInstance } from "./fhevmTypes";
 import { ethers } from "ethers";
 
+function isAddress(value: string): value is `0x${string}` {
+  return ethers.isAddress(value);
+}
+
 function _timestampNow(): number {
   return Math.floor(Date.now() / 1000);
 }
@@ -13,23 +17,29 @@ class FhevmDecryptionSignatureStorageKey {
   #key: string;
 
   constructor(instance: FhevmInstance, contractAddresses: string[], userAddress: string, publicKey?: string) {
-    if (!ethers.isAddress(userAddress)) {
+    if (!isAddress(userAddress)) {
       throw new TypeError(`Invalid address ${userAddress}`);
     }
 
-    const sortedContractAddresses = (contractAddresses as `0x${string}`[]).sort();
+    const sortedContractAddresses = contractAddresses.map(address => {
+      if (!isAddress(address)) {
+        throw new TypeError(`Invalid contract address ${address}`);
+      }
+      return address
+    }).sort();
 
-    const emptyEIP712 = (instance as any).createEIP712(publicKey ?? (ethers as any).ZeroAddress, sortedContractAddresses, 0, 0);
+
+    const emptyEIP712 = instance.createEIP712(publicKey ?? ethers.ZeroAddress, sortedContractAddresses, 0, 0);
 
     try {
-      const hash = (ethers as any).TypedDataEncoder.hash(
+      const hash = ethers.TypedDataEncoder.hash(
         emptyEIP712.domain,
         { UserDecryptRequestVerification: emptyEIP712.types.UserDecryptRequestVerification },
         emptyEIP712.message,
       );
 
       this.#contractAddresses = sortedContractAddresses;
-      this.#userAddress = userAddress as `0x${string}`;
+      this.#userAddress = userAddress;
 
       this.#key = `${userAddress}:${hash}`;
     } catch (e) {
