@@ -61,7 +61,7 @@ export const useFHEDecrypt = (params: {
         const uniqueAddresses = Array.from(new Set(thisRequests.map(r => r.contractAddress)));
         const sig: FhevmDecryptionSignature | null = await FhevmDecryptionSignature.loadOrSign(
           instance,
-          uniqueAddresses as `0x${string}`[],
+          uniqueAddresses,
           ethersSigner,
           fhevmDecryptionSignatureStorage,
         );
@@ -95,7 +95,8 @@ export const useFHEDecrypt = (params: {
         } catch (e) {
           const err = e as unknown as { name?: string; message?: string };
           const code = err && typeof err === "object" && "name" in (err as any) ? (err as any).name : "DECRYPT_ERROR";
-          const msg = err && typeof err === "object" && "message" in (err as any) ? (err as any).message : "Decryption failed";
+          const msg =
+            err && typeof err === "object" && "message" in (err as any) ? (err as any).message : "Decryption failed";
           setError(`${code}: ${msg}`);
           setMessage("FHEVM userDecrypt failed");
           return;
@@ -112,7 +113,8 @@ export const useFHEDecrypt = (params: {
       } catch (e) {
         const err = e as unknown as { name?: string; message?: string };
         const code = err && typeof err === "object" && "name" in (err as any) ? (err as any).name : "UNKNOWN_ERROR";
-        const msg = err && typeof err === "object" && "message" in (err as any) ? (err as any).message : "Unknown error";
+        const msg =
+          err && typeof err === "object" && "message" in (err as any) ? (err as any).message : "Unknown error";
         setError(`${code}: ${msg}`);
         setMessage("FHEVM decryption errored");
       } finally {

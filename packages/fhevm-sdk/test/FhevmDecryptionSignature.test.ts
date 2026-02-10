@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { JsonRpcSigner } from "ethers";
 import { FhevmDecryptionSignature } from "../src/FhevmDecryptionSignature";
 import type { FhevmDecryptionSignatureType, EIP712Type, FhevmInstance } from "../src/fhevmTypes";
 import { GenericStringInMemoryStorage } from "../src/storage/GenericStringStorage";
-import { JsonRpcSigner } from "ethers";
 
 const validEIP712: EIP712Type = {
   domain: {
@@ -163,7 +163,7 @@ describe("FhevmDecryptionSignature", () => {
         startTimestamp: 100,
         durationDays: 7,
         userAddress: "0x1111111111111111111111111111111111111111" as `0x${string}`,
-        contractAddresses: ["0xa", "0xb"] as `0x${string}`[],
+        contractAddresses: ["0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"],
       });
       const sig = FhevmDecryptionSignature.fromJSON(data);
       expect(sig.publicKey).toBe("0xpub");
@@ -172,7 +172,10 @@ describe("FhevmDecryptionSignature", () => {
       expect(sig.startTimestamp).toBe(100);
       expect(sig.durationDays).toBe(7);
       expect(sig.userAddress).toBe("0x1111111111111111111111111111111111111111");
-      expect(sig.contractAddresses).toEqual(["0xa", "0xb"]);
+      expect(sig.contractAddresses).toEqual([
+        "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      ]);
     });
   });
 

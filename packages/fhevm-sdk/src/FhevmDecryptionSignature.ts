@@ -6,6 +6,23 @@ function isAddress(value: string): value is `0x${string}` {
   return ethers.isAddress(value);
 }
 
+function isAddressArray(v: unknown): v is `0x${string}`[] {
+  return Array.isArray(v) && v.every(x => isAddress(x));
+}
+
+function hasEIP712Shape(e: unknown): e is EIP712Type {
+  if (!e || typeof e !== "object") return false;
+  const o = e as Record<string, unknown>;
+  return (
+    typeof o.domain === "object" &&
+    o.domain !== null &&
+    typeof o.primaryType === "string" &&
+    "message" in o &&
+    typeof o.types === "object" &&
+    o.types !== null
+  );
+}
+
 function _timestampNow(): number {
   return Math.floor(Date.now() / 1000);
 }
@@ -16,18 +33,13 @@ class FhevmDecryptionSignatureStorageKey {
   #publicKey: string | undefined;
   #key: string;
 
-  constructor(instance: FhevmInstance, contractAddresses: string[], userAddress: string, publicKey?: string) {
-    if (!isAddress(userAddress)) {
-      throw new TypeError(`Invalid address ${userAddress}`);
-    }
-
-    const sortedContractAddresses = contractAddresses.map(address => {
-      if (!isAddress(address)) {
-        throw new TypeError(`Invalid contract address ${address}`);
-      }
-      return address
-    }).sort();
-
+  constructor(
+    instance: FhevmInstance,
+    contractAddresses: `0x${string}`[],
+    userAddress: `0x${string}`,
+    publicKey?: string,
+  ) {
+    const sortedContractAddresses = contractAddresses.sort();
 
     const emptyEIP712 = instance.createEIP712(publicKey ?? ethers.ZeroAddress, sortedContractAddresses, 0, 0);
 
@@ -117,50 +129,19 @@ export class FhevmDecryptionSignature {
   }
 
   static checkIs(s: unknown): s is FhevmDecryptionSignatureType {
-    if (!s || typeof s !== "object") {
-      return false;
-    }
-    if (!("publicKey" in s && typeof (s as any).publicKey === "string")) {
-      return false;
-    }
-    if (!("privateKey" in s && typeof (s as any).privateKey === "string")) {
-      return false;
-    }
-    if (!("signature" in s && typeof (s as any).signature === "string")) {
-      return false;
-    }
-    if (!("startTimestamp" in s && typeof (s as any).startTimestamp === "number")) {
-      return false;
-    }
-    if (!("durationDays" in s && typeof (s as any).durationDays === "number")) {
-      return false;
-    }
-    if (!("contractAddresses" in s && Array.isArray((s as any).contractAddresses))) {
-      return false;
-    }
-    for (let i = 0; i < (s as any).contractAddresses.length; ++i) {
-      if (typeof (s as any).contractAddresses[i] !== "string") return false;
-      if (!((s as any).contractAddresses[i] as string).startsWith("0x")) return false;
-    }
-    if (!("userAddress" in s && typeof (s as any).userAddress === "string" && (s as any).userAddress.startsWith("0x"))) {
-      return false;
-    }
-    if (!("eip712" in s && typeof (s as any).eip712 === "object" && (s as any).eip712 !== null)) {
-      return false;
-    }
-    if (!("domain" in (s as any).eip712 && typeof (s as any).eip712.domain === "object")) {
-      return false;
-    }
-    if (!("primaryType" in (s as any).eip712 && typeof (s as any).eip712.primaryType === "string")) {
-      return false;
-    }
-    if (!("message" in (s as any).eip712)) {
-      return false;
-    }
-    if (!("types" in (s as any).eip712 && typeof (s as any).eip712.types === "object" && (s as any).eip712.types !== null)) {
-      return false;
-    }
-    return true;
+    if (!s || typeof s !== "object") return false;
+    const o = s as Record<string, unknown>;
+    const checks: [key: string, pred: (v: unknown) => boolean][] = [
+      ["publicKey", (v): v is string => typeof v === "string"],
+      ["privateKey", (v): v is string => typeof v === "string"],
+      ["signature", (v): v is string => typeof v === "string"],
+      ["startTimestamp", (v): v is number => typeof v === "number"],
+      ["durationDays", (v): v is number => typeof v === "number"],
+      ["userAddress", (v): v is `0x${string}` => typeof v === "string" && isAddress(v)],
+      ["contractAddresses", isAddressArray],
+      ["eip712", hasEIP712Shape],
+    ];
+    return checks.every(([key, pred]) => key in o && pred(o[key]));
   }
 
   toJSON() {
@@ -208,8 +189,8 @@ export class FhevmDecryptionSignature {
   static async loadFromGenericStringStorage(
     storage: GenericStringStorage,
     instance: FhevmInstance,
-    contractAddresses: string[],
-    userAddress: string,
+    contractAddresses: `0x${string}`[],
+    userAddress: `0x${string}`,
     publicKey?: string,
   ): Promise<FhevmDecryptionSignature | null> {
     try {
@@ -238,7 +219,7 @@ export class FhevmDecryptionSignature {
 
   static async new(
     instance: FhevmInstance,
-    contractAddresses: string[],
+    contractAddresses: `0x${string}`[],
     publicKey: string,
     privateKey: string,
     signer: ethers.JsonRpcSigner,
@@ -256,7 +237,7 @@ export class FhevmDecryptionSignature {
       return new FhevmDecryptionSignature({
         publicKey,
         privateKey,
-        contractAddresses: contractAddresses as `0x${string}`[],
+        contractAddresses,
         startTimestamp,
         durationDays,
         signature,
@@ -270,7 +251,7 @@ export class FhevmDecryptionSignature {
 
   static async loadOrSign(
     instance: FhevmInstance,
-    contractAddresses: string[],
+    contractAddresses: `0x${string}`[],
     signer: ethers.JsonRpcSigner,
     storage: GenericStringStorage,
     keyPair?: { publicKey: string; privateKey: string },
@@ -302,4 +283,3 @@ export class FhevmDecryptionSignature {
     return sig;
   }
 }
-
