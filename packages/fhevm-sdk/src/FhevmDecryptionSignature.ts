@@ -59,18 +59,6 @@ class FhevmDecryptionSignatureStorageKey {
     }
   }
 
-  get contractAddresses(): `0x${string}`[] {
-    return this.#contractAddresses;
-  }
-
-  get userAddress(): `0x${string}` {
-    return this.#userAddress;
-  }
-
-  get publicKey(): string | undefined {
-    return this.#publicKey;
-  }
-
   get key(): string {
     return this.#key;
   }
