@@ -168,7 +168,7 @@ describe("FhevmDecryptionSignature", () => {
       const data = validSignatureType({
         contractAddresses: ["0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
       });
-      expect(() => FhevmDecryptionSignature.fromJSON(data)).not.toThrow(TypeError);
+      expect(() => FhevmDecryptionSignature.fromJSON(data)).not.toThrow();
     });
   });
 
