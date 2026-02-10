@@ -152,6 +152,24 @@ describe("FhevmDecryptionSignature", () => {
       expect(() => FhevmDecryptionSignature.fromJSON({})).toThrow(TypeError);
       expect(() => FhevmDecryptionSignature.fromJSON('{"publicKey":"0x1"}')).toThrow(TypeError);
     });
+    it("throws when user addresses is", () => {
+      const data = validSignatureType({
+        userAddress: "0xbb",
+      });
+      expect(() => FhevmDecryptionSignature.fromJSON(data)).toThrow(TypeError);
+    });
+    it("throws when contract addresses are wrong", () => {
+      const data = validSignatureType({
+        contractAddresses: ["0xa", "0xb"],
+      });
+      expect(() => FhevmDecryptionSignature.fromJSON(data)).toThrow(TypeError);
+    });
+    it("does not throw when contract addresses are unsorted", () => {
+      const data = validSignatureType({
+        contractAddresses: ["0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+      });
+      expect(() => FhevmDecryptionSignature.fromJSON(data)).not.toThrow(TypeError);
+    });
   });
 
   describe("getters", () => {
@@ -162,7 +180,7 @@ describe("FhevmDecryptionSignature", () => {
         signature: "0xsig",
         startTimestamp: 100,
         durationDays: 7,
-        userAddress: "0x1111111111111111111111111111111111111111" as `0x${string}`,
+        userAddress: "0x1111111111111111111111111111111111111111",
         contractAddresses: ["0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"],
       });
       const sig = FhevmDecryptionSignature.fromJSON(data);
