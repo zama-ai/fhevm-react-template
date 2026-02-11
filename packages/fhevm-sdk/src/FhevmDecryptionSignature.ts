@@ -7,7 +7,7 @@ function isAddress(value: string): value is `0x${string}` {
 }
 
 function isAddressArray(v: unknown): v is `0x${string}`[] {
-  return Array.isArray(v) && v.every(x => isAddress(x));
+  return Array.isArray(v) && v.every(x => typeof x === "string" && isAddress(x));
 }
 
 function hasEIP712Shape(e: unknown): e is EIP712Type {
@@ -39,7 +39,7 @@ class FhevmDecryptionSignatureStorageKey {
     userAddress: `0x${string}`,
     publicKey?: string,
   ) {
-    const sortedContractAddresses = contractAddresses.sort();
+    const sortedContractAddresses = [...contractAddresses].sort();
 
     const emptyEIP712 = instance.createEIP712(publicKey ?? ethers.ZeroAddress, sortedContractAddresses, 0, 0);
 
