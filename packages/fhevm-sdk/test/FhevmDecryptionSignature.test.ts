@@ -152,13 +152,13 @@ describe("FhevmDecryptionSignature", () => {
       expect(() => FhevmDecryptionSignature.fromJSON({})).toThrow(TypeError);
       expect(() => FhevmDecryptionSignature.fromJSON('{"publicKey":"0x1"}')).toThrow(TypeError);
     });
-    it("throws when user addresses is", () => {
+    it("throws when user addresses is invalid", () => {
       const data = validSignatureType({
         userAddress: "0xbb",
       });
       expect(() => FhevmDecryptionSignature.fromJSON(data)).toThrow(TypeError);
     });
-    it("throws when contract addresses are wrong", () => {
+    it("throws when contract addresses are invalid", () => {
       const data = validSignatureType({
         contractAddresses: ["0xa", "0xb"],
       });
@@ -285,28 +285,31 @@ describe("FhevmDecryptionSignature", () => {
     });
 
     it("loadFromGenericStringStorage returns null when stored signature is expired", async () => {
-      vi.useFakeTimers();
-      const start = 1000;
-      const durationDays = 1;
-      vi.setSystemTime((start + 2 * 24 * 60 * 60) * 1000); // 2 days later
-      const storage = new GenericStringInMemoryStorage();
-      const instance = createMockInstance();
-      const data = validSignatureType({
-        startTimestamp: start,
-        durationDays,
-        userAddress: "0x0000000000000000000000000000000000000001",
-        contractAddresses: ["0x0000000000000000000000000000000000000002"],
-      });
-      const sig = FhevmDecryptionSignature.fromJSON(data);
-      await sig.saveToGenericStringStorage(storage, instance, false);
-      const loaded = await FhevmDecryptionSignature.loadFromGenericStringStorage(
-        storage,
-        instance,
-        ["0x0000000000000000000000000000000000000002"],
-        "0x0000000000000000000000000000000000000001",
-      );
-      expect(loaded).toBeNull();
-      vi.useRealTimers();
+      try {
+        vi.useFakeTimers();
+        const start = 1000;
+        const durationDays = 1;
+        vi.setSystemTime((start + 2 * 24 * 60 * 60) * 1000); // 2 days later
+        const storage = new GenericStringInMemoryStorage();
+        const instance = createMockInstance();
+        const data = validSignatureType({
+          startTimestamp: start,
+          durationDays,
+          userAddress: "0x0000000000000000000000000000000000000001",
+          contractAddresses: ["0x0000000000000000000000000000000000000002"],
+        });
+        const sig = FhevmDecryptionSignature.fromJSON(data);
+        await sig.saveToGenericStringStorage(storage, instance, false);
+        const loaded = await FhevmDecryptionSignature.loadFromGenericStringStorage(
+          storage,
+          instance,
+          ["0x0000000000000000000000000000000000000002"],
+          "0x0000000000000000000000000000000000000001",
+        );
+        expect(loaded).toBeNull();
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 
