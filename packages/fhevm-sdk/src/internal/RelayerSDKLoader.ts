@@ -40,14 +40,30 @@ export class RelayerSDKLoader {
         `script[src="${SDK_CDN_URL}"]`
       );
       if (existingScript) {
-        if (!isFhevmWindowType(window, this._trace)) {
+        // Script tag exists — it may still be loading
+        if (isFhevmWindowType(window, this._trace)) {
+          resolve();
+          return;
+        }
+        // Wait for the existing script to finish loading
+        existingScript.addEventListener("load", () => {
+          if (isFhevmWindowType(window, this._trace)) {
+            resolve();
+          } else {
+            reject(
+              new Error(
+                "RelayerSDKLoader: window object does not contain a valid relayerSDK object."
+              )
+            );
+          }
+        });
+        existingScript.addEventListener("error", () => {
           reject(
             new Error(
-              "RelayerSDKLoader: window object does not contain a valid relayerSDK object."
+              `RelayerSDKLoader: Failed to load Relayer SDK from ${SDK_CDN_URL}`
             )
           );
-        }
-        resolve();
+        });
         return;
       }
 

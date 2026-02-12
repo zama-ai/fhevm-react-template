@@ -25,6 +25,10 @@ export const wagmiConfig = createConfig({
       const alchemyHttpUrl = getAlchemyHttpUrl(chain.id);
       if (alchemyHttpUrl) {
         rpcFallbacks = [http(alchemyHttpUrl), http()];
+      } else if (chain.id === mainnet.id) {
+        // Use a CORS-friendly public RPC for mainnet ENS resolution
+        // The default (eth.merkle.io) blocks CORS from localhost
+        rpcFallbacks = [http("https://cloudflare-eth.com")];
       }
     }
     return createClient({

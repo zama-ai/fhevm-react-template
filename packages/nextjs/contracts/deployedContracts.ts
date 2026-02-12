@@ -7,8 +7,42 @@ import { GenericContractsDeclaration } from "~~/utils/helper/contract";
 const deployedContracts = {
   31337: {
     FHECounter: {
-      address: "0x40e8Aa088739445BC3a3727A724F56508899f65B",
+      address: "0x380ee13b0039852314fFF513821729B052D06a71",
       abi: [
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "handle",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+          ],
+          name: "SenderNotAllowedToUseHandle",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ZamaProtocolUnsupported",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "confidentialProtocolId",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
         {
           inputs: [
             {
@@ -58,28 +92,49 @@ const deployedContracts = {
           stateMutability: "nonpayable",
           type: "function",
         },
-        {
-          inputs: [],
-          name: "protocolId",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "pure",
-          type: "function",
-        },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 3,
+      deployedOnBlock: 4,
     },
   },
   11155111: {
     FHECounter: {
-      address: "0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e",
+      address: "0x7DDA7D91704bd59000608e6A7B41927B3FF90129",
       abi: [
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "handle",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+          ],
+          name: "SenderNotAllowedToUseHandle",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ZamaProtocolUnsupported",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "confidentialProtocolId",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
         {
           inputs: [
             {
@@ -129,22 +184,9 @@ const deployedContracts = {
           stateMutability: "nonpayable",
           type: "function",
         },
-        {
-          inputs: [],
-          name: "protocolId",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "pure",
-          type: "function",
-        },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 9368216,
+      deployedOnBlock: 10135027,
     },
   },
 } as const;
