@@ -110,6 +110,11 @@ pnpm start
 - Optional: set `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` for better WalletConnect reliability.
 - Optional: add per-chain RPCs via `rpcOverrides` in `packages/nextjs/scaffold.config.ts`.
 
+### Environment variables overview
+
+- **Local Hardhat node**: you only need the default values from `.env.example` (no Alchemy key required).
+- **Sepolia testnet**: make sure `NEXT_PUBLIC_ALCHEMY_API_KEY` and the deployment mnemonic are set before running `pnpm deploy:sepolia` and `pnpm start`.
+
 ## 🔧 Troubleshooting
 
 ### Common MetaMask + Hardhat Issues
