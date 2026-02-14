@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import * as main from "../src";
 import * as react from "../src/react";
+import * as vue from "../src/vue";
 import * as core from "../src/core";
 import * as storage from "../src/storage";
 
@@ -11,6 +12,10 @@ describe("exports", () => {
 
   it("react exports are present", () => {
     expect(react).toBeTruthy();
+  });
+
+  it("vue exports are present", () => {
+    expect(vue).toBeTruthy();
   });
 
   it("core exports are present", () => {

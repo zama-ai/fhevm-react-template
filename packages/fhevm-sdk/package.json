@@ -26,6 +26,10 @@
     "./react": {
       "types": "./src/react/index.ts",
       "default": "./dist/react/index.js"
+    },
+    "./vue": {
+      "types": "./src/vue/index.ts",
+      "default": "./dist/vue/index.js"
     }
   },
   "scripts": {
@@ -42,7 +46,16 @@
     "@fhevm/mock-utils": "^0.1.0",
     "@zama-fhe/relayer-sdk": "^0.2.0",
     "ethers": "^6.13.4",
-    "react": "^18.0.0 || ^19.0.0"
+    "react": "^18.0.0 || ^19.0.0",
+    "vue": "^3.4.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/node": "~18.19.50",
@@ -53,6 +66,7 @@
     "fake-indexeddb": "~6.0.0",
     "jsdom": "^27.0.0",
     "react": "~19.0.0",
+    "vue": "^3.4.0",
     "typescript": "~5.8.2",
     "vitest": "~2.1.8"
   }
