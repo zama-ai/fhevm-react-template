@@ -29,7 +29,33 @@ export const FHECounterDemo = () => {
     return (window as any).ethereum;
   }, []);
 
-  const initialMockChains = { 31337: "http://localhost:8545" };
+  const initialMockChains = useMemo(() => {
+    console.log("[FHECounterDemo] Current chainId:", chainId);
+    
+    // Only include the current chain to avoid conflicts
+    if (chainId === 11155111) {
+      // Sepolia
+      const config = {
+        11155111: `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+      } as Record<number, string>;
+      console.log("[FHECounterDemo] Using Sepolia config:", config);
+      return config;
+    } else if (chainId === 31337) {
+      // Hardhat local
+      const config = {
+        31337: "http://localhost:8545"
+      } as Record<number, string>;
+      console.log("[FHECounterDemo] Using Hardhat config:", config);
+      return config;
+    } else {
+      // Default to Sepolia if no specific chain
+      const config = {
+        11155111: `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+      } as Record<number, string>;
+      console.log("[FHECounterDemo] Using default Sepolia config:", config);
+      return config;
+    }
+  }, [chainId]);
 
   const {
     instance: fhevmInstance,
