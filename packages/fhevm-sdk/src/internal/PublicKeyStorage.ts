@@ -49,16 +49,19 @@ async function _getDB(): Promise<IDBPDatabase<PublicParamsDB> | undefined> {
   return __dbPromise;
 }
 
-type FhevmInstanceConfigPublicKey = {
-  data: Uint8Array | null;
-  id: string | null;
+// Types that match @zama-fhe/relayer-sdk v0.4 FhevmPkeConfigType
+type FhevmPublicKeyType = {
+  data: Uint8Array;
+  id: string;
 };
 
-type FhevmInstanceConfigPublicParams = {
-  "2048": {
-    publicParamsId: string;
-    publicParams: Uint8Array;
-  };
+type FhevmPkeCrsType = {
+  publicParams: Uint8Array;
+  publicParamsId: string;
+};
+
+type FhevmPkeCrsByCapacityType = {
+  2048: FhevmPkeCrsType;
 };
 
 function assertFhevmStoredPublicKey(
@@ -110,12 +113,12 @@ function assertFhevmStoredPublicParams(
 }
 
 export async function publicKeyStorageGet(aclAddress: `0x${string}`): Promise<{
-  publicKey?: FhevmInstanceConfigPublicKey;
-  publicParams: FhevmInstanceConfigPublicParams | null;
+  publicKey?: FhevmPublicKeyType;
+  publicParams?: FhevmPkeCrsByCapacityType;
 }> {
   const db = await _getDB();
   if (!db) {
-    return { publicParams: null };
+    return {};
   }
 
   let storedPublicKey: FhevmStoredPublicKey | null = null;
@@ -140,27 +143,25 @@ export async function publicKeyStorageGet(aclAddress: `0x${string}`): Promise<{
     //
   }
 
-  const publicKeyData = storedPublicKey?.publicKey;
-  const publicKeyId = storedPublicKey?.publicKeyId;
-  const publicParams = storedPublicParams
-    ? {
-        "2048": storedPublicParams,
-      }
-    : null;
+  const result: {
+    publicKey?: FhevmPublicKeyType;
+    publicParams?: FhevmPkeCrsByCapacityType;
+  } = {};
 
-  let publicKey: FhevmInstanceConfigPublicKey | undefined = undefined;
-
-  if (publicKeyId && publicKeyData) {
-    publicKey = {
-      id: publicKeyId,
-      data: publicKeyData,
+  if (storedPublicKey) {
+    result.publicKey = {
+      id: storedPublicKey.publicKeyId,
+      data: storedPublicKey.publicKey,
     };
   }
 
-  return {
-    ...(publicKey !== undefined && { publicKey }),
-    publicParams,
-  };
+  if (storedPublicParams) {
+    result.publicParams = {
+      2048: storedPublicParams,
+    };
+  }
+
+  return result;
 }
 
 export async function publicKeyStorageSet(
