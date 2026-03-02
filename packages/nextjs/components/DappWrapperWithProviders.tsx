@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { InMemoryStorageProvider } from "@fhevm-sdk";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HardhatConfig, MemoryStorage, RelayerWeb, SepoliaConfig, ZamaProvider } from "@zama-fhe/react-sdk";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
@@ -11,6 +11,17 @@ import { WagmiProvider } from "wagmi";
 import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/helper";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
+import { WagmiSigner } from "~~/services/web3/wagmiSigner";
+
+const signer = new WagmiSigner({ config: wagmiConfig });
+const relayer = new RelayerWeb({
+  getChainId: () => signer.getChainId(),
+  transports: {
+    31337: HardhatConfig,
+    11155111: SepoliaConfig,
+  },
+});
+const storage = new MemoryStorage();
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,14 +47,14 @@ export const DappWrapperWithProviders = ({ children }: { children: React.ReactNo
           avatar={BlockieAvatar}
           theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
         >
-          <ProgressBar height="3px" color="#2299dd" />
-          <div className={`flex flex-col min-h-screen`}>
-            <Header />
-            <main className="relative flex flex-col flex-1">
-              <InMemoryStorageProvider>{children}</InMemoryStorageProvider>
-            </main>
-          </div>
-          <Toaster />
+          <ZamaProvider relayer={relayer} signer={signer} storage={storage}>
+            <ProgressBar height="3px" color="#2299dd" />
+            <div className={`flex flex-col min-h-screen`}>
+              <Header />
+              <main className="relative flex flex-col flex-1">{children}</main>
+            </div>
+            <Toaster />
+          </ZamaProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
