@@ -7,7 +7,7 @@ function _timestampNow(): number {
 }
 
 class FhevmDecryptionSignatureStorageKey {
-  #contractAddresses: `0x${string}`[];
+  #contractAddresses: readonly `0x${string}`[];
   #userAddress: `0x${string}`;
   #publicKey: string | undefined;
   #key: string;
@@ -19,17 +19,25 @@ class FhevmDecryptionSignatureStorageKey {
 
     const sortedContractAddresses = (contractAddresses as `0x${string}`[]).sort();
 
-    const emptyEIP712 = (instance as any).createEIP712(publicKey ?? (ethers as any).ZeroAddress, sortedContractAddresses, 0, 0);
+    // Use the new SDK's createUserDecryptEIP712 method
+    const emptyEIP712 = instance.createUserDecryptEIP712({
+      publicKey: publicKey ?? ethers.ZeroAddress,
+      contractAddresses: sortedContractAddresses,
+      startTimestamp: 0,
+      durationDays: 0,
+      extraData: "0x00",
+    });
 
     try {
-      const hash = (ethers as any).TypedDataEncoder.hash(
-        emptyEIP712.domain,
-        { UserDecryptRequestVerification: emptyEIP712.types.UserDecryptRequestVerification },
+      const hash = ethers.TypedDataEncoder.hash(
+        emptyEIP712.domain as any,
+        emptyEIP712.types as any,
         emptyEIP712.message,
       );
 
       this.#contractAddresses = sortedContractAddresses;
       this.#userAddress = userAddress as `0x${string}`;
+      this.#publicKey = publicKey;
 
       this.#key = `${userAddress}:${hash}`;
     } catch (e) {
@@ -37,7 +45,7 @@ class FhevmDecryptionSignatureStorageKey {
     }
   }
 
-  get contractAddresses(): `0x${string}`[] {
+  get contractAddresses(): readonly `0x${string}`[] {
     return this.#contractAddresses;
   }
 
@@ -61,7 +69,7 @@ export class FhevmDecryptionSignature {
   #startTimestamp: number;
   #durationDays: number;
   #userAddress: `0x${string}`;
-  #contractAddresses: `0x${string}`[];
+  #contractAddresses: readonly `0x${string}`[];
   #eip712: EIP712Type;
 
   private constructor(parameters: FhevmDecryptionSignatureType) {
@@ -74,7 +82,7 @@ export class FhevmDecryptionSignature {
     this.#startTimestamp = parameters.startTimestamp;
     this.#durationDays = parameters.durationDays;
     this.#userAddress = parameters.userAddress;
-    this.#contractAddresses = parameters.contractAddresses;
+    this.#contractAddresses = Array.isArray(parameters.contractAddresses) ? [...parameters.contractAddresses] as `0x${string}`[] : parameters.contractAddresses;
     this.#eip712 = parameters.eip712;
   }
 
@@ -104,6 +112,10 @@ export class FhevmDecryptionSignature {
 
   public get userAddress() {
     return this.#userAddress;
+  }
+
+  public get eip712() {
+    return this.#eip712;
   }
 
   static checkIs(s: unknown): s is FhevmDecryptionSignatureType {
@@ -185,7 +197,7 @@ export class FhevmDecryptionSignature {
 
       const storageKey = new FhevmDecryptionSignatureStorageKey(
         instance,
-        this.#contractAddresses,
+        [...this.#contractAddresses],
         this.#userAddress,
         withPublicKey ? this.#publicKey : undefined,
       );
@@ -237,12 +249,22 @@ export class FhevmDecryptionSignature {
       const userAddress = (await signer.getAddress()) as `0x${string}`;
       const startTimestamp = _timestampNow();
       const durationDays = 365;
-      const eip712 = (instance as any).createEIP712(publicKey, contractAddresses, startTimestamp, durationDays);
-      const signature = await (signer as any).signTypedData(
-        eip712.domain,
-        { UserDecryptRequestVerification: eip712.types.UserDecryptRequestVerification },
+
+      // Use the new SDK's createUserDecryptEIP712 method
+      const eip712 = instance.createUserDecryptEIP712({
+        publicKey,
+        contractAddresses: contractAddresses as `0x${string}`[],
+        startTimestamp,
+        durationDays,
+        extraData: "0x00",
+      });
+
+      const signature = await signer.signTypedData(
+        eip712.domain as any,
+        eip712.types as any,
         eip712.message,
       );
+
       return new FhevmDecryptionSignature({
         publicKey,
         privateKey,
@@ -279,7 +301,21 @@ export class FhevmDecryptionSignature {
       return cached;
     }
 
-    const { publicKey, privateKey } = keyPair ?? (instance as any).generateKeypair();
+    // Generate or use provided key pair
+    let publicKey: string;
+    let privateKey: string;
+
+    if (keyPair) {
+      publicKey = keyPair.publicKey;
+      privateKey = keyPair.privateKey;
+    } else {
+      // Use the new SDK's generateFhevmDecryptionKey method
+      const decryptionKey = await instance.generateFhevmDecryptionKey();
+      publicKey = await decryptionKey.getTkmsPublicKeyHex();
+
+      // Serialize the private key for storage
+      privateKey = await decryptionKey.serialize();
+    }
 
     const sig = await FhevmDecryptionSignature.new(instance, contractAddresses, publicKey, privateKey, signer);
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { InMemoryStorageProvider } from "@fhevm-sdk";
+import { setFhevmRuntimeConfig } from "@fhevm/sdk/ethers";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
@@ -19,6 +20,20 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+// Configure FHEVM runtime once at app startup
+let runtimeConfigured = false;
+if (!runtimeConfigured) {
+  try {
+    setFhevmRuntimeConfig({
+      numberOfThreads: 4,
+    });
+    runtimeConfigured = true;
+  } catch (e) {
+    // Runtime config already set (can happen in dev mode with hot reload)
+    console.log("FHEVM runtime already configured");
+  }
+}
 
 export const DappWrapperWithProviders = ({ children }: { children: React.ReactNode }) => {
   const { resolvedTheme } = useTheme();

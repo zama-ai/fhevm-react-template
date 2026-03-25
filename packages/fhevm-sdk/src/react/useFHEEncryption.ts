@@ -1,47 +1,43 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import { FhevmInstance } from "../fhevmTypes.js";
-import { RelayerEncryptedInput } from "@zama-fhe/relayer-sdk/web";
+import type { FhevmInstance } from "../fhevmTypes.js";
 import { ethers } from "ethers";
+import type { VerifiedInputProof } from "@fhevm/sdk/ethers";
 
 export type EncryptResult = {
-  handles: Uint8Array[];
-  inputProof: Uint8Array;
+  handles: readonly string[];
+  inputProof: string;
 };
 
-// Map external encrypted integer type to RelayerEncryptedInput builder method
-export const getEncryptionMethod = (internalType: string) => {
+// Map external encrypted integer type to FHE type string
+export const getEncryptionType = (internalType: string): "bool" | "uint8" | "uint16" | "uint32" | "uint64" | "uint128" | "uint256" | "address" => {
   switch (internalType) {
     case "externalEbool":
-      return "addBool" as const;
+      return "bool";
     case "externalEuint8":
-      return "add8" as const;
+      return "uint8";
     case "externalEuint16":
-      return "add16" as const;
+      return "uint16";
     case "externalEuint32":
-      return "add32" as const;
+      return "uint32";
     case "externalEuint64":
-      return "add64" as const;
+      return "uint64";
     case "externalEuint128":
-      return "add128" as const;
+      return "uint128";
     case "externalEuint256":
-      return "add256" as const;
+      return "uint256";
     case "externalEaddress":
-      return "addAddress" as const;
+      return "address";
     default:
-      console.warn(`Unknown internalType: ${internalType}, defaulting to add64`);
-      return "add64" as const;
+      console.warn(`Unknown internalType: ${internalType}, defaulting to uint64`);
+      return "uint64";
   }
 };
 
-// Convert Uint8Array or hex-like string to 0x-prefixed hex string
-export const toHex = (value: Uint8Array | string): `0x${string}` => {
-  if (typeof value === "string") {
-    return (value.startsWith("0x") ? value : `0x${value}`) as `0x${string}`;
-  }
-  // value is Uint8Array
-  return ("0x" + Buffer.from(value).toString("hex")) as `0x${string}`;
+// Convert value to 0x-prefixed hex string
+export const toHex = (value: string): `0x${string}` => {
+  return (value.startsWith("0x") ? value : `0x${value}`) as `0x${string}`;
 };
 
 // Build contract params from EncryptResult and ABI for a given function
@@ -54,19 +50,24 @@ export const buildParamsFromAbi = (enc: EncryptResult, abi: any[], functionName:
     switch (input.type) {
       case "bytes32":
       case "bytes":
-        return toHex(raw);
+        return toHex(raw as string);
       case "uint256":
-        return BigInt(raw as unknown as string);
+        return BigInt(raw as string);
       case "address":
       case "string":
-        return raw as unknown as string;
+        return raw;
       case "bool":
         return Boolean(raw);
       default:
         console.warn(`Unknown ABI param type ${input.type}; passing as hex`);
-        return toHex(raw);
+        return toHex(raw as string);
     }
   });
+};
+
+export type EncryptValue = {
+  readonly type: "bool" | "uint8" | "uint16" | "uint32" | "uint64" | "uint128" | "uint256" | "address";
+  readonly value: number | bigint | boolean | string;
 };
 
 export const useFHEEncryption = (params: {
@@ -82,14 +83,24 @@ export const useFHEEncryption = (params: {
   );
 
   const encryptWith = useCallback(
-    async (buildFn: (builder: RelayerEncryptedInput) => void): Promise<EncryptResult | undefined> => {
+    async (values: EncryptValue[]): Promise<EncryptResult | undefined> => {
       if (!instance || !ethersSigner || !contractAddress) return undefined;
 
       const userAddress = await ethersSigner.getAddress();
-      const input = instance.createEncryptedInput(contractAddress, userAddress) as RelayerEncryptedInput;
-      buildFn(input);
-      const enc = await input.encrypt();
-      return enc;
+
+      // Use the new SDK's encrypt method
+      const proof = await instance.encrypt({
+        contractAddress,
+        userAddress,
+        values: values as any,
+        extraData: "0x00",
+      });
+
+      // Convert to the expected EncryptResult format
+      return {
+        handles: proof.externalHandles.map(h => h.bytes32Hex),
+        inputProof: proof.bytesHex,
+      };
     },
     [instance, ethersSigner, contractAddress],
   );

@@ -6,7 +6,7 @@ import { useWagmiEthers } from "../wagmi/useWagmiEthers";
 import { FhevmInstance } from "@fhevm-sdk";
 import {
   buildParamsFromAbi,
-  getEncryptionMethod,
+  getEncryptionType,
   useFHEDecrypt,
   useFHEEncryption,
   useInMemoryStorage,
@@ -134,13 +134,13 @@ export const useFHECounterWagmi = (parameters: {
     [hasContract, instance, hasSigner, isProcessing],
   );
 
-  const getEncryptionMethodFor = (functionName: "increment" | "decrement") => {
+  const getEncryptionTypeFor = (functionName: "increment" | "decrement") => {
     const functionAbi = fheCounter?.abi.find(item => item.type === "function" && item.name === functionName);
-    if (!functionAbi) return { method: undefined as string | undefined, error: `Function ABI not found for ${functionName}` } as const;
+    if (!functionAbi) return { type: undefined as ReturnType<typeof getEncryptionType> | undefined, error: `Function ABI not found for ${functionName}` } as const;
     if (!functionAbi.inputs || functionAbi.inputs.length === 0)
-      return { method: undefined as string | undefined, error: `No inputs found for ${functionName}` } as const;
+      return { type: undefined as ReturnType<typeof getEncryptionType> | undefined, error: `No inputs found for ${functionName}` } as const;
     const firstInput = functionAbi.inputs[0]!;
-    return { method: getEncryptionMethod(firstInput.internalType), error: undefined } as const;
+    return { type: getEncryptionType(firstInput.internalType), error: undefined } as const;
   };
 
   const updateCounter = useCallback(
@@ -151,13 +151,13 @@ export const useFHECounterWagmi = (parameters: {
       setIsProcessing(true);
       setMessage(`Starting ${op}(${valueAbs})...`);
       try {
-        const { method, error } = getEncryptionMethodFor(op);
-        if (!method) return setMessage(error ?? "Encryption method not found");
+        const { type, error } = getEncryptionTypeFor(op);
+        if (!type) return setMessage(error ?? "Encryption type not found");
 
-        setMessage(`Encrypting with ${method}...`);
-        const enc = await encryptWith(builder => {
-          (builder as any)[method](valueAbs);
-        });
+        setMessage(`Encrypting with ${type}...`);
+        const enc = await encryptWith([
+          { type, value: valueAbs }
+        ]);
         if (!enc) return setMessage("Encryption failed");
 
         const writeContract = getContract("write");

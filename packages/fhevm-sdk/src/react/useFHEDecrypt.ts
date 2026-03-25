@@ -79,19 +79,25 @@ export const useFHEDecrypt = (params: {
 
         setMessage("Call FHEVM userDecrypt...");
 
-        const mutableReqs = thisRequests.map(r => ({ handle: r.handle, contractAddress: r.contractAddress }));
-        let res: Record<string, string | bigint | boolean> = {};
+        const mutableReqs = thisRequests.map(r => ({
+          handle: r.handle as any,
+          contractAddress: r.contractAddress as any
+        }));
+        let decryptedHandles: readonly any[] = [];
         try {
-          res = await instance.userDecrypt(
-            mutableReqs,
-            sig.privateKey,
-            sig.publicKey,
-            sig.signature,
-            sig.contractAddresses,
-            sig.userAddress,
-            sig.startTimestamp,
-            sig.durationDays,
-          );
+          // Load the decryption key from the stored private key
+          const decryptionKey = await instance.loadFhevmDecryptionKey({
+            tkmsPrivateKeyBytes: sig.privateKey as any,
+          });
+
+          // Use the new SDK's userDecrypt method
+          decryptedHandles = await instance.userDecrypt({
+            decryptionKey,
+            handleContractPairs: mutableReqs as any,
+            userDecryptEIP712Signer: sig.userAddress as any,
+            userDecryptEIP712Message: sig.eip712.message,
+            userDecryptEIP712Signature: sig.signature as any,
+          });
         } catch (e) {
           const err = e as unknown as { name?: string; message?: string };
           const code = err && typeof err === "object" && "name" in (err as any) ? (err as any).name : "DECRYPT_ERROR";
@@ -100,6 +106,16 @@ export const useFHEDecrypt = (params: {
           setError(`${code}: ${msg}`);
           setMessage("FHEVM userDecrypt failed");
           return;
+        }
+
+        // Convert the array of DecryptedFhevmHandle to the expected Record format
+        const res: Record<string, string | bigint | boolean> = {};
+        for (let i = 0; i < thisRequests.length; i++) {
+          const handle = thisRequests[i].handle;
+          const decrypted = decryptedHandles[i];
+          if (decrypted) {
+            res[handle] = decrypted.value;
+          }
         }
 
         setMessage("FHEVM userDecrypt completed!");
