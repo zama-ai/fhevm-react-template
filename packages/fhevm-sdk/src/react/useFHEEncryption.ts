@@ -3,7 +3,6 @@
 import { useCallback, useMemo } from "react";
 import type { FhevmInstance } from "../fhevmTypes.js";
 import { ethers } from "ethers";
-import type { VerifiedInputProof } from "@fhevm/sdk/ethers";
 
 export type EncryptResult = {
   handles: readonly string[];
@@ -88,18 +87,15 @@ export const useFHEEncryption = (params: {
 
       const userAddress = await ethersSigner.getAddress();
 
-      // Use the new SDK's encrypt method
       const proof = await instance.encrypt({
         contractAddress,
         userAddress,
         values: values as any,
-        extraData: "0x00",
       });
 
-      // Convert to the expected EncryptResult format
       return {
-        handles: proof.externalHandles.map(h => h.bytes32Hex),
-        inputProof: proof.bytesHex,
+        handles: proof.encryptedInputs.map((h: any) => h.bytes32Hex),
+        inputProof: proof.inputProof,
       };
     },
     [instance, ethersSigner, contractAddress],

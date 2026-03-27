@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { InMemoryStorageProvider } from "@fhevm-sdk";
-import { setFhevmRuntimeConfig } from "@fhevm/sdk/ethers";
+import { setFhevmRuntimeConfig } from "@fhevm-sdk";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
@@ -29,7 +29,7 @@ if (!runtimeConfigured) {
       numberOfThreads: 4,
     });
     runtimeConfigured = true;
-  } catch (e) {
+  } catch {
     // Runtime config already set (can happen in dev mode with hot reload)
     console.log("FHEVM runtime already configured");
   }

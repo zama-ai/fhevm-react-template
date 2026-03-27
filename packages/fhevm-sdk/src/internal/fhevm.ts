@@ -232,12 +232,16 @@ export const createFhevmInstance = async (parameters: {
   notify("sdk-initializing");
 
   // Create ethers provider
+  // JsonRpcProvider needs a URL string. For EIP-1193 providers (like window.ethereum),
+  // we need to get the RPC URL from the chain config or use a public endpoint.
   let ethersProvider: JsonRpcProvider;
   if (typeof providerOrUrl === "string") {
     ethersProvider = new JsonRpcProvider(providerOrUrl);
   } else {
-    // Convert EIP-1193 provider to ethers provider
-    ethersProvider = new JsonRpcProvider(providerOrUrl as any);
+    // EIP-1193 providers don't expose their RPC URL.
+    // Use the Sepolia public RPC as the JsonRpcProvider endpoint.
+    // The SDK only needs this for on-chain reads (ACL checks, contract reads).
+    ethersProvider = new JsonRpcProvider("https://ethereum-sepolia-rpc.publicnode.com");
   }
 
   throwIfAborted();

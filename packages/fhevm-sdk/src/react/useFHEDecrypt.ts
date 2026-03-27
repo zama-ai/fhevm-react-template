@@ -1,12 +1,23 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import { FhevmDecryptionSignature } from "../FhevmDecryptionSignature.js";
+import { loadOrCreateDecryptSession, buildSignedPermit } from "../FhevmDecryptionSignature.js";
 import { GenericStringStorage } from "../storage/GenericStringStorage.js";
 import { FhevmInstance } from "../fhevmTypes.js";
+import { toFhevmHandle } from "@fhevm/sdk/ethers";
 import { ethers } from "ethers";
 
-export type FHEDecryptRequest = { handle: string; contractAddress: `0x${string}` };
+export type FHEDecryptRequest = { handle: string | bigint; contractAddress: `0x${string}` };
+
+/** Convert a handle (bigint, number, or hex string) to a 0x-prefixed bytes32 hex string */
+function toBytes32Hex(handle: string | bigint | number): string {
+  if (typeof handle === "bigint" || typeof handle === "number") {
+    return "0x" + BigInt(handle).toString(16).padStart(64, "0");
+  }
+  // Already a hex string
+  if (handle.startsWith("0x")) return handle;
+  return "0x" + handle.padStart(64, "0");
+}
 
 export const useFHEDecrypt = (params: {
   instance: FhevmInstance | undefined;
@@ -45,7 +56,6 @@ export const useFHEDecrypt = (params: {
     const thisSigner = ethersSigner;
     const thisRequests = requests;
 
-    // Capture the current requests key to avoid false "stale" detection on first run
     lastReqKeyRef.current = requestsKey;
 
     isDecryptingRef.current = true;
@@ -59,16 +69,18 @@ export const useFHEDecrypt = (params: {
 
       try {
         const uniqueAddresses = Array.from(new Set(thisRequests.map(r => r.contractAddress)));
-        const sig: FhevmDecryptionSignature | null = await FhevmDecryptionSignature.loadOrSign(
+
+        // 1. Load or create a decrypt session (key pair + signed permit)
+        const session = await loadOrCreateDecryptSession(
           instance,
           uniqueAddresses,
           ethersSigner,
           fhevmDecryptionSignatureStorage,
         );
 
-        if (!sig) {
-          setMessage("Unable to build FHEVM decryption signature");
-          setError("SIGNATURE_ERROR: Failed to create decryption signature");
+        if (!session) {
+          setMessage("Unable to create decrypt session");
+          setError("SESSION_ERROR: Failed to create decrypt session");
           return;
         }
 
@@ -77,48 +89,59 @@ export const useFHEDecrypt = (params: {
           return;
         }
 
-        setMessage("Call FHEVM userDecrypt...");
+        setMessage("Decrypting...");
 
-        const mutableReqs = thisRequests.map(r => ({
-          handle: r.handle as any,
-          contractAddress: r.contractAddress as any
-        }));
         let decryptedHandles: readonly any[] = [];
         try {
-          // Load the decryption key from the stored private key
-          const decryptionKey = await instance.loadFhevmDecryptionKey({
-            tkmsPrivateKeyBytes: sig.privateKey as any,
+          // 2. Restore the key pair from serialized bytes
+          console.log("[decrypt] Loading key pair from serialized bytes...");
+          const e2eTransportKeyPair = await instance.loadE2eTransportKeyPair({
+            tkmsPrivateKeyBytes: session.serializedKeyPair as any,
+          });
+          console.log("[decrypt] Key pair loaded");
+
+          // 3. Build the signed permit
+          const signedPermit = buildSignedPermit(session);
+          console.log("[decrypt] Signed permit built:", {
+            signer: signedPermit.signer,
+            hasPermit: !!signedPermit.permit,
+            hasSignature: !!signedPermit.signature,
           });
 
-          // Use the new SDK's userDecrypt method
-          decryptedHandles = await instance.userDecrypt({
-            decryptionKey,
-            handleContractPairs: mutableReqs as any,
-            userDecryptEIP712Signer: sig.userAddress as any,
-            userDecryptEIP712Message: sig.eip712.message,
-            userDecryptEIP712Signature: sig.signature as any,
+          // 4. Decrypt using the new API
+          const encryptedValues = thisRequests.map(r => ({
+            encrypted: toFhevmHandle(toBytes32Hex(r.handle)),
+            contractAddress: r.contractAddress as any,
+          }));
+          console.log("[decrypt] Calling instance.decrypt with", encryptedValues.length, "values:", encryptedValues);
+          decryptedHandles = await instance.decrypt({
+            e2eTransportKeyPair,
+            encryptedValues,
+            signedPermit,
           });
+          console.log("[decrypt] Success:", decryptedHandles);
         } catch (e) {
+          console.error("[decrypt] Failed:", e);
           const err = e as unknown as { name?: string; message?: string };
           const code = err && typeof err === "object" && "name" in (err as any) ? (err as any).name : "DECRYPT_ERROR";
           const msg =
             err && typeof err === "object" && "message" in (err as any) ? (err as any).message : "Decryption failed";
           setError(`${code}: ${msg}`);
-          setMessage("FHEVM userDecrypt failed");
+          setMessage("Decryption failed");
           return;
         }
 
         // Convert the array of DecryptedFhevmHandle to the expected Record format
         const res: Record<string, string | bigint | boolean> = {};
         for (let i = 0; i < thisRequests.length; i++) {
-          const handle = thisRequests[i].handle;
+          const handle = String(thisRequests[i].handle);
           const decrypted = decryptedHandles[i];
           if (decrypted) {
             res[handle] = decrypted.value;
           }
         }
 
-        setMessage("FHEVM userDecrypt completed!");
+        setMessage("Decryption completed!");
 
         if (isStale()) {
           setMessage("Ignore FHEVM decryption");
@@ -132,7 +155,7 @@ export const useFHEDecrypt = (params: {
         const msg =
           err && typeof err === "object" && "message" in (err as any) ? (err as any).message : "Unknown error";
         setError(`${code}: ${msg}`);
-        setMessage("FHEVM decryption errored");
+        setMessage("Decryption errored");
       } finally {
         isDecryptingRef.current = false;
         setIsDecrypting(false);

@@ -19,27 +19,3 @@ export type HandleContractPair = {
 export type UserDecryptResults = {
   readonly [handle: string]: bigint;
 };
-
-export type FhevmDecryptionSignatureType = {
-  readonly publicKey: string;
-  readonly privateKey: string;
-  readonly signature: string;
-  readonly startTimestamp: number; // Unix timestamp in seconds
-  readonly durationDays: number;
-  readonly userAddress: `0x${string}`;
-  readonly contractAddresses: readonly `0x${string}`[];
-  readonly eip712: EIP712Type;
-};
-
-export type EIP712Type = {
-  readonly domain: {
-    readonly chainId: number | bigint;
-    readonly name: string;
-    readonly verifyingContract: `0x${string}`;
-    readonly version: string;
-  };
-
-  readonly message: any;
-  readonly primaryType: string;
-  readonly types: any;
-};
