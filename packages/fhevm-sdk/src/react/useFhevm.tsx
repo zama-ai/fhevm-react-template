@@ -1,128 +1,246 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { FhevmInstance } from "../fhevmTypes.js";
-import { createFhevmInstance } from "../internal/fhevm.js";
 import { ethers } from "ethers";
+import type { FhevmInstance } from "../fhevmTypes.js";
+import { FhevmClient, type FhevmClientStatus } from "../core/FhevmClient.js";
 
-function _assert(condition: boolean, message?: string): asserts condition {
-  if (!condition) {
-    const m = message ? `Assertion failed: ${message}` : `Assertion failed.`;
-    throw new Error(m);
-  }
-}
+/**
+ * Legacy type alias for backward compatibility
+ * @deprecated Use FhevmClientStatus from core instead
+ */
+export type FhevmGoState = FhevmClientStatus;
 
-export type FhevmGoState = "idle" | "loading" | "ready" | "error";
-
+/**
+ * React hook for managing FHEVM instances.
+ * 
+ * This hook provides a React-friendly interface to the FhevmClient,
+ * handling lifecycle management, state updates, and cleanup automatically.
+ * 
+ * @remarks
+ * The hook will automatically initialize the FHEVM instance when the provider
+ * and chainId are available (and `enabled` is true). It will clean up resources
+ * when the component unmounts or when dependencies change.
+ * 
+ * **Note**: This hook now uses the refactored FhevmClient internally for better
+ * stability and testability while maintaining the same API.
+ * 
+ * @param parameters - Configuration options
+ * @returns FHEVM instance state and control functions
+ * 
+ * @example
+ * Basic usage:
+ * ```typescript
+ * function MyComponent() {
+ *   const { instance, status, error, refresh } = useFhevm({
+ *     provider: window.ethereum,
+ *     chainId: 11155111
+ *   });
+ *   
+ *   if (status === 'loading') return <div>Loading...</div>;
+ *   if (error) return <div>Error: {error.message}</div>;
+ *   if (!instance) return <div>Not initialized</div>;
+ *   
+ *   return <div>Ready! Instance: {instance}</div>;
+ * }
+ * ```
+ * 
+ * @example
+ * With manual control:
+ * ```typescript
+ * function MyComponent() {
+ *   const { instance, status, refresh } = useFhevm({
+ *     provider: window.ethereum,
+ *     chainId: 11155111,
+ *     enabled: false // Don't auto-initialize
+ *   });
+ *   
+ *   const handleInit = async () => {
+ *     refresh(); // Manually trigger initialization
+ *   };
+ *   
+ *   return <button onClick={handleInit}>Initialize FHEVM</button>;
+ * }
+ * ```
+ * 
+ * @example
+ * With local development:
+ * ```typescript
+ * function MyComponent() {
+ *   const { instance, status } = useFhevm({
+ *     provider: window.ethereum,
+ *     chainId: 31337,
+ *     initialMockChains: { 31337: 'http://localhost:8545' }
+ *   });
+ *   
+ *   // Hook automatically detects local chain and uses mock mode
+ *   return <div>Status: {status}</div>;
+ * }
+ * ```
+ * 
+ * @public
+ */
 export function useFhevm(parameters: {
+  /** Web3 provider (EIP-1193 or RPC URL) */
   provider: string | ethers.Eip1193Provider | undefined;
+  /** Blockchain chain ID */
   chainId: number | undefined;
+  /** Enable auto-initialization (default: true) */
   enabled?: boolean;
+  /** Mock chain RPC URLs for local development */
   initialMockChains?: Readonly<Record<number, string>>;
 }): {
+  /** The initialized FHEVM instance, or undefined */
   instance: FhevmInstance | undefined;
+  /** Function to manually refresh/re-initialize the instance */
   refresh: () => void;
+  /** Last error that occurred, or undefined */
   error: Error | undefined;
+  /** Current initialization status */
   status: FhevmGoState;
 } {
   const { provider, chainId, initialMockChains, enabled = true } = parameters;
 
-  const [instance, _setInstance] = useState<FhevmInstance | undefined>(undefined);
-  const [status, _setStatus] = useState<FhevmGoState>("idle");
-  const [error, _setError] = useState<Error | undefined>(undefined);
-  const [_isRunning, _setIsRunning] = useState<boolean>(enabled);
-  const [_providerChanged, _setProviderChanged] = useState<number>(0);
-  const _abortControllerRef = useRef<AbortController | null>(null);
-  const _providerRef = useRef<string | ethers.Eip1193Provider | undefined>(provider);
-  const _chainIdRef = useRef<number | undefined>(chainId);
-  const _mockChainsRef = useRef<Record<number, string> | undefined>(initialMockChains as any);
+  // State
+  const [instance, setInstance] = useState<FhevmInstance | undefined>(undefined);
+  const [status, setStatus] = useState<FhevmGoState>("idle");
+  const [error, setError] = useState<Error | undefined>(undefined);
 
+  // Ref to hold the client instance
+  const clientRef = useRef<FhevmClient | null>(null);
+  
+  // Track previous values to detect changes
+  const prevValuesRef = useRef<{
+    provider: string | ethers.Eip1193Provider | undefined;
+    chainId: number | undefined;
+    enabled: boolean;
+  }>({ provider: undefined, chainId: undefined, enabled: false });
+
+  /**
+   * Manual refresh function
+   */
   const refresh = useCallback(() => {
-    if (_abortControllerRef.current) {
-      _providerRef.current = undefined;
-      _chainIdRef.current = undefined;
-
-      _abortControllerRef.current.abort();
-      _abortControllerRef.current = null;
-    }
-
-    _providerRef.current = provider;
-    _chainIdRef.current = chainId;
-
-    _setInstance(undefined);
-    _setError(undefined);
-    _setStatus("idle");
-
-    if (provider !== undefined) {
-      _setProviderChanged(prev => prev + 1);
-    }
-  }, [provider, chainId]);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
-
-  useEffect(() => {
-    _setIsRunning(enabled);
-  }, [enabled]);
-
-  useEffect(() => {
-    if (_isRunning === false) {
-      if (_abortControllerRef.current) {
-        _abortControllerRef.current.abort();
-        _abortControllerRef.current = null;
-      }
-      _setInstance(undefined);
-      _setError(undefined);
-      _setStatus("idle");
+    if (!clientRef.current || !enabled || !provider) {
       return;
     }
 
-    if (_isRunning === true) {
-      if (_providerRef.current === undefined) {
-        _setInstance(undefined);
-        _setError(undefined);
-        _setStatus("idle");
-        return;
-      }
-
-      if (!_abortControllerRef.current) {
-        _abortControllerRef.current = new AbortController();
-      }
-
-      _assert(!_abortControllerRef.current.signal.aborted, "!controllerRef.current.signal.aborted");
-
-      _setStatus("loading");
-      _setError(undefined);
-
-      const thisSignal = _abortControllerRef.current.signal;
-      const thisProvider = _providerRef.current;
-      const thisRpcUrlsByChainId = _mockChainsRef.current as any;
-
-      createFhevmInstance({
-        signal: thisSignal,
-        provider: thisProvider as any,
-        mockChains: thisRpcUrlsByChainId as any,
-        onStatusChange: s => console.log(`[useFhevm] createFhevmInstance status changed: ${s}`),
+    clientRef.current
+      .refresh()
+      .then((inst) => {
+        setInstance(inst);
+        setError(undefined);
       })
-        .then(i => {
-          if (thisSignal.aborted) return;
-          _assert(thisProvider === _providerRef.current, "thisProvider === _providerRef.current");
+      .catch((err) => {
+        // Ignore cancellation errors silently
+        if (err?.message?.includes("cancelled") || err?.message?.includes("Initialization was cancelled")) {
+          return;
+        }
+        setError(err instanceof Error ? err : new Error(String(err)));
+      });
+  }, [enabled, provider]);
 
-          _setInstance(i);
-          _setError(undefined);
-          _setStatus("ready");
+  /**
+   * Initialize or update the client when parameters change
+   */
+  useEffect(() => {
+    // Check if parameters changed
+    const prevValues = prevValuesRef.current;
+    const hasChanges =
+      prevValues.provider !== provider ||
+      prevValues.chainId !== chainId ||
+      prevValues.enabled !== enabled;
+
+    if (!hasChanges) {
+      return;
+    }
+
+    // Update tracked values
+    prevValuesRef.current = { provider, chainId, enabled };
+
+    // If not enabled or missing provider, clean up
+    if (!enabled || !provider) {
+      if (clientRef.current) {
+        clientRef.current.destroy();
+        clientRef.current = null;
+      }
+      setInstance(undefined);
+      setStatus("idle");
+      setError(undefined);
+      return;
+    }
+
+    // Create or update client
+    if (!clientRef.current) {
+      // Create new client
+      const client = new FhevmClient({
+        provider,
+        chainId,
+        mockChains: initialMockChains as Record<number, string>,
+        enabled,
+      });
+
+      // Set up event listeners
+      client.on("statusChange", (s) => {
+        setStatus(s);
+      });
+
+      client.on("error", (err) => {
+        setError(err);
+      });
+
+      clientRef.current = client;
+
+      // Initialize
+      client
+        .initialize()
+        .then((inst) => {
+          setInstance(inst);
+          setError(undefined);
         })
-        .catch(e => {
-          if (thisSignal.aborted) return;
-
-          _assert(thisProvider === _providerRef.current, "thisProvider === _providerRef.current");
-
-          _setInstance(undefined);
-          _setError(e as any);
-          _setStatus("error");
+        .catch((err) => {
+          // Ignore cancellation errors silently
+          if (err?.message?.includes("cancelled") || err?.message?.includes("Initialization was cancelled")) {
+            return;
+          }
+          setError(err instanceof Error ? err : new Error(String(err)));
+        });
+    } else {
+      // Update existing client config
+      clientRef.current
+        .updateConfig({
+          provider,
+          chainId,
+          mockChains: initialMockChains as Record<number, string>,
+          enabled,
+        })
+        .then((inst) => {
+          setInstance(inst);
+          setError(undefined);
+        })
+        .catch((err) => {
+          // Ignore cancellation errors silently
+          if (err?.message?.includes("cancelled") || err?.message?.includes("Initialization was cancelled")) {
+            return;
+          }
+          setError(err instanceof Error ? err : new Error(String(err)));
         });
     }
-  }, [_isRunning, _providerChanged]);
+  }, [provider, chainId, enabled, initialMockChains]);
 
-  return { instance, refresh, error, status };
+  /**
+   * Cleanup on unmount
+   */
+  useEffect(() => {
+    return () => {
+      if (clientRef.current) {
+        clientRef.current.destroy();
+        clientRef.current = null;
+      }
+    };
+  }, []);
+
+  return {
+    instance,
+    refresh,
+    error,
+    status,
+  };
 }
-
