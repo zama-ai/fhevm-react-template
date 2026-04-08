@@ -1,7 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
-import { useFhevm } from "@fhevm-sdk";
 import { useAccount } from "wagmi";
 import { RainbowKitCustomConnectButton } from "~~/components/helper/RainbowKitCustomConnectButton";
 import { useFHECounterWagmi } from "~~/hooks/fhecounter-example/useFHECounterWagmi";
@@ -13,34 +11,7 @@ import { useFHECounterWagmi } from "~~/hooks/fhecounter-example/useFHECounterWag
  *  - "Decrement" button: allows you to decrement the FHECounter count handle using FHE operations.
  */
 export const FHECounterDemo = () => {
-  const { isConnected, chain } = useAccount();
-
-  const chainId = chain?.id;
-
-  //////////////////////////////////////////////////////////////////////////////
-  // FHEVM instance
-  //////////////////////////////////////////////////////////////////////////////
-
-  // Create EIP-1193 provider from wagmi for FHEVM
-  const provider = useMemo(() => {
-    if (typeof window === "undefined") return undefined;
-
-    // Get the wallet provider from window.ethereum
-    return (window as any).ethereum;
-  }, []);
-
-  const initialMockChains = { 31337: "http://localhost:8545" };
-
-  const {
-    instance: fhevmInstance,
-    status: fhevmStatus,
-    error: fhevmError,
-  } = useFhevm({
-    provider,
-    chainId,
-    initialMockChains,
-    enabled: true, // use enabled to dynamically create the instance on-demand
-  });
+  const { isConnected } = useAccount();
 
   //////////////////////////////////////////////////////////////////////////////
   // useFHECounter is a custom hook containing all the FHECounter logic, including
@@ -49,10 +20,7 @@ export const FHECounterDemo = () => {
   // - decrypting FHE handles
   //////////////////////////////////////////////////////////////////////////////
 
-  const fheCounter = useFHECounterWagmi({
-    instance: fhevmInstance,
-    initialMockChains,
-  });
+  const fheCounter = useFHECounterWagmi();
 
   //////////////////////////////////////////////////////////////////////////////
   // UI Stuff:
@@ -72,18 +40,15 @@ export const FHECounterDemo = () => {
 
   // Primary (accent) button — #FFD208 with dark text and warm hover #A38025
   const primaryButtonClass =
-    buttonClass +
-    " bg-[#FFD208] text-[#2D2D2D] hover:bg-[#A38025] focus-visible:ring-[#2D2D2D]  cursor-pointer";
+    buttonClass + " bg-[#FFD208] text-[#2D2D2D] hover:bg-[#A38025] focus-visible:ring-[#2D2D2D]  cursor-pointer";
 
   // Secondary (neutral dark) button — #2D2D2D with light text and accent focus
   const secondaryButtonClass =
-    buttonClass +
-    " bg-black text-[#F4F4F4] hover:bg-[#1F1F1F] focus-visible:ring-[#FFD208] cursor-pointer";
+    buttonClass + " bg-black text-[#F4F4F4] hover:bg-[#1F1F1F] focus-visible:ring-[#FFD208] cursor-pointer";
 
   // Success/confirmed state — deeper gold #A38025 with dark text
   const successButtonClass =
-    buttonClass +
-    " bg-[#A38025] text-[#2D2D2D] hover:bg-[#8F6E1E] focus-visible:ring-[#2D2D2D]";
+    buttonClass + " bg-[#A38025] text-[#2D2D2D] hover:bg-[#8F6E1E] focus-visible:ring-[#2D2D2D]";
 
   const titleClass = "font-bold text-gray-900 text-xl mb-4 border-b-1 border-gray-700 pb-2";
   const sectionClass = "bg-[#f4f4f4] shadow-lg p-6 mb-6 text-gray-900";
@@ -180,15 +145,6 @@ export const FHECounterDemo = () => {
       {/* Status Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className={sectionClass}>
-          <h3 className={titleClass}>🔧 FHEVM Instance</h3>
-          <div className="space-y-3">
-            {printProperty("Instance Status", fhevmInstance ? "✅ Connected" : "❌ Disconnected")}
-            {printProperty("Status", fhevmStatus)}
-            {printProperty("Error", fhevmError ?? "No errors")}
-          </div>
-        </div>
-
-        <div className={sectionClass}>
           <h3 className={titleClass}>📊 Counter Status</h3>
           <div className="space-y-3">
             {printProperty("Refreshing", fheCounter.isRefreshing)}
@@ -238,9 +194,7 @@ function printBooleanProperty(name: string, value: boolean) {
       <span className="text-gray-700 font-medium">{name}</span>
       <span
         className={`font-mono text-sm font-semibold px-2 py-1 border ${
-          value
-            ? "text-green-800 bg-green-100 border-green-300"
-            : "text-red-800 bg-red-100 border-red-300"
+          value ? "text-green-800 bg-green-100 border-green-300" : "text-red-800 bg-red-100 border-red-300"
         }`}
       >
         {value ? "✓ true" : "✗ false"}
