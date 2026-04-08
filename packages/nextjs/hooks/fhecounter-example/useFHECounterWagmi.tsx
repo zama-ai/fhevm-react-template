@@ -1,19 +1,21 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useDeployedContractInfo } from "../helper";
-import { ZERO_HANDLE, useCreateEIP712, useEncrypt, useGenerateKeypair, useUserDecrypt } from "@zama-fhe/react-sdk";
+import { useEncrypt, useUserDecrypt, useUserDecryptedValue } from "@zama-fhe/react-sdk";
 import { toHex } from "viem";
-import { useAccount, useChainId, useReadContract, useSignTypedData, useWriteContract } from "wagmi";
+import { useAccount, useChainId, useReadContract, useWriteContract } from "wagmi";
 import type { Contract } from "~~/utils/helper/contract";
 import type { AllowedChainIds } from "~~/utils/helper/networks";
 
+const ZERO_HANDLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
+
 /**
- * useFHECounterWagmi - FHE Counter hook using @zama-fhe/react-sdk + wagmi
+ * useFHECounterWagmi - FHE Counter hook using @zama-fhe/react-sdk v2 + wagmi
  *
  * What it does:
  * - Reads the current encrypted counter via wagmi's useReadContract
- * - Decrypts the handle on-demand using useGenerateKeypair + useCreateEIP712 + useSignTypedData + useUserDecrypt
+ * - Decrypts the handle on-demand using useUserDecrypt (v2 handles keypair + EIP-712 + signing internally)
  * - Encrypts inputs with useEncrypt and writes increment/decrement via useWriteContract
  */
 export const useFHECounterWagmi = () => {
@@ -29,8 +31,6 @@ export const useFHECounterWagmi = () => {
   // Simple status string for UX messages
   const [message, setMessage] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isDecrypting, setIsDecrypting] = useState(false);
-  const [decryptedValues, setDecryptedValues] = useState<Record<string, bigint>>({});
 
   // Helpers
   const hasContract = Boolean(fheCounter?.address && fheCounter?.abi);
@@ -59,29 +59,23 @@ export const useFHECounterWagmi = () => {
   // Contract write hook
   const { writeContractAsync } = useWriteContract();
 
-  // Decryption hooks
-  const generateKeypair = useGenerateKeypair();
-  const createEIP712 = useCreateEIP712();
-  const { signTypedDataAsync } = useSignTypedData();
-  const userDecrypt = useUserDecrypt();
+  // Decryption hook - v2 handles keypair generation, EIP-712, and signing internally
+  const decrypt = useUserDecrypt({
+    onCredentialsReady: () => setMessage("Credentials ready, decrypting..."),
+    onDecrypted: () => setMessage("Decryption complete!"),
+  });
 
-  // Cache credentials to avoid re-signing on each decrypt
-  const credentialsRef = useRef<{
-    publicKey: string;
-    privateKey: string;
-    signature: string;
-    contractAddresses: `0x${string}`[];
-    startTimestamp: number;
-    durationDays: number;
-  } | null>(null);
+  // Read decrypted value from cache
+  const { data: cachedDecryptedValue } = useUserDecryptedValue(countHandle as `0x${string}` | undefined);
 
   // Derived state
-  const isDecrypted = Boolean(countHandle && countHandle !== ZERO_HANDLE && decryptedValues[countHandle] !== undefined);
+  const isDecrypted = cachedDecryptedValue !== undefined;
+  const isDecrypting = decrypt.isPending;
   const clearCount = useMemo(() => {
     if (!countHandle) return undefined;
     if (countHandle === ZERO_HANDLE) return BigInt(0);
-    return decryptedValues[countHandle];
-  }, [countHandle, decryptedValues]);
+    return cachedDecryptedValue;
+  }, [countHandle, cachedDecryptedValue]);
 
   const canDecrypt = Boolean(
     hasContract && isConnected && address && countHandle && countHandle !== ZERO_HANDLE && !isDecrypted && !isDecrypting,
@@ -91,92 +85,17 @@ export const useFHECounterWagmi = () => {
 
   // Decrypt the current count handle
   const decryptCountHandle = useCallback(async () => {
-    if (!canDecrypt || !countHandle || !fheCounter?.address || !address) return;
-    setIsDecrypting(true);
+    if (!canDecrypt || !countHandle || !fheCounter?.address) return;
     setMessage("Starting decryption...");
 
     try {
-      let creds = credentialsRef.current;
-
-      // Check if cached credentials include the current contract
-      const contractAddr = fheCounter.address as `0x${string}`;
-      if (!creds || !creds.contractAddresses.includes(contractAddr)) {
-        // Generate keypair
-        setMessage("Generating FHE keypair...");
-        const keypair = await generateKeypair.mutateAsync();
-
-        // Create EIP712 typed data
-        const startTimestamp = Math.floor(Date.now() / 1000);
-        const durationDays = 1;
-        setMessage("Creating EIP-712 credential...");
-        const eip712 = await createEIP712.mutateAsync({
-          publicKey: keypair.publicKey,
-          contractAddresses: [contractAddr],
-          startTimestamp,
-          durationDays,
-        });
-
-        // Sign with wallet
-        setMessage("Waiting for wallet signature...");
-        const signature = await signTypedDataAsync({
-          domain: {
-            ...eip712.domain,
-            chainId: eip712.domain.chainId,
-            verifyingContract: eip712.domain.verifyingContract as `0x${string}`,
-          },
-          types: eip712.types,
-          primaryType: "UserDecryptRequestVerification",
-          message: {
-            publicKey: eip712.message.publicKey as `0x${string}`,
-            contractAddresses: eip712.message.contractAddresses.map((a: string) => a as `0x${string}`),
-            startTimestamp: eip712.message.startTimestamp,
-            durationDays: eip712.message.durationDays,
-            extraData: eip712.message.extraData as `0x${string}`,
-          },
-        });
-
-        creds = {
-          publicKey: keypair.publicKey,
-          privateKey: keypair.privateKey,
-          signature,
-          contractAddresses: [contractAddr],
-          startTimestamp,
-          durationDays,
-        };
-        credentialsRef.current = creds;
-      }
-
-      // Perform the decryption
-      setMessage("Decrypting handle...");
-      const results = await userDecrypt.mutateAsync({
-        handles: [countHandle],
-        contractAddress: fheCounter.address,
-        signedContractAddresses: creds.contractAddresses,
-        privateKey: creds.privateKey,
-        publicKey: creds.publicKey,
-        signature: creds.signature,
-        signerAddress: address,
-        startTimestamp: creds.startTimestamp,
-        durationDays: creds.durationDays,
+      await decrypt.mutateAsync({
+        handles: [{ handle: countHandle as `0x${string}`, contractAddress: fheCounter.address }],
       });
-
-      setDecryptedValues(prev => ({ ...prev, ...results }));
-      setMessage("Decryption complete!");
     } catch (e) {
       setMessage(`Decryption failed: ${e instanceof Error ? e.message : String(e)}`);
-    } finally {
-      setIsDecrypting(false);
     }
-  }, [
-    canDecrypt,
-    countHandle,
-    fheCounter?.address,
-    address,
-    generateKeypair,
-    createEIP712,
-    signTypedDataAsync,
-    userDecrypt,
-  ]);
+  }, [canDecrypt, countHandle, fheCounter?.address, decrypt]);
 
   // Mutations (increment/decrement)
   const updateCounter = useCallback(
@@ -187,10 +106,10 @@ export const useFHECounterWagmi = () => {
       setIsProcessing(true);
       setMessage(`Starting ${op}(${valueAbs})...`);
       try {
-        // Encrypt the value
+        // Encrypt the value with FHE type annotation (v2 API)
         setMessage("Encrypting value...");
         const enc = await encrypt.mutateAsync({
-          values: [BigInt(valueAbs)],
+          values: [{ value: BigInt(valueAbs), type: "euint64" }],
           contractAddress: fheCounter.address,
           userAddress: address,
         });

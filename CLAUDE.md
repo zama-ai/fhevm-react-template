@@ -12,7 +12,7 @@ Requires Node.js >= 20.0.0 and pnpm.
 
 ```bash
 git submodule update --init --recursive  # Initialize hardhat submodule
-pnpm install                             # Install deps (runs sdk:build via preinstall)
+pnpm install                             # Install deps
 ```
 
 ## Local Development Workflow (3 terminals)
@@ -42,18 +42,6 @@ pnpm verify:sepolia       # Verify contracts on Etherscan
 cd packages/hardhat && npx hardhat test test/FHECounter.ts
 ```
 
-### SDK (packages/fhevm-sdk)
-```bash
-pnpm sdk:build            # Build the SDK (required before frontend works)
-pnpm sdk:watch            # Watch mode for SDK development
-pnpm sdk:test             # Run SDK tests with Vitest
-pnpm sdk:test:watch       # Watch mode for SDK tests
-pnpm sdk:clean            # Clean SDK build artifacts
-
-# Run single test file
-cd packages/fhevm-sdk && npx vitest run test/storage.test.ts
-```
-
 ### Frontend (packages/nextjs)
 ```bash
 pnpm next:build           # Production build
@@ -76,13 +64,6 @@ pnpm lint                 # Lint all code
 - Contracts in `contracts/`, deploy scripts in `deploy/`, tests in `test/`
 - Uses `@fhevm/hardhat-plugin` for FHEVM support
 - Solidity 0.8.27, EVM version: Cancun, optimizer: 800 runs
-
-**packages/fhevm-sdk** - Core FHEVM utilities for React (package name: `@fhevm-sdk`)
-- `src/react/` - React hooks: `useFHEDecrypt`, `useFHEEncryption`, `useFhevm`
-- `src/storage/` - Ciphertext storage utilities (IndexedDB)
-- `src/core/` - Core FHEVM functionality
-- `src/FhevmDecryptionSignature.ts` - Decryption signature handling
-- Exports: `/core`, `/storage`, `/types`, `/react`
 
 **packages/nextjs** - React frontend application
 - Next.js 15 with App Router (`app/` directory)
@@ -123,7 +104,7 @@ Frontend (.env.local):
 ## Key Dependencies
 
 - `@fhevm/solidity` - FHEVM Solidity contracts
-- `@zama-fhe/relayer-sdk` - Relayer SDK for decryption
+- `@zama-fhe/sdk` + `@zama-fhe/react-sdk` - Zama FHE SDK v2 (encryption, decryption, React hooks)
 - `@openzeppelin/confidential-contracts` - OpenZeppelin FHE extensions
 - `viem` + `wagmi` - Ethereum client library
 - `@rainbow-me/rainbowkit` - Wallet connection UI

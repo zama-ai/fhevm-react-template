@@ -1,7 +1,8 @@
-import type { GenericSigner, EIP712TypedData, Hex, TransactionReceipt, ContractCallConfig } from "@zama-fhe/react-sdk";
+import type { GenericSigner, EIP712TypedData, Hex, TransactionReceipt } from "@zama-fhe/sdk";
 import type { Config } from "wagmi";
 import {
   getAccount,
+  getBlock,
   getChainId,
   readContract,
   signTypedData,
@@ -12,7 +13,7 @@ import {
 /**
  * Custom WagmiSigner that implements GenericSigner using wagmi/actions.
  * This replaces `@zama-fhe/react-sdk/wagmi`'s WagmiSigner which uses
- * `getConnection` (not available in wagmi 2.16.x).
+ * `watchConnection` (not available in all wagmi 2.x versions).
  */
 export class WagmiSigner implements GenericSigner {
   private config: Config;
@@ -43,15 +44,20 @@ export class WagmiSigner implements GenericSigner {
     });
   }
 
-  async writeContract<C extends ContractCallConfig>(config: C): Promise<Hex> {
-    return writeContract(this.config, config as any);
+  async writeContract(config: any): Promise<Hex> {
+    return writeContract(this.config, config);
   }
 
-  async readContract<T = unknown, C extends ContractCallConfig = ContractCallConfig>(config: C): Promise<T> {
-    return readContract(this.config, config as any) as Promise<T>;
+  async readContract(config: any): Promise<any> {
+    return readContract(this.config, config);
   }
 
   async waitForTransactionReceipt(hash: Hex): Promise<TransactionReceipt> {
     return (await waitForTransactionReceipt(this.config, { hash })) as unknown as TransactionReceipt;
+  }
+
+  async getBlockTimestamp(): Promise<bigint> {
+    const block = await getBlock(this.config);
+    return block.timestamp;
   }
 }
