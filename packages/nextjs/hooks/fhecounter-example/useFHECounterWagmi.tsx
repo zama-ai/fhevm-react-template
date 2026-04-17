@@ -109,7 +109,7 @@ export const useFHECounterWagmi = () => {
         // Encrypt the value with FHE type annotation (v2 API)
         setMessage("Encrypting value...");
         const enc = await encrypt.mutateAsync({
-          values: [{ value: BigInt(valueAbs), type: "euint64" }],
+          values: [{ value: BigInt(valueAbs), type: "euint32" }],
           contractAddress: fheCounter.address,
           userAddress: address,
         });

@@ -1,0 +1,31 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["dependencies"]
+test = "test"
+script = "script"
+solc = "0.8.27"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 800
+cbor_metadata = false
+bytecode_hash = "none"
+
+[fuzz]
+runs = 256
+
+[fmt]
+line_length = 120
+
+[dependencies]
+"@openzeppelin-contracts" = "5.1.0"
+"@openzeppelin-contracts-upgradeable" = "5.1.0"
+forge-std = "1.14.0"
+"@openzeppelin-confidential-contracts" = { version = "6edd293", git = "https://github.com/OpenZeppelin/openzeppelin-confidential-contracts.git", rev = "6edd293" }
+"@encrypted-types" = "0.0.4"
+"@fhevm-solidity" = "0.11.1"
+forge-fhevm = { version = "eba2324", git = "https://github.com/zama-ai/forge-fhevm.git", rev = "eba2324" }
+
+[soldeer]
+remappings_version = false
+recursive_deps = true
