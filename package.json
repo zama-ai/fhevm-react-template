@@ -25,15 +25,10 @@
     "next:format": "pnpm --filter ./packages/nextjs format",
     "next:lint": "pnpm --filter ./packages/nextjs lint",
     "next:serve": "pnpm --filter ./packages/nextjs serve",
-    "precommit": "lint-staged",
-    "postinstall": "sh scripts/patch-node-tkms.sh",
     "start": "pnpm --filter ./packages/nextjs dev",
     "vercel": "pnpm --filter ./packages/nextjs vercel",
     "vercel:login": "pnpm --filter ./packages/nextjs vercel:login",
     "vercel:yolo": "pnpm --filter ./packages/nextjs vercel:yolo"
-  },
-  "dependencies": {
-    "hardhat-deploy": "^0.11.45"
   },
   "devDependencies": {
     "@types/node": "^22.7.5",
@@ -53,9 +48,6 @@
       "unrs-resolver",
       "utf-8-validate",
       "yarn"
-    ],
-    "overrides": {
-      "@zama-fhe/relayer-sdk": "0.4.1"
-    }
+    ]
   }
 }

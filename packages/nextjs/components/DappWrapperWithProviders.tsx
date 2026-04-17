@@ -25,9 +25,8 @@ export const queryClient = new QueryClient({
   },
 });
 
-// ZamaProvider takes a single relayer, but RelayerWeb can't serve Hardhat
-// (HardhatConfig.relayerUrl is empty, and the CDN-loaded relayer-sdk rejects it).
-// Swap to RelayerCleartext for chainId 31337 and rebuild on chain changes.
+// Swap RelayerCleartext for local anvil (31337), RelayerWeb for real networks.
+// Rebuild on chain change so the right transport/worker is in place.
 const ZamaRuntimeProvider = ({ children }: { children: React.ReactNode }) => {
   const chainId = useChainId();
 

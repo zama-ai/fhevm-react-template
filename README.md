@@ -1,190 +1,155 @@
 # FHEVM React Template
 
-A minimal React frontend template for building FHEVM-enabled decentralized applications (dApps). This template provides a simple development interface for interacting with FHEVM smart contracts, specifically the `FHECounter.sol` contract.
+A minimal React + Foundry template for building FHEVM-enabled dApps. Ships with `FHECounter.sol` (a trivial encrypted counter) and a Next.js frontend that reads, writes, and decrypts its value.
 
-## 🚀 What is FHEVM?
+## What is FHEVM?
 
-FHEVM (Fully Homomorphic Encryption Virtual Machine) enables computation on encrypted data directly on Ethereum. This template demonstrates how to build dApps that can perform computations while keeping data private.
+FHEVM (Fully Homomorphic Encryption Virtual Machine) lets smart contracts compute on encrypted data. Inputs, storage, and ciphertext handles stay private; only authorized callers can decrypt.
 
-## ✨ Features
+## Stack
 
-- **🔐 FHEVM Integration**: Built-in support for fully homomorphic encryption
-- **⚛️ React + Next.js**: Modern, performant frontend framework
-- **🎨 Tailwind CSS**: Utility-first styling for rapid UI development
-- **🔗 RainbowKit**: Seamless wallet connection and management
-- **🌐 Multi-Network Support**: Works on both Sepolia testnet and local Hardhat node
-- **📦 Monorepo Structure**: Organized packages for SDK, contracts, and frontend
+- **Contracts**: Foundry, Solidity 0.8.27, [forge-fhevm](https://github.com/zama-ai/forge-fhevm) for host contracts + testing helpers
+- **Frontend**: Next.js 15 (App Router), React 19, wagmi, viem, RainbowKit, Tailwind + daisyUI
+- **FHE SDK**: `@zama-fhe/sdk` + `@zama-fhe/react-sdk` v2
+  - `RelayerCleartext` for local anvil (plaintext mirror executor — no KMS/gateway)
+  - `RelayerWeb` for Sepolia (real relayer, WASM worker)
 
-## 🧰 Scripts overview
+## Prerequisites
 
-| Script                   | What it does                                                   |
-| ------------------------ | -------------------------------------------------------------- |
-| `pnpm dev`              | Starts the frontend dev server for the React template.        |
-| `pnpm test`             | Runs the frontend tests in watch mode.                        |
-| `pnpm lint`             | Lints the project using the configured ESLint rules.          |
-| `pnpm build`            | Builds the production bundle for deployment.                  |
-| `pnpm preview`          | Serves the built app locally to verify the production build.  |
+- Node.js ≥ 20, pnpm
+- [Foundry](https://book.getfoundry.sh/getting-started/installation) (`forge`, `anvil`, `cast`)
+- `jq` (for the chain startup script)
+- MetaMask
 
-## 📋 Prerequinextjss
-
-Before you begin, ensure you have:
-
-- **Node.js** (v18 or higher)
-- **pnpm** package manager
-- **MetaMask** browser extension
-- **Git** for cloning the repository
-
-## 🛠️ Quick Start
-
-### 1. Clone and Setup
+## Quick start
 
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd fhevm-react-template
-
-# Initialize submodules (includes fhevm-hardhat-template)
-git submodule update --init --recursive
-
-# Install dependencies
 pnpm install
 ```
 
-### 2. Environment Configuration
+### Local (recommended for development)
 
-Set up your Hardhat environment variables by following the [FHEVM documentation](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional):
-
-- `MNEMONIC`: Your wallet mnemonic phrase
-- `INFURA_API_KEY`: Your Infura API key for Sepolia
-
-### 3. Start Development Environment
-
-**Option A: Local Development (Recommended for testing)**
+Three terminals:
 
 ```bash
-# Terminal 1: Start local Hardhat node
+# 1. Start anvil + deploy the FHEVM cleartext host stack
 pnpm chain
-# RPC URL: http://127.0.0.1:8545 | Chain ID: 31337
 
-# Terminal 2: Deploy contracts to localhost
+# 2. Deploy FHECounter + regenerate frontend ABIs
 pnpm deploy:localhost
 
-# Terminal 3: Start the frontend
+# 3. Start the frontend
 pnpm start
 ```
 
-**Option B: Sepolia Testnet**
+Open http://localhost:3000 and add the local network to MetaMask:
+
+- **RPC URL**: `http://127.0.0.1:8545`
+- **Chain ID**: `31337`
+- **Currency**: `ETH`
+
+Import an anvil dev account (10,000 ETH each) — e.g. private key `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80` (address `0xf39F…2266`).
+
+### Sepolia
+
+Add a `.env.local` at the repo root:
 
 ```bash
-# Deploy to Sepolia testnet
-pnpm deploy:sepolia
-
-# Start the frontend
-pnpm start
+DEPLOYER_PRIVATE_KEY=0x...                         # deployer funded with Sepolia ETH
+SEPOLIA_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
+ETHERSCAN_API_KEY=...                              # optional, enables --verify
 ```
 
-### 4. Connect MetaMask
+Add to `packages/nextjs/.env.local`:
 
-1. Open [http://localhost:3000](http://localhost:3000) in your browser
-2. Click "Connect Wallet" and select MetaMask
-3. If using localhost, add the Hardhat network to MetaMask:
-   - **Network Name**: Hardhat Local
-   - **RPC URL**: `http://127.0.0.1:8545`
-   - **Chain ID**: `31337`
-   - **Currency Symbol**: `ETH`
+```bash
+NEXT_PUBLIC_ALCHEMY_API_KEY=YOUR_KEY
+```
 
-### ⚠️ Common pitfalls
+Then:
 
-- If contracts are not found, make sure submodules are initialized with  
-  `git submodule update --init --recursive` and that you have run `pnpm install`.
-- If the frontend shows network or RPC errors, double-check that `MNEMONIC`
-  and `INFURA_API_KEY` are correctly set in your Hardhat environment.
-- If the app builds but cannot read contract state, verify that
-  `NEXT_PUBLIC_ALCHEMY_API_KEY` and `packages/nextjs/contracts/deployedContracts.ts`
-  point to the right network and deployed addresses.
+```bash
+pnpm deploy:sepolia    # forge script → writes deployment → regenerates ABIs
+pnpm start             # same frontend picks up the 11155111 entry automatically
+```
 
-### ⚠️ Sepolia Production note
+## Scripts
 
-- In production, `NEXT_PUBLIC_ALCHEMY_API_KEY` must be set (see `packages/nextjs/scaffold.config.ts`). The app throws if missing.
-- Ensure `packages/nextjs/contracts/deployedContracts.ts` points to your live contract addresses.
-- Optional: set `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` for better WalletConnect reliability.
-- Optional: add per-chain RPCs via `rpcOverrides` in `packages/nextjs/scaffold.config.ts`.
+| Command                  | What it does                                                            |
+| ------------------------ | ----------------------------------------------------------------------- |
+| `pnpm chain`             | Starts anvil on 8545 + deploys FHEVM cleartext host stack               |
+| `pnpm deploy:localhost`  | Deploys `FHECounter` to local anvil + regenerates frontend ABIs         |
+| `pnpm deploy:sepolia`    | Deploys to Sepolia (reads `.env.local`) + regenerates frontend ABIs     |
+| `pnpm compile`           | `forge build` on `packages/foundry`                                     |
+| `pnpm test`              | `forge test` on `packages/foundry`                                      |
+| `pnpm generate`          | Rebuilds `packages/nextjs/contracts/deployedContracts.ts` from foundry  |
+| `pnpm start`             | `next dev` (http://localhost:3000)                                      |
+| `pnpm next:build`        | Production build of the frontend                                        |
+| `pnpm next:check-types`  | TypeScript check on the frontend                                        |
+| `pnpm lint`              | Lint the frontend                                                       |
+| `pnpm format`            | Prettier on the frontend                                                |
 
-## 🔧 Troubleshooting
-
-### Common MetaMask + Hardhat Issues
-
-When developing with MetaMask and Hardhat, you may encounter these common issues:
-
-#### ❌ Nonce Mismatch Error
-
-**Problem**: MetaMask tracks transaction nonces, but when you restart Hardhat, the node resets while MetaMask doesn't update its tracking.
-
-**Solution**:
-1. Open MetaMask extension
-2. Select the Hardhat network
-3. Go to **Settings** → **Advanced**
-4. Click **"Clear Activity Tab"** (red button)
-5. This resets MetaMask's nonce tracking
-
-#### ❌ Cached View Function Results
-
-**Problem**: MetaMask caches smart contract view function results. After restarting Hardhat, you may see outdated data.
-
-**Solution**:
-1. **Restart your entire browser** (not just refresh the page)
-2. MetaMask's cache is stored in extension memory and requires a full browser restart to clear
-
-> 💡 **Pro Tip**: Always restart your browser after restarting Hardhat to avoid cache issues.
-
-For more details, see the [MetaMask development guide](https://docs.metamask.io/wallet/how-to/run-devnet/).
-
-## 📁 Project Structure
-
-This template uses a monorepo structure with three main packages:
+## Project structure
 
 ```
 fhevm-react-template/
 ├── packages/
-│   ├── fhevm-hardhat-template/    # Smart contracts & deployment
-│   ├── fhevm-sdk/                 # FHEVM SDK package
-│   └── nextjs/                      # React frontend application
-└── scripts/                       # Build and deployment scripts
+│   ├── foundry/            # Solidity contracts + forge tests
+│   │   ├── src/
+│   │   │   └── FHECounter.sol
+│   │   ├── script/
+│   │   │   └── DeployFHECounter.s.sol
+│   │   ├── test/
+│   │   │   └── FHECounter.t.sol        # uses forge-fhevm's FhevmTest
+│   │   ├── foundry.toml
+│   │   └── remappings.txt
+│   └── nextjs/             # React frontend
+│       ├── app/
+│       ├── components/
+│       │   └── DappWrapperWithProviders.tsx  # wires ZamaProvider + relayer
+│       ├── hooks/
+│       │   └── fhecounter-example/useFHECounterWagmi.tsx
+│       ├── contracts/
+│       │   └── deployedContracts.ts          # autogenerated from forge broadcast
+│       └── scaffold.config.ts
+└── scripts/                # chain, deploy, ABI generator
 ```
 
-### Key Components
+## Troubleshooting
 
-#### 🔗 FHEVM Integration (`packages/nextjs/hooks/fhecounter-example/`)
-- **`useFHECounterWagmi.tsx`**: Example hook demonstrating FHEVM contract interaction
-- Essential hooks for FHEVM-enabled smart contract communication
-- Easily copyable to any FHEVM + React project
+### MetaMask nonce mismatch after restarting anvil
 
-#### 🎣 Wallet Management (`packages/nextjs/hooks/helper/`)
-- MetaMask wallet provider hooks
-- Compatible with EIP-6963 standard
-- Easily adaptable for other wallet providers
+MetaMask caches nonces; anvil resets them on restart. Fix:
 
-#### 🔧 Flexibility
-- Replace `ethers.js` with `Wagmi` or other React-friendly libraries
-- Modular architecture for easy customization
-- Support for multiple wallet providers
+1. MetaMask → Settings → Advanced → **Clear activity tab data**
 
-## 📚 Additional Resources
+### Stale view-function results
 
-### Official Documentation
-- [FHEVM Documentation](https://docs.zama.ai/protocol/solidity-guides/) - Complete FHEVM guide
-- [FHEVM Hardhat Guide](https://docs.zama.ai/protocol/solidity-guides/development-guide/hardhat) - Hardhat integration
-- [Relayer SDK Documentation](https://docs.zama.ai/protocol/relayer-sdk-guides/) - SDK reference
-- [Environment Setup](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup#set-up-the-hardhat-configuration-variables-optional) - MNEMONIC & API keys
+MetaMask also caches view-function results across reloads. After restarting anvil, **restart your browser** (not just the tab) to clear the cache.
 
-### Development Tools
-- [MetaMask + Hardhat Setup](https://docs.metamask.io/wallet/how-to/run-devnet/) - Local development
-- [React Documentation](https://reactjs.org/) - React framework guide
+### `Contract address is not a valid address`
 
-### Community & Support
-- [FHEVM Discord](https://discord.com/invite/zama) - Community support
-- [GitHub Issues](https://github.com/zama-ai/fhevm-react-template/issues) - Bug reports & feature requests
+The Zama relayer SDK requires EIP-55 checksummed addresses. `scripts/generateTsAbis.ts` already checksums via viem's `getAddress()` — if you see this error, rerun `pnpm generate` after a deploy.
 
-## 📄 License
+### Sepolia deploy fails with weird path errors
 
-This project is licensed under the **BSD-3-Clause-Clear License**. See the [LICENSE](LICENSE) file for details.
+Your `.env.local` likely has a typo (double `==`, spaces around `=`, quoted values with stray chars). Inspect and fix.
+
+## FHEVM notes
+
+- **ACL is mandatory.** Every encrypted value needs `FHE.allowThis(handle)` + `FHE.allow(handle, user)` — without it, reads silently fail. `FHECounter.sol` does this explicitly.
+- **`euint32` vs `euint64`.** Types are baked into ciphertext handles. The frontend's `type: "euint32"` must match the contract's `externalEuint32` parameter — a mismatch reverts with `InvalidType()`.
+- **Local uses cleartext mode.** Anvil runs a `CleartextFHEVMExecutor` from forge-fhevm that mirrors every FHE op into a `plaintexts(bytes32)` mapping. No KMS, no gateway, no WASM in the browser — `RelayerCleartext` reads plaintext directly. Good for dev, not for production.
+- **Sepolia uses real relayer.** `RelayerWeb` spins up a Web Worker and fetches the FHE crypto from Zama's CDN. Requires `NEXT_PUBLIC_ALCHEMY_API_KEY` for the RPC transport.
+
+## References
+
+- [Zama Protocol docs](https://docs.zama.ai/protocol/)
+- [`@zama-fhe/sdk`](https://github.com/zama-ai/sdk)
+- [forge-fhevm](https://github.com/zama-ai/forge-fhevm)
+- [OpenZeppelin Confidential Contracts](https://github.com/OpenZeppelin/openzeppelin-confidential-contracts)
+- [FHEVM Discord](https://discord.com/invite/zama)
+
+## License
+
+BSD-3-Clause-Clear. See [LICENSE](LICENSE).

@@ -1,116 +1,124 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working in this repository.
 
-## Project Overview
+## Project overview
 
-FHEVM React Template is a monorepo for building decentralized applications with Fully Homomorphic Encryption (FHE) support. It enables computation on encrypted data using Zama's FHEVM protocol.
+Monorepo template for building FHEVM dApps — confidential smart contracts with Fully Homomorphic Encryption via Zama's stack. Contracts in Foundry, frontend in Next.js.
 
-## Initial Setup
+## Initial setup
 
-Requires Node.js >= 20.0.0 and pnpm.
+Requires Node.js ≥ 20, pnpm, Foundry (`forge`/`anvil`/`cast`), and `jq`.
 
 ```bash
-git submodule update --init --recursive  # Initialize hardhat submodule
-pnpm install                             # Install deps
+pnpm install
 ```
 
-## Local Development Workflow (3 terminals)
+## Local development (3 terminals)
 
 ```bash
-# Terminal 1: Start local Hardhat node
-pnpm chain                    # localhost:8545, chainId: 31337
+# Terminal 1: anvil + FHEVM cleartext host stack
+pnpm chain                    # http://127.0.0.1:8545, chainId 31337
 
-# Terminal 2: Deploy contracts
-pnpm deploy:localhost         # Deploys + generates TypeScript ABIs
+# Terminal 2: deploy FHECounter + regenerate frontend ABIs
+pnpm deploy:localhost
 
-# Terminal 3: Start frontend
+# Terminal 3: frontend
 pnpm start                    # http://localhost:3000
 ```
 
-## Common Commands
+`pnpm chain` runs `scripts/chain.sh` which starts anvil and then invokes `forge-fhevm/deploy-local.sh` (from the soldeer-installed copy under `packages/foundry/dependencies/`) to deploy the **cleartext** FHEVM host contracts (`CleartextFHEVMExecutor` and friends) at the addresses that `@zama-fhe/sdk/cleartext`'s `hardhatCleartextConfig` expects. This is what makes `RelayerCleartext` work locally — without it the frontend can't decrypt on 31337.
 
-### Smart Contracts (packages/hardhat)
+## Common commands
+
+### Contracts (`packages/foundry`)
+
 ```bash
-pnpm compile              # Compile Solidity contracts
-pnpm hardhat:test         # Run all contract tests
-pnpm hardhat:lint         # Lint Solidity and TypeScript
-pnpm deploy:sepolia       # Deploy to Sepolia testnet
-pnpm verify:sepolia       # Verify contracts on Etherscan
-
-# Run single test file
-cd packages/hardhat && npx hardhat test test/FHECounter.ts
+pnpm compile                        # forge build
+pnpm test                           # forge test (uses forge-fhevm's FhevmTest)
+cd packages/foundry && forge test -vv   # verbose
 ```
 
-### Frontend (packages/nextjs)
+### Frontend (`packages/nextjs`)
+
 ```bash
-pnpm next:build           # Production build
-pnpm next:lint            # Lint frontend code
-pnpm next:check-types     # TypeScript type checking
+pnpm next:build                     # production build
+pnpm next:check-types               # tsc
+pnpm next:lint                      # eslint
 ```
 
-### Formatting & Linting
+### Formatting / linting
+
 ```bash
-pnpm format               # Format all code (Next.js + Hardhat)
-pnpm lint                 # Lint all code
+pnpm format                         # prettier on frontend
+pnpm lint                           # eslint on frontend
 ```
 
 ## Architecture
 
-### Monorepo Structure (pnpm workspaces)
+### Monorepo layout (pnpm workspaces)
 
-**packages/hardhat** - Smart contract development (git submodule pointing to fhevm-hardhat-template)
-- This is a **git submodule** — changes here are tracked in a separate repo
-- Contracts in `contracts/`, deploy scripts in `deploy/`, tests in `test/`
-- Uses `@fhevm/hardhat-plugin` for FHEVM support
-- Solidity 0.8.27, EVM version: Cancun, optimizer: 800 runs
+**`packages/foundry`** — Solidity contracts + forge tests.
 
-**packages/nextjs** - React frontend application
-- Next.js 15 with App Router (`app/` directory)
-- RainbowKit + wagmi for wallet connection
-- DaisyUI + Tailwind CSS for styling
-- `hooks/fhecounter-example/` - Example FHEVM integration
-- `hooks/helper/` - Wallet provider hooks (EIP-6963)
-- `contracts/deployedContracts.ts` - Auto-generated contract addresses/ABIs
-- TypeScript path alias: `~~/*` maps to project root
+- `src/FHECounter.sol` — tiny encrypted-counter example inheriting `ZamaEthereumConfig`.
+- `script/DeployFHECounter.s.sol` — single-contract deploy script (`vm.broadcast`).
+- `test/FHECounter.t.sol` — tests inherit `forge-fhevm/FhevmTest.sol` and use `encryptUint32` / `signUserDecrypt` / `userDecrypt` helpers.
+- `foundry.toml` uses `evm_version = "cancun"`, `solc 0.8.27`, soldeer for deps.
+- `remappings.txt` wires soldeer-installed paths to familiar names (`@fhevm/solidity/`, `forge-fhevm/`, etc.).
 
-### Contract ABI Generation
+**`packages/nextjs`** — React app.
 
-Running `pnpm deploy:localhost` or `pnpm deploy:sepolia` automatically:
-1. Deploys contracts
-2. Runs `scripts/generateTsAbis.ts` to update `packages/nextjs/contracts/deployedContracts.ts`
+- App Router (`app/`), RainbowKit + wagmi for wallet UI.
+- `components/DappWrapperWithProviders.tsx` wires `ZamaProvider`. **Key pattern**: relayer is swapped per chain — `RelayerCleartext(hardhatCleartextConfig)` for 31337, `RelayerWeb` for Sepolia/mainnet. Provider re-mounts on chain change; the old relayer is `.terminate()`d in cleanup.
+- `services/web3/wagmiSigner.ts` — local `GenericSigner` implementation built on `wagmi/actions`. Replaces `@zama-fhe/react-sdk/wagmi`, which has a broken `watchConnection` import in 2.2.0.
+- `hooks/fhecounter-example/useFHECounterWagmi.tsx` — the example hook: `useEncrypt`, `useWriteContract`, `useUserDecrypt`. Important: the encryption `type:` literal must match the contract's `externalEuintN` parameter, or `FHE.fromExternal` reverts with `InvalidType()`.
+- `contracts/deployedContracts.ts` — autogenerated (see below).
+- `scaffold.config.ts` defines `targetNetworks = [hardhat, sepolia]` and throws in production if `NEXT_PUBLIC_ALCHEMY_API_KEY` is missing.
 
-### Network Configuration
+### ABI + address generation
 
-**Hardhat** (`packages/hardhat/hardhat.config.ts`):
-- localhost/hardhat: chainId 31337
-- sepolia: chainId 11155111 (requires INFURA_API_KEY)
+Deploy → regenerate is one script. `scripts/generateTsAbis.ts` walks `packages/foundry/broadcast/*/*/run-latest.json` for every chain a deploy has run on, reads the ABI from `packages/foundry/out/<Name>.sol/<Name>.json`, checksums the address with viem's `getAddress()` (the Zama relayer SDK enforces EIP-55 via `isChecksummedAddress`), and writes `packages/nextjs/contracts/deployedContracts.ts`.
 
-**Frontend** (`packages/nextjs/scaffold.config.ts`):
-- Targets: hardhat, sepolia
-- Production requires `NEXT_PUBLIC_ALCHEMY_API_KEY`
+`broadcast/` is git-ignored per `packages/foundry/.gitignore` — the single source of truth for the frontend is the generated TS file, which is tracked.
 
-### Environment Variables
+### Network configuration
 
-Hardhat (set via `npx hardhat vars set`):
-- `MNEMONIC` - Wallet mnemonic
-- `INFURA_API_KEY` - For Sepolia RPC
-- `ETHERSCAN_API_KEY` - For contract verification
+Foundry (`foundry.toml`): solc 0.8.27, optimizer 800 runs. Soldeer deps: `forge-fhevm`, `@fhevm-solidity`, `@openzeppelin-confidential-contracts`, `@openzeppelin-contracts`, `@encrypted-types`.
 
-Frontend (.env.local):
-- `NEXT_PUBLIC_ALCHEMY_API_KEY` - Required for production
-- `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` - Optional
+Frontend (`scaffold.config.ts`): `targetNetworks = [hardhat, sepolia]`. `NEXT_PUBLIC_ALCHEMY_API_KEY` required in production. Mainnet is implicitly added for ENS lookup; override its RPC via `rpcOverrides` if you see CORS noise from public fallbacks.
 
-## Key Dependencies
+### Env vars
 
-- `@fhevm/solidity` - FHEVM Solidity contracts
-- `@zama-fhe/sdk` + `@zama-fhe/react-sdk` - Zama FHE SDK v2 (encryption, decryption, React hooks)
-- `@openzeppelin/confidential-contracts` - OpenZeppelin FHE extensions
-- `viem` + `wagmi` - Ethereum client library
-- `@rainbow-me/rainbowkit` - Wallet connection UI
+Repo root `.env.local` (sourced automatically by `deploy-sepolia.sh`):
+
+- `DEPLOYER_PRIVATE_KEY` — 0x-prefixed deployer key for Sepolia
+- `SEPOLIA_RPC_URL` — JSON-RPC endpoint
+- `ETHERSCAN_API_KEY` — optional, enables `--verify`
+
+Frontend `packages/nextjs/.env.local`:
+
+- `NEXT_PUBLIC_ALCHEMY_API_KEY` — Alchemy key for the Sepolia transport
+- `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` — optional
+
+## Key dependencies
+
+- `@fhevm/solidity` — FHE Solidity library (`FHE.sol`, encrypted types)
+- `forge-fhevm` — Foundry host contracts + test helpers (cleartext executor lives here)
+- `@zama-fhe/sdk` / `@zama-fhe/react-sdk` v2 — browser FHE SDK (RelayerWeb + RelayerCleartext + ZamaProvider hooks)
+- `@openzeppelin/confidential-contracts` — ERC-7984 (confidential tokens), not used here but available for extending
+- `viem` + `wagmi` — Ethereum client
+- `@rainbow-me/rainbowkit` — wallet connection UI
 
 ## Troubleshooting
 
-**MetaMask nonce mismatch after Hardhat restart**: MetaMask tracks transaction nonces, but Hardhat resets them on restart. Fix: MetaMask → Settings → Advanced → "Clear Activity Tab"
+**MetaMask nonce mismatch after anvil restart.** MetaMask caches nonces, anvil resets them. Fix: MetaMask → Settings → Advanced → "Clear activity tab data".
 
-**Cached view function results**: MetaMask caches smart contract view results. After restarting Hardhat, restart your entire browser (not just refresh) to clear the cache.
+**Stale view results.** MetaMask caches view-function returns. Restart the browser, not just the tab.
+
+**"Contract address is not a valid address".** Relayer SDK enforces EIP-55 checksum. Rerun `pnpm generate` — `generateTsAbis.ts` checksums addresses via viem `getAddress()`. If still broken, the deployed address in the generated file is off.
+
+**`InvalidType()` on contract write.** The frontend encrypted with the wrong FHE type (e.g. `euint64` when the contract takes `externalEuint32`). Type is baked into the first byte of the ciphertext handle.
+
+**`Invalid relayerUrl: ` on 31337.** Means you're pointing `RelayerWeb` at chain 31337 instead of `RelayerCleartext`. Check `DappWrapperWithProviders.tsx`'s chain switch.
+
+**`plaintexts(bytes32)` revert on 31337.** `pnpm chain` didn't run the forge-fhevm deploy step — the deployed executor isn't the cleartext variant. Stop anvil, rerun `pnpm chain` from scratch.
