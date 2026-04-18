@@ -1,21 +1,20 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDeployedContractInfo } from "../helper";
-import { useEncrypt, useUserDecrypt, useUserDecryptedValue } from "@zama-fhe/react-sdk";
+import { useEncrypt, useUserDecrypt } from "@zama-fhe/react-sdk";
+import { ZERO_HANDLE, ZamaSDKEvents } from "@zama-fhe/sdk";
 import { toHex } from "viem";
 import { useAccount, useChainId, useReadContract, useWriteContract } from "wagmi";
 import type { Contract } from "~~/utils/helper/contract";
 import type { AllowedChainIds } from "~~/utils/helper/networks";
-
-const ZERO_HANDLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 /**
  * useFHECounterWagmi - FHE Counter hook using @zama-fhe/react-sdk v2 + wagmi
  *
  * What it does:
  * - Reads the current encrypted counter via wagmi's useReadContract
- * - Decrypts the handle on-demand using useUserDecrypt (v2 handles keypair + EIP-712 + signing internally)
+ * - Decrypts the handle on-demand using useUserDecrypt (query-based: handles keypair + EIP-712 + signing internally)
  * - Encrypts inputs with useEncrypt and writes increment/decrement via useWriteContract
  */
 export const useFHECounterWagmi = () => {
@@ -59,18 +58,39 @@ export const useFHECounterWagmi = () => {
   // Contract write hook
   const { writeContractAsync } = useWriteContract();
 
-  // Decryption hook - v2 handles keypair generation, EIP-712, and signing internally
-  const decrypt = useUserDecrypt({
-    onCredentialsReady: () => setMessage("Credentials ready, decrypting..."),
-    onDecrypted: () => setMessage("Decryption complete!"),
-  });
+  useEffect(() => {
+    const ctrl = new AbortController();
+    const { CredentialsCached, DecryptEnd } = ZamaSDKEvents;
+    window.addEventListener(CredentialsCached, () => setMessage("Credentials ready, decrypting..."), {
+      signal: ctrl.signal,
+    });
+    window.addEventListener(DecryptEnd, () => setMessage("Decryption complete!"), {
+      signal: ctrl.signal,
+    });
+    return () => ctrl.abort();
+  }, []);
 
-  // Read decrypted value from cache
-  const { data: cachedDecryptedValue } = useUserDecryptedValue(countHandle as `0x${string}` | undefined);
+  // Build handles array for decryption query (query-based, fires automatically when enabled)
+  const decryptHandles = useMemo(() => {
+    if (!countHandle || countHandle === ZERO_HANDLE || !fheCounter?.address) return [];
+    return [{ handle: countHandle as `0x${string}`, contractAddress: fheCounter.address as `0x${string}` }];
+  }, [countHandle, fheCounter?.address]);
+
+  // Whether we should attempt decryption
+  const [decryptEnabled, setDecryptEnabled] = useState(false);
+
+  // Decryption hook - query-based: fires when enabled and handles are provided
+  const decrypt = useUserDecrypt({ handles: decryptHandles }, { enabled: decryptEnabled && decryptHandles.length > 0 });
+
+  // Extract decrypted value from query result
+  const cachedDecryptedValue = useMemo(() => {
+    if (!countHandle || !decrypt.data) return undefined;
+    return decrypt.data[countHandle as `0x${string}`];
+  }, [countHandle, decrypt.data]);
 
   // Derived state
   const isDecrypted = cachedDecryptedValue !== undefined;
-  const isDecrypting = decrypt.isPending;
+  const isDecrypting = decrypt.isFetching;
   const clearCount = useMemo(() => {
     if (!countHandle) return undefined;
     if (countHandle === ZERO_HANDLE) return BigInt(0);
@@ -78,24 +98,30 @@ export const useFHECounterWagmi = () => {
   }, [countHandle, cachedDecryptedValue]);
 
   const canDecrypt = Boolean(
-    hasContract && isConnected && address && countHandle && countHandle !== ZERO_HANDLE && !isDecrypted && !isDecrypting,
+    hasContract &&
+      isConnected &&
+      address &&
+      countHandle &&
+      countHandle !== ZERO_HANDLE &&
+      !isDecrypted &&
+      !isDecrypting,
   );
 
   const canUpdateCounter = Boolean(hasContract && isConnected && address && !isProcessing);
 
-  // Decrypt the current count handle
+  // Decrypt the current count handle (enables the query which fires automatically)
   const decryptCountHandle = useCallback(async () => {
     if (!canDecrypt || !countHandle || !fheCounter?.address) return;
     setMessage("Starting decryption...");
+    setDecryptEnabled(true);
+  }, [canDecrypt, countHandle, fheCounter?.address]);
 
-    try {
-      await decrypt.mutateAsync({
-        handles: [{ handle: countHandle as `0x${string}`, contractAddress: fheCounter.address }],
-      });
-    } catch (e) {
-      setMessage(`Decryption failed: ${e instanceof Error ? e.message : String(e)}`);
+  // Report decryption errors
+  useEffect(() => {
+    if (decrypt.error) {
+      setMessage(`Decryption failed: ${decrypt.error.message}`);
     }
-  }, [canDecrypt, countHandle, fheCounter?.address, decrypt]);
+  }, [decrypt.error]);
 
   // Mutations (increment/decrement)
   const updateCounter = useCallback(
@@ -106,7 +132,7 @@ export const useFHECounterWagmi = () => {
       setIsProcessing(true);
       setMessage(`Starting ${op}(${valueAbs})...`);
       try {
-        // Encrypt the value with FHE type annotation (v2 API)
+        // Encrypt the value with FHE type annotation
         setMessage("Encrypting value...");
         const enc = await encrypt.mutateAsync({
           values: [{ value: BigInt(valueAbs), type: "euint32" }],

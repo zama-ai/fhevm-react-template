@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ZamaProvider } from "@zama-fhe/react-sdk";
-import { RelayerWeb, SepoliaConfig, memoryStorage } from "@zama-fhe/sdk";
+import { RelayerWeb, SepoliaConfig, type ZamaSDKEvent, memoryStorage } from "@zama-fhe/sdk";
 import { RelayerCleartext, hardhatCleartextConfig } from "@zama-fhe/sdk/cleartext";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import { useTheme } from "next-themes";
@@ -48,8 +48,12 @@ const ZamaRuntimeProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [relayer]);
 
+  function dispatchEvent(event: ZamaSDKEvent) {
+    window.dispatchEvent(new CustomEvent(event.type, { detail: event }));
+  }
+
   return (
-    <ZamaProvider relayer={relayer} signer={signer} storage={memoryStorage}>
+    <ZamaProvider relayer={relayer} signer={signer} storage={memoryStorage} onEvent={dispatchEvent}>
       {children}
     </ZamaProvider>
   );
