@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDeployedContractInfo } from "../helper";
-import { useEncrypt, useUserDecrypt } from "@zama-fhe/react-sdk";
+import { useAllow, useEncrypt, useIsAllowed, useUserDecrypt } from "@zama-fhe/react-sdk";
 import { ZERO_HANDLE, ZamaSDKEvents } from "@zama-fhe/sdk";
-import { toHex } from "viem";
+import { bytesToHex } from "viem";
 import { useAccount, useChainId, useReadContract, useWriteContract } from "wagmi";
 import type { Contract } from "~~/utils/helper/contract";
 import type { AllowedChainIds } from "~~/utils/helper/networks";
@@ -76,11 +76,16 @@ export const useFHECounterWagmi = () => {
     return [{ handle: countHandle as `0x${string}`, contractAddress: fheCounter.address as `0x${string}` }];
   }, [countHandle, fheCounter?.address]);
 
-  // Whether we should attempt decryption
+  // Authorization: useAllow acquires FHE keypair + EIP-712 signature, useIsAllowed gates decryption
+  const { mutate: allow, isPending: isAllowing } = useAllow();
+  const contractAddr = (fheCounter?.address ?? "0x0") as `0x${string}`;
+  const { data: isAllowed } = useIsAllowed({ contractAddresses: [contractAddr] });
+
+  // Whether the user has requested decryption
   const [decryptEnabled, setDecryptEnabled] = useState(false);
 
-  // Decryption hook - query-based: fires when enabled and handles are provided
-  const decrypt = useUserDecrypt({ handles: decryptHandles }, { enabled: decryptEnabled && decryptHandles.length > 0 });
+  // Decryption hook - query-based: fires when authorized and handles are provided
+  const decrypt = useUserDecrypt({ handles: decryptHandles }, { enabled: decryptEnabled && !!isAllowed });
 
   // Extract decrypted value from query result
   const cachedDecryptedValue = useMemo(() => {
@@ -104,17 +109,23 @@ export const useFHECounterWagmi = () => {
       countHandle &&
       countHandle !== ZERO_HANDLE &&
       !isDecrypted &&
-      !isDecrypting,
+      !isDecrypting &&
+      !isAllowing,
   );
 
   const canUpdateCounter = Boolean(hasContract && isConnected && address && !isProcessing);
 
-  // Decrypt the current count handle (enables the query which fires automatically)
+  // Decrypt the current count handle: authorize if needed, then enable the query
   const decryptCountHandle = useCallback(async () => {
     if (!canDecrypt || !countHandle || !fheCounter?.address) return;
-    setMessage("Starting decryption...");
     setDecryptEnabled(true);
-  }, [canDecrypt, countHandle, fheCounter?.address]);
+    if (!isAllowed) {
+      setMessage("Authorizing decryption...");
+      allow([fheCounter.address as `0x${string}`]);
+      return;
+    }
+    setMessage("Starting decryption...");
+  }, [canDecrypt, countHandle, fheCounter?.address, isAllowed, allow]);
 
   // Report decryption errors
   useEffect(() => {
@@ -147,7 +158,7 @@ export const useFHECounterWagmi = () => {
           address: fheCounter.address as `0x${string}`,
           abi: (fheCounter as FHECounterInfo).abi as any,
           functionName: op,
-          args: [toHex(enc.handles[0]), toHex(enc.inputProof)],
+          args: [bytesToHex(enc.handles[0]!), bytesToHex(enc.inputProof)],
           gas: 15_000_000n,
         });
 

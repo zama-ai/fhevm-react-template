@@ -1,4 +1,4 @@
-import type { GenericSigner, EIP712TypedData, Hex, TransactionReceipt } from "@zama-fhe/sdk";
+import type { EIP712TypedData, GenericSigner, Hex, SignerLifecycleCallbacks, TransactionReceipt } from "@zama-fhe/sdk";
 import type { Config } from "wagmi";
 import {
   getAccount,
@@ -7,11 +7,13 @@ import {
   readContract,
   signTypedData,
   waitForTransactionReceipt,
+  watchAccount,
   writeContract,
 } from "wagmi/actions";
 
 /**
  * Custom WagmiSigner that implements GenericSigner using wagmi/actions.
+ * Includes subscribe() for session lifecycle (disconnect/account/chain change).
  * This replaces `@zama-fhe/react-sdk/wagmi`'s WagmiSigner which uses
  * `watchConnection` (not available in all wagmi 2.x versions).
  */
@@ -59,5 +61,21 @@ export class WagmiSigner implements GenericSigner {
   async getBlockTimestamp(): Promise<bigint> {
     const block = await getBlock(this.config);
     return block.timestamp;
+  }
+
+  subscribe({ onDisconnect, onAccountChange, onChainChange }: SignerLifecycleCallbacks): () => void {
+    return watchAccount(this.config, {
+      onChange: (account, prevAccount) => {
+        if (account.status === "disconnected" && prevAccount.status !== "disconnected") {
+          onDisconnect?.();
+        }
+        if (account.address && prevAccount.address && account.address !== prevAccount.address) {
+          onAccountChange?.(account.address);
+        }
+        if (account.chainId && account.chainId !== prevAccount.chainId) {
+          onChainChange?.(account.chainId);
+        }
+      },
+    });
   }
 }
