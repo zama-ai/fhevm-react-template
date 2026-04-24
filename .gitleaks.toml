@@ -1,0 +1,26 @@
+# gitleaks config — runs in CI only (see .github/workflows/ci.yml).
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Paths and literals that never contain real secrets"
+paths = [
+  # Public contract addresses + ABIs, auto-generated from forge broadcasts.
+  '''packages/nextjs/contracts/''',
+  # Example env files contain placeholder values only.
+  '''\.env\.example''',
+  # Foundry-installed libraries; not our code.
+  '''packages/foundry/lib/''',
+  '''packages/foundry/out/''',
+  '''packages/foundry/cache/''',
+  '''packages/foundry/broadcast/''',
+  '''packages/foundry/dependencies/''',
+  # Lockfile — registry URLs, not secrets.
+  '''pnpm-lock\.yaml''',
+]
+
+# Anvil default account #0 — publicly documented in foundry's docs and in
+# every FHEVM template. Not a real secret.
+stopwords = [
+  "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+]

@@ -12,10 +12,17 @@ import {
 } from "wagmi/actions";
 
 /**
- * Custom WagmiSigner that implements GenericSigner using wagmi/actions.
- * Includes subscribe() for session lifecycle (disconnect/account/chain change).
- * This replaces `@zama-fhe/react-sdk/wagmi`'s WagmiSigner which uses
- * `watchConnection` (not available in all wagmi 2.x versions).
+ * Wagmi-backed GenericSigner.
+ *
+ * Reimplements `@zama-fhe/react-sdk/wagmi`'s WagmiSigner locally because the
+ * bundled version imports `watchConnection` from `wagmi/actions`, which wagmi
+ * (through ≥2.22.x) does not export. wagmi exposes `watchAccount` instead,
+ * which delivers the same disconnect / account-change / chain-change events
+ * we need for the SDK's session lifecycle.
+ *
+ * Remove this file and switch to `import { WagmiSigner } from
+ * "@zama-fhe/react-sdk/wagmi"` once the upstream fix reaches a stable
+ * @zama-fhe/react-sdk release.
  */
 export class WagmiSigner implements GenericSigner {
   private config: Config;
@@ -37,7 +44,10 @@ export class WagmiSigner implements GenericSigner {
   }
 
   async signTypedData(typedData: EIP712TypedData): Promise<Hex> {
-    const { EIP712Domain: _, ...sigTypes } = typedData.types;
+    // wagmi's signTypedData derives EIP712Domain from `domain`; passing it via
+    // `types` triggers "Ambiguous primary type" — strip it here.
+    const sigTypes = { ...typedData.types };
+    delete (sigTypes as Record<string, unknown>).EIP712Domain;
     return signTypedData(this.config, {
       primaryType: Object.keys(sigTypes)[0]!,
       types: sigTypes,

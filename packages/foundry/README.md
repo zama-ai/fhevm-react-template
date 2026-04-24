@@ -71,13 +71,13 @@ fhevm-foundry-template/
 
 ## Available Scripts
 
-| Script                                     | Description              |
-| ------------------------------------------ | ------------------------ |
-| `forge build`                              | Compile all contracts    |
-| `forge test -vvv`                          | Run all tests            |
-| `forge test --match-test test_name -vvv`   | Run a single test        |
-| `forge fmt`                                | Format code              |
-| `forge fmt --check`                        | Check formatting         |
+| Script                                   | Description           |
+| ---------------------------------------- | --------------------- |
+| `forge build`                            | Compile all contracts |
+| `forge test -vvv`                        | Run all tests         |
+| `forge test --match-test test_name -vvv` | Run a single test     |
+| `forge fmt`                              | Format code           |
+| `forge fmt --check`                      | Check formatting      |
 
 ## Documentation
 

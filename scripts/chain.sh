@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
-# Start a local anvil node with the FHEVM cleartext host stack deployed.
+# Start anvil + FHEVM cleartext host stack + FHECounter in one command.
 #
-# This deploys CleartextFHEVMExecutor (and the full host stack) at the same
-# fixed addresses that @zama-fhe/sdk/cleartext's hardhatCleartextConfig
-# expects, so RelayerCleartext in the frontend works out of the box.
+# Flow (2 terminals):
+#   pnpm chain   # this script — anvil + FHEVM host + FHECounter
+#   pnpm start   # frontend
+#
+# To redeploy FHECounter without restarting anvil, run
+# `pnpm deploy:localhost` in another terminal.
 set -euo pipefail
 
 PORT="${ANVIL_PORT:-8545}"
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+RPC_URL="http://127.0.0.1:$PORT"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # forge-fhevm is installed as a soldeer dependency of packages/foundry. The
 # installed source tree includes deploy-local.sh (the canonical FHEVM host
@@ -20,7 +25,7 @@ if [[ -z "$FORGE_FHEVM_DIR" || ! -d "$FORGE_FHEVM_DIR" ]]; then
   exit 1
 fi
 
-for bin in anvil forge cast jq; do
+for bin in anvil forge cast jq pnpm; do
   command -v "$bin" >/dev/null || { echo "error: missing '$bin' on PATH" >&2; exit 1; }
 done
 
@@ -41,23 +46,36 @@ cleanup() { [[ -n "$ANVIL_PID" ]] && kill "$ANVIL_PID" 2>/dev/null || true; }
 trap cleanup EXIT INT TERM
 
 echo "starting anvil on port $PORT..."
-anvil --port "$PORT" --chain-id 31337 --silent &
+ANVIL_STATE="${ANVIL_STATE:-$REPO_ROOT/.anvil-state.json}"
+ANVIL_ARGS="--host 127.0.0.1 --port $PORT --chain-id 31337 --auto-impersonate --silent"
+if [[ -f "$ANVIL_STATE" ]]; then
+  echo "  restoring anvil state from $ANVIL_STATE"
+  anvil $ANVIL_ARGS --load-state "$ANVIL_STATE" --dump-state "$ANVIL_STATE" &
+else
+  anvil $ANVIL_ARGS --dump-state "$ANVIL_STATE" &
+fi
 ANVIL_PID=$!
 
 # Wait for RPC
 for _ in $(seq 1 150); do
-  nc -z 127.0.0.1 "$PORT" 2>/dev/null && break
+  cast chain-id --rpc-url "$RPC_URL" >/dev/null 2>&1 && break
   sleep 0.2
 done
-nc -z 127.0.0.1 "$PORT" 2>/dev/null || { echo "anvil failed to start on port $PORT" >&2; exit 1; }
+kill -0 "$ANVIL_PID" 2>/dev/null \
+  || { echo "anvil failed to start on port $PORT (already in use?)" >&2; exit 1; }
 
 echo "deploying FHEVM cleartext host stack..."
-(cd "$FORGE_FHEVM_DIR" && ./deploy-local.sh --anvil-port "$PORT")
+# Unset any chain override inherited from the calling shell — cast reads
+# CHAIN (and legacy FOUNDRY_CHAIN / DAPP_CHAIN) and would fail if set to an
+# invalid value such as "testnet".
+(unset CHAIN FOUNDRY_CHAIN DAPP_CHAIN; cd "$FORGE_FHEVM_DIR" && ./deploy-local.sh --rpc-url "$RPC_URL")
 
-echo ""
-echo "✓ anvil + FHEVM cleartext host ready on http://127.0.0.1:$PORT"
-echo "  chain id: 31337"
-echo "  press Ctrl+C to stop"
-echo ""
+echo "deploying FHECounter..."
+RPC_URL="$RPC_URL" "$SCRIPT_DIR/deploy-localhost.sh"
+
+echo
+echo "✓ anvil + FHEVM host + FHECounter ready on $RPC_URL (chain id 31337)"
+echo "  next: pnpm start (in another terminal)"
+echo
 
 wait "$ANVIL_PID"

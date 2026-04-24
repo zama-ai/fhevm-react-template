@@ -39,5 +39,11 @@ fi
 cd "$FOUNDRY_DIR"
 forge script "${FORGE_ARGS[@]}"
 
+echo
+echo "▸ Regenerating frontend ABIs + addresses"
 cd "$REPO_ROOT"
 pnpm generate
+
+echo
+echo "✅  Sepolia deploy complete. Frontend reads addresses from"
+echo "    packages/nextjs/contracts/FHECounter.ts."

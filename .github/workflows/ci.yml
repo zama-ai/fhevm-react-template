@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: build + test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      - name: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      # dependencies/ is gitignored; soldeer resolves deps from foundry.toml.
+      - name: Install contract deps
+        working-directory: packages/foundry
+        run: forge soldeer install
+
+      - name: forge build
+        working-directory: packages/foundry
+        run: forge build --sizes
+
+      - name: forge test
+        working-directory: packages/foundry
+        run: forge test -vv
+
+      - name: frontend typecheck
+        run: pnpm --filter ./packages/nextjs check-types
+
+      - name: frontend lint
+        run: pnpm --filter ./packages/nextjs lint
+
+      - name: frontend build
+        env:
+          # scaffold.config.ts throws in production if this is unset. CI only
+          # exercises the build pipeline — a stub is enough since no RPC call
+          # actually happens during `next build`.
+          NEXT_PUBLIC_ALCHEMY_API_KEY: ci-stub
+        run: pnpm --filter ./packages/nextjs build
+
+      - name: prettier check
+        run: pnpm exec prettier --check .
+
+  gitleaks:
+    name: gitleaks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Use the OSS gitleaks binary directly — gitleaks-action@v2 requires a
+      # paid license for GitHub org repos.
+      - name: Install gitleaks
+        run: |
+          VERSION=8.18.4
+          curl -sSfL \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin gitleaks
+
+      # Scan only the commits introduced by the PR (or the newly-pushed commits
+      # on main). Scanning full history re-reports pre-existing findings that
+      # aren't this change's problem. `fetch-depth: 0` above ensures both ends
+      # of the range are present locally.
+      - name: Determine scan range
+        id: range
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.event.after }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            range="${PR_BASE_SHA}..${PR_HEAD_SHA}"
+          elif [ "$PUSH_BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            # First push to a branch — no prior ref, fall back to scanning the
+            # tip commit only.
+            range="${PUSH_AFTER}~1..${PUSH_AFTER}"
+          else
+            range="${PUSH_BEFORE}..${PUSH_AFTER}"
+          fi
+          echo "range=$range" >> "$GITHUB_OUTPUT"
+          echo "scanning $range"
+
+      - name: Scan new commits
+        run: |
+          gitleaks detect \
+            --config .gitleaks.toml \
+            --no-banner \
+            --redact \
+            --verbose \
+            --log-opts="${{ steps.range.outputs.range }}"

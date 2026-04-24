@@ -10,8 +10,5 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "include": [
-    "packages/**/*",
-    "scripts/**/*"
-  ]
+  "include": ["packages/**/*", "scripts/**/*"]
 }
