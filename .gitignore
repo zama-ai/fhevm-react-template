@@ -19,3 +19,4 @@ tmp*
 packages/nextjs/contracts/*.local.ts
 
 CLAUDE.md
+.claude
