@@ -13,8 +13,8 @@ import { WagmiProvider, useChainId } from "wagmi";
 import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/helper";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
-// Local re-implementation — see services/web3/wagmiSigner.ts for why we can't
-// use @zama-fhe/react-sdk/wagmi directly in SDK 3.0.0.
+// Swap to `@zama-fhe/react-sdk/wagmi` once a patched stable ships — the fix
+// is already in the alpha track (≥ 3.0.0-alpha.16). See wagmiSigner.ts.
 import { WagmiSigner } from "~~/services/web3/wagmiSigner";
 
 // Module-scoped — the signer, keypair store and session store are chain-agnostic

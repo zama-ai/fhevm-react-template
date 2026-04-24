@@ -14,15 +14,13 @@ import {
 /**
  * Wagmi-backed GenericSigner.
  *
- * Reimplements `@zama-fhe/react-sdk/wagmi`'s WagmiSigner locally because the
- * bundled version imports `watchConnection` from `wagmi/actions`, which wagmi
- * (through ≥2.22.x) does not export. wagmi exposes `watchAccount` instead,
- * which delivers the same disconnect / account-change / chain-change events
- * we need for the SDK's session lifecycle.
- *
- * Remove this file and switch to `import { WagmiSigner } from
- * "@zama-fhe/react-sdk/wagmi"` once the upstream fix reaches a stable
- * @zama-fhe/react-sdk release.
+ * Reimplements `@zama-fhe/react-sdk/wagmi`'s WagmiSigner locally because
+ * @zama-fhe/react-sdk@3.0.0 (stable) imports `watchConnection` from
+ * `wagmi/actions`, and wagmi only exports `watchAccount`. The upstream fix
+ * is already in the alpha track (≥ 3.0.0-alpha.16 uses `watchAccount`);
+ * delete this file and switch `DappWrapperWithProviders` back to
+ * `import { WagmiSigner } from "@zama-fhe/react-sdk/wagmi"` once the fix
+ * reaches a stable release.
  */
 export class WagmiSigner implements GenericSigner {
   private config: Config;
